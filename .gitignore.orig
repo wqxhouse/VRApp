@@ -1,0 +1,52 @@
+<<<<<<< HEAD
+Makefile
+*CMakeFiles*
+cmake_install.cmake
+doc
+CMakeCache.txt
+*vcxproj*
+*~
+.*.swp
+*.opensdf
+*.sdf
+*.sln
+*.suo
+*.o
+Debug
+ipch
+*.dir
+x64
+lib
+bin
+ascii2bin
+.DS_store
+=======
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+>>>>>>> e8b3751b669f2d4e18f6eaff157d15c6c80cb089

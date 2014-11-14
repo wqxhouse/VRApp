@@ -1,0 +1,620 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		384385AF1A169DF800A5EA27 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 384385A91A169DF800A5EA27 /* PointLight.cpp */; };
+		3846AF9D1A15881A004A871F /* finalPass.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3846AF9B1A158008004A871F /* finalPass.vert */; };
+		3846AF9E1A15881A004A871F /* finalPass.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3846AF9C1A15801C004A871F /* finalPass.frag */; };
+		3881FAC11A0CA4DC000AB452 /* mainScene.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FAB91A0CA4AB000AB452 /* mainScene.frag */; };
+		3881FAC21A0CA4DC000AB452 /* mainScene.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABA1A0CA4AB000AB452 /* mainScene.vert */; };
+		3881FAC31A0CA4DC000AB452 /* pointLightPass.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABB1A0CA4AB000AB452 /* pointLightPass.frag */; };
+		3881FAC41A0CA4DC000AB452 /* pointLightPass.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABC1A0CA4AB000AB452 /* pointLightPass.vert */; };
+		3881FAC51A0CA4DC000AB452 /* pointLightStencil.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABD1A0CA4AB000AB452 /* pointLightStencil.frag */; };
+		3881FAC61A0CA4DC000AB452 /* pointLightStencil.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABE1A0CA4AB000AB452 /* pointLightStencil.vert */; };
+		3881FAC71A0CA4DC000AB452 /* ssao.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABF1A0CA4AB000AB452 /* ssao.frag */; };
+		3881FAC81A0CA4DC000AB452 /* ssao.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FAC01A0CA4AB000AB452 /* ssao.vert */; };
+		3881FAC91A0CA4DC000AB452 /* gbuffer.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38D648B51A0C8B720088AF3C /* gbuffer.vert */; };
+		3881FACA1A0CA4DC000AB452 /* gbuffer.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38D648B41A0C8B720088AF3C /* gbuffer.frag */; };
+		388D901B1A135A31006AA441 /* GeometryPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 388D900E1A135A31006AA441 /* GeometryPass.cpp */; };
+		388D901C1A135A31006AA441 /* LightingPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 388D90101A135A31006AA441 /* LightingPass.cpp */; };
+		388D901D1A135A31006AA441 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 388D90121A135A31006AA441 /* main.cpp */; };
+		388D901E1A135A31006AA441 /* LightGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 388D90131A135A31006AA441 /* LightGroup.cpp */; };
+		388D901F1A135A31006AA441 /* ScreenPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 388D90151A135A31006AA441 /* ScreenPass.cpp */; };
+		388D90201A135A31006AA441 /* Shared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 388D90171A135A31006AA441 /* Shared.cpp */; };
+		388D90211A135A31006AA441 /* SSAOPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 388D90191A135A31006AA441 /* SSAOPass.cpp */; };
+		38A423CB1A15D44C0079AD58 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38A423CA1A15D44C0079AD58 /* Utils.cpp */; };
+		38AB05431A15D2B3005FAEC3 /* LightCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38AB05411A15D2B3005FAEC3 /* LightCallback.cpp */; };
+		38C4BC2D19FE2D49005430B2 /* libOpenThreads.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BBFA19FE2D49005430B2 /* libOpenThreads.3.2.1.dylib */; };
+		38C4BC2E19FE2D49005430B2 /* libOpenThreads.20.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BBFB19FE2D49005430B2 /* libOpenThreads.20.dylib */; };
+		38C4BC2F19FE2D49005430B2 /* libOpenThreads.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BBFC19FE2D49005430B2 /* libOpenThreads.dylib */; };
+		38C4BC3019FE2D49005430B2 /* libosg.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BBFD19FE2D49005430B2 /* libosg.3.2.1.dylib */; };
+		38C4BC3119FE2D49005430B2 /* libosg.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BBFE19FE2D49005430B2 /* libosg.100.dylib */; };
+		38C4BC3219FE2D49005430B2 /* libosg.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BBFF19FE2D49005430B2 /* libosg.dylib */; };
+		38C4BC3319FE2D49005430B2 /* libosgAnimation.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0019FE2D49005430B2 /* libosgAnimation.3.2.1.dylib */; };
+		38C4BC3419FE2D49005430B2 /* libosgAnimation.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0119FE2D49005430B2 /* libosgAnimation.100.dylib */; };
+		38C4BC3519FE2D49005430B2 /* libosgAnimation.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0219FE2D49005430B2 /* libosgAnimation.dylib */; };
+		38C4BC3619FE2D49005430B2 /* libosgDB.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0319FE2D49005430B2 /* libosgDB.3.2.1.dylib */; };
+		38C4BC3719FE2D49005430B2 /* libosgDB.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0419FE2D49005430B2 /* libosgDB.100.dylib */; };
+		38C4BC3819FE2D49005430B2 /* libosgDB.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0519FE2D49005430B2 /* libosgDB.dylib */; };
+		38C4BC3919FE2D49005430B2 /* libosgFX.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0619FE2D49005430B2 /* libosgFX.3.2.1.dylib */; };
+		38C4BC3A19FE2D49005430B2 /* libosgFX.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0719FE2D49005430B2 /* libosgFX.100.dylib */; };
+		38C4BC3B19FE2D49005430B2 /* libosgFX.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0819FE2D49005430B2 /* libosgFX.dylib */; };
+		38C4BC3C19FE2D49005430B2 /* libosgGA.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0919FE2D49005430B2 /* libosgGA.3.2.1.dylib */; };
+		38C4BC3D19FE2D49005430B2 /* libosgGA.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0A19FE2D49005430B2 /* libosgGA.100.dylib */; };
+		38C4BC3E19FE2D49005430B2 /* libosgGA.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0B19FE2D49005430B2 /* libosgGA.dylib */; };
+		38C4BC3F19FE2D49005430B2 /* libosgManipulator.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0C19FE2D49005430B2 /* libosgManipulator.3.2.1.dylib */; };
+		38C4BC4019FE2D49005430B2 /* libosgManipulator.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0D19FE2D49005430B2 /* libosgManipulator.100.dylib */; };
+		38C4BC4119FE2D49005430B2 /* libosgManipulator.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0E19FE2D49005430B2 /* libosgManipulator.dylib */; };
+		38C4BC4219FE2D49005430B2 /* libosgParticle.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC0F19FE2D49005430B2 /* libosgParticle.3.2.1.dylib */; };
+		38C4BC4319FE2D49005430B2 /* libosgParticle.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1019FE2D49005430B2 /* libosgParticle.100.dylib */; };
+		38C4BC4419FE2D49005430B2 /* libosgParticle.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1119FE2D49005430B2 /* libosgParticle.dylib */; };
+		38C4BC4519FE2D49005430B2 /* libosgPresentation.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1219FE2D49005430B2 /* libosgPresentation.3.2.1.dylib */; };
+		38C4BC4619FE2D49005430B2 /* libosgPresentation.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1319FE2D49005430B2 /* libosgPresentation.100.dylib */; };
+		38C4BC4719FE2D49005430B2 /* libosgPresentation.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1419FE2D49005430B2 /* libosgPresentation.dylib */; };
+		38C4BC4819FE2D49005430B2 /* libosgShadow.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1519FE2D49005430B2 /* libosgShadow.3.2.1.dylib */; };
+		38C4BC4919FE2D49005430B2 /* libosgShadow.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1619FE2D49005430B2 /* libosgShadow.100.dylib */; };
+		38C4BC4A19FE2D49005430B2 /* libosgShadow.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1719FE2D49005430B2 /* libosgShadow.dylib */; };
+		38C4BC4B19FE2D49005430B2 /* libosgSim.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1819FE2D49005430B2 /* libosgSim.3.2.1.dylib */; };
+		38C4BC4C19FE2D49005430B2 /* libosgSim.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1919FE2D49005430B2 /* libosgSim.100.dylib */; };
+		38C4BC4D19FE2D49005430B2 /* libosgSim.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1A19FE2D49005430B2 /* libosgSim.dylib */; };
+		38C4BC4E19FE2D49005430B2 /* libosgTerrain.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1B19FE2D49005430B2 /* libosgTerrain.3.2.1.dylib */; };
+		38C4BC4F19FE2D49005430B2 /* libosgTerrain.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1C19FE2D49005430B2 /* libosgTerrain.100.dylib */; };
+		38C4BC5019FE2D49005430B2 /* libosgTerrain.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1D19FE2D49005430B2 /* libosgTerrain.dylib */; };
+		38C4BC5119FE2D49005430B2 /* libosgText.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1E19FE2D49005430B2 /* libosgText.3.2.1.dylib */; };
+		38C4BC5219FE2D49005430B2 /* libosgText.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC1F19FE2D49005430B2 /* libosgText.100.dylib */; };
+		38C4BC5319FE2D49005430B2 /* libosgText.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2019FE2D49005430B2 /* libosgText.dylib */; };
+		38C4BC5419FE2D49005430B2 /* libosgUtil.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2119FE2D49005430B2 /* libosgUtil.3.2.1.dylib */; };
+		38C4BC5519FE2D49005430B2 /* libosgUtil.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2219FE2D49005430B2 /* libosgUtil.100.dylib */; };
+		38C4BC5619FE2D49005430B2 /* libosgUtil.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2319FE2D49005430B2 /* libosgUtil.dylib */; };
+		38C4BC5719FE2D49005430B2 /* libosgViewer.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2419FE2D49005430B2 /* libosgViewer.3.2.1.dylib */; };
+		38C4BC5819FE2D49005430B2 /* libosgViewer.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2519FE2D49005430B2 /* libosgViewer.100.dylib */; };
+		38C4BC5919FE2D49005430B2 /* libosgViewer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2619FE2D49005430B2 /* libosgViewer.dylib */; };
+		38C4BC5A19FE2D49005430B2 /* libosgVolume.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2719FE2D49005430B2 /* libosgVolume.3.2.1.dylib */; };
+		38C4BC5B19FE2D49005430B2 /* libosgVolume.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2819FE2D49005430B2 /* libosgVolume.100.dylib */; };
+		38C4BC5C19FE2D49005430B2 /* libosgVolume.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2919FE2D49005430B2 /* libosgVolume.dylib */; };
+		38C4BC5D19FE2D49005430B2 /* libosgWidget.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2A19FE2D49005430B2 /* libosgWidget.3.2.1.dylib */; };
+		38C4BC5E19FE2D49005430B2 /* libosgWidget.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2B19FE2D49005430B2 /* libosgWidget.100.dylib */; };
+		38C4BC5F19FE2D49005430B2 /* libosgWidget.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2C19FE2D49005430B2 /* libosgWidget.dylib */; };
+		38C4BC6219FE3F6D005430B2 /* osgdb_deprecated_osg.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC6019FE3F6D005430B2 /* osgdb_deprecated_osg.so */; };
+		38C4BC6319FE3F6D005430B2 /* osgdb_osg.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC6119FE3F6D005430B2 /* osgdb_osg.so */; };
+		38DFB4681A15791C00F5AA6D /* FinalPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38DFB4661A15791C00F5AA6D /* FinalPass.cpp */; };
+		38F7013F1A142D2A00DC8AD8 /* v.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38F7013D1A142CEE00DC8AD8 /* v.frag */; };
+		38F701401A142D2A00DC8AD8 /* v.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38F7013E1A142CEE00DC8AD8 /* v.vert */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		38C4BBEE19FE2CBE005430B2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				3846AF9D1A15881A004A871F /* finalPass.vert in CopyFiles */,
+				3846AF9E1A15881A004A871F /* finalPass.frag in CopyFiles */,
+				38F7013F1A142D2A00DC8AD8 /* v.frag in CopyFiles */,
+				38F701401A142D2A00DC8AD8 /* v.vert in CopyFiles */,
+				3881FAC11A0CA4DC000AB452 /* mainScene.frag in CopyFiles */,
+				3881FAC21A0CA4DC000AB452 /* mainScene.vert in CopyFiles */,
+				3881FAC31A0CA4DC000AB452 /* pointLightPass.frag in CopyFiles */,
+				3881FAC41A0CA4DC000AB452 /* pointLightPass.vert in CopyFiles */,
+				3881FAC51A0CA4DC000AB452 /* pointLightStencil.frag in CopyFiles */,
+				3881FAC61A0CA4DC000AB452 /* pointLightStencil.vert in CopyFiles */,
+				3881FAC71A0CA4DC000AB452 /* ssao.frag in CopyFiles */,
+				3881FAC81A0CA4DC000AB452 /* ssao.vert in CopyFiles */,
+				3881FAC91A0CA4DC000AB452 /* gbuffer.vert in CopyFiles */,
+				3881FACA1A0CA4DC000AB452 /* gbuffer.frag in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		384385A91A169DF800A5EA27 /* PointLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLight.cpp; sourceTree = "<group>"; };
+		3846AF9B1A158008004A871F /* finalPass.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = finalPass.vert; sourceTree = "<group>"; };
+		3846AF9C1A15801C004A871F /* finalPass.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = finalPass.frag; sourceTree = "<group>"; };
+		3881FAB91A0CA4AB000AB452 /* mainScene.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = mainScene.frag; sourceTree = "<group>"; };
+		3881FABA1A0CA4AB000AB452 /* mainScene.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = mainScene.vert; sourceTree = "<group>"; };
+		3881FABB1A0CA4AB000AB452 /* pointLightPass.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pointLightPass.frag; sourceTree = "<group>"; };
+		3881FABC1A0CA4AB000AB452 /* pointLightPass.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pointLightPass.vert; sourceTree = "<group>"; };
+		3881FABD1A0CA4AB000AB452 /* pointLightStencil.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pointLightStencil.frag; sourceTree = "<group>"; };
+		3881FABE1A0CA4AB000AB452 /* pointLightStencil.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pointLightStencil.vert; sourceTree = "<group>"; };
+		3881FABF1A0CA4AB000AB452 /* ssao.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ssao.frag; sourceTree = "<group>"; };
+		3881FAC01A0CA4AB000AB452 /* ssao.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ssao.vert; sourceTree = "<group>"; };
+		388D900D1A135855006AA441 /* PointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointLight.h; sourceTree = "<group>"; };
+		388D900E1A135A31006AA441 /* GeometryPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeometryPass.cpp; sourceTree = "<group>"; };
+		388D900F1A135A31006AA441 /* GeometryPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeometryPass.h; sourceTree = "<group>"; };
+		388D90101A135A31006AA441 /* LightingPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LightingPass.cpp; sourceTree = "<group>"; };
+		388D90111A135A31006AA441 /* LightingPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightingPass.h; sourceTree = "<group>"; };
+		388D90121A135A31006AA441 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		388D90131A135A31006AA441 /* LightGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LightGroup.cpp; sourceTree = "<group>"; };
+		388D90141A135A31006AA441 /* LightGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightGroup.h; sourceTree = "<group>"; };
+		388D90151A135A31006AA441 /* ScreenPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenPass.cpp; sourceTree = "<group>"; };
+		388D90161A135A31006AA441 /* ScreenPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenPass.h; sourceTree = "<group>"; };
+		388D90171A135A31006AA441 /* Shared.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shared.cpp; sourceTree = "<group>"; };
+		388D90181A135A31006AA441 /* Shared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shared.h; sourceTree = "<group>"; };
+		388D90191A135A31006AA441 /* SSAOPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SSAOPass.cpp; sourceTree = "<group>"; };
+		388D901A1A135A31006AA441 /* SSAOPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSAOPass.h; sourceTree = "<group>"; };
+		38A423CA1A15D44C0079AD58 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
+		38AB05411A15D2B3005FAEC3 /* LightCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LightCallback.cpp; sourceTree = "<group>"; };
+		38AB05421A15D2B3005FAEC3 /* LightCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightCallback.h; sourceTree = "<group>"; };
+		38C4BBF019FE2CBE005430B2 /* vrphysics */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vrphysics; sourceTree = BUILT_PRODUCTS_DIR; };
+		38C4BBFA19FE2D49005430B2 /* libOpenThreads.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenThreads.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libOpenThreads.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BBFB19FE2D49005430B2 /* libOpenThreads.20.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenThreads.20.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libOpenThreads.20.dylib"; sourceTree = "<group>"; };
+		38C4BBFC19FE2D49005430B2 /* libOpenThreads.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenThreads.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libOpenThreads.dylib"; sourceTree = "<group>"; };
+		38C4BBFD19FE2D49005430B2 /* libosg.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosg.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosg.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BBFE19FE2D49005430B2 /* libosg.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosg.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosg.100.dylib"; sourceTree = "<group>"; };
+		38C4BBFF19FE2D49005430B2 /* libosg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosg.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosg.dylib"; sourceTree = "<group>"; };
+		38C4BC0019FE2D49005430B2 /* libosgAnimation.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgAnimation.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgAnimation.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC0119FE2D49005430B2 /* libosgAnimation.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgAnimation.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgAnimation.100.dylib"; sourceTree = "<group>"; };
+		38C4BC0219FE2D49005430B2 /* libosgAnimation.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgAnimation.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgAnimation.dylib"; sourceTree = "<group>"; };
+		38C4BC0319FE2D49005430B2 /* libosgDB.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgDB.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgDB.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC0419FE2D49005430B2 /* libosgDB.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgDB.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgDB.100.dylib"; sourceTree = "<group>"; };
+		38C4BC0519FE2D49005430B2 /* libosgDB.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgDB.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgDB.dylib"; sourceTree = "<group>"; };
+		38C4BC0619FE2D49005430B2 /* libosgFX.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgFX.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgFX.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC0719FE2D49005430B2 /* libosgFX.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgFX.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgFX.100.dylib"; sourceTree = "<group>"; };
+		38C4BC0819FE2D49005430B2 /* libosgFX.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgFX.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgFX.dylib"; sourceTree = "<group>"; };
+		38C4BC0919FE2D49005430B2 /* libosgGA.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgGA.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgGA.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC0A19FE2D49005430B2 /* libosgGA.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgGA.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgGA.100.dylib"; sourceTree = "<group>"; };
+		38C4BC0B19FE2D49005430B2 /* libosgGA.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgGA.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgGA.dylib"; sourceTree = "<group>"; };
+		38C4BC0C19FE2D49005430B2 /* libosgManipulator.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgManipulator.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgManipulator.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC0D19FE2D49005430B2 /* libosgManipulator.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgManipulator.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgManipulator.100.dylib"; sourceTree = "<group>"; };
+		38C4BC0E19FE2D49005430B2 /* libosgManipulator.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgManipulator.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgManipulator.dylib"; sourceTree = "<group>"; };
+		38C4BC0F19FE2D49005430B2 /* libosgParticle.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgParticle.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgParticle.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC1019FE2D49005430B2 /* libosgParticle.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgParticle.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgParticle.100.dylib"; sourceTree = "<group>"; };
+		38C4BC1119FE2D49005430B2 /* libosgParticle.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgParticle.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgParticle.dylib"; sourceTree = "<group>"; };
+		38C4BC1219FE2D49005430B2 /* libosgPresentation.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgPresentation.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgPresentation.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC1319FE2D49005430B2 /* libosgPresentation.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgPresentation.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgPresentation.100.dylib"; sourceTree = "<group>"; };
+		38C4BC1419FE2D49005430B2 /* libosgPresentation.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgPresentation.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgPresentation.dylib"; sourceTree = "<group>"; };
+		38C4BC1519FE2D49005430B2 /* libosgShadow.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgShadow.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgShadow.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC1619FE2D49005430B2 /* libosgShadow.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgShadow.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgShadow.100.dylib"; sourceTree = "<group>"; };
+		38C4BC1719FE2D49005430B2 /* libosgShadow.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgShadow.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgShadow.dylib"; sourceTree = "<group>"; };
+		38C4BC1819FE2D49005430B2 /* libosgSim.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgSim.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgSim.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC1919FE2D49005430B2 /* libosgSim.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgSim.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgSim.100.dylib"; sourceTree = "<group>"; };
+		38C4BC1A19FE2D49005430B2 /* libosgSim.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgSim.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgSim.dylib"; sourceTree = "<group>"; };
+		38C4BC1B19FE2D49005430B2 /* libosgTerrain.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgTerrain.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgTerrain.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC1C19FE2D49005430B2 /* libosgTerrain.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgTerrain.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgTerrain.100.dylib"; sourceTree = "<group>"; };
+		38C4BC1D19FE2D49005430B2 /* libosgTerrain.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgTerrain.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgTerrain.dylib"; sourceTree = "<group>"; };
+		38C4BC1E19FE2D49005430B2 /* libosgText.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgText.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgText.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC1F19FE2D49005430B2 /* libosgText.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgText.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgText.100.dylib"; sourceTree = "<group>"; };
+		38C4BC2019FE2D49005430B2 /* libosgText.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgText.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgText.dylib"; sourceTree = "<group>"; };
+		38C4BC2119FE2D49005430B2 /* libosgUtil.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgUtil.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgUtil.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC2219FE2D49005430B2 /* libosgUtil.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgUtil.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgUtil.100.dylib"; sourceTree = "<group>"; };
+		38C4BC2319FE2D49005430B2 /* libosgUtil.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgUtil.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgUtil.dylib"; sourceTree = "<group>"; };
+		38C4BC2419FE2D49005430B2 /* libosgViewer.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgViewer.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgViewer.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC2519FE2D49005430B2 /* libosgViewer.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgViewer.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgViewer.100.dylib"; sourceTree = "<group>"; };
+		38C4BC2619FE2D49005430B2 /* libosgViewer.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgViewer.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgViewer.dylib"; sourceTree = "<group>"; };
+		38C4BC2719FE2D49005430B2 /* libosgVolume.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgVolume.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgVolume.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC2819FE2D49005430B2 /* libosgVolume.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgVolume.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgVolume.100.dylib"; sourceTree = "<group>"; };
+		38C4BC2919FE2D49005430B2 /* libosgVolume.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgVolume.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgVolume.dylib"; sourceTree = "<group>"; };
+		38C4BC2A19FE2D49005430B2 /* libosgWidget.3.2.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgWidget.3.2.1.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgWidget.3.2.1.dylib"; sourceTree = "<group>"; };
+		38C4BC2B19FE2D49005430B2 /* libosgWidget.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgWidget.100.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgWidget.100.dylib"; sourceTree = "<group>"; };
+		38C4BC2C19FE2D49005430B2 /* libosgWidget.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgWidget.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgWidget.dylib"; sourceTree = "<group>"; };
+		38C4BC6019FE3F6D005430B2 /* osgdb_deprecated_osg.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.bundle"; name = osgdb_deprecated_osg.so; path = "../OpenSceneGraph-3.2.1/releaselib/osgPlugins-3.2.1/osgdb_deprecated_osg.so"; sourceTree = "<group>"; };
+		38C4BC6119FE3F6D005430B2 /* osgdb_osg.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.bundle"; name = osgdb_osg.so; path = "../OpenSceneGraph-3.2.1/releaselib/osgPlugins-3.2.1/osgdb_osg.so"; sourceTree = "<group>"; };
+		38D648B41A0C8B720088AF3C /* gbuffer.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gbuffer.frag; sourceTree = "<group>"; };
+		38D648B51A0C8B720088AF3C /* gbuffer.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gbuffer.vert; sourceTree = "<group>"; };
+		38D648B61A0C8C890088AF3C /* concrete.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = concrete.jpg; sourceTree = "<group>"; };
+		38D648B71A0C8C890088AF3C /* random.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = random.png; sourceTree = "<group>"; };
+		38DFB4661A15791C00F5AA6D /* FinalPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FinalPass.cpp; sourceTree = "<group>"; };
+		38DFB4671A15791C00F5AA6D /* FinalPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinalPass.h; sourceTree = "<group>"; };
+		38F7013D1A142CEE00DC8AD8 /* v.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = v.frag; path = vrphysics/v.frag; sourceTree = "<group>"; };
+		38F7013E1A142CEE00DC8AD8 /* v.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = v.vert; path = vrphysics/v.vert; sourceTree = "<group>"; };
+		38F701411A1455FE00DC8AD8 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		38C4BBED19FE2CBE005430B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				38C4BC6219FE3F6D005430B2 /* osgdb_deprecated_osg.so in Frameworks */,
+				38C4BC6319FE3F6D005430B2 /* osgdb_osg.so in Frameworks */,
+				38C4BC2D19FE2D49005430B2 /* libOpenThreads.3.2.1.dylib in Frameworks */,
+				38C4BC2E19FE2D49005430B2 /* libOpenThreads.20.dylib in Frameworks */,
+				38C4BC2F19FE2D49005430B2 /* libOpenThreads.dylib in Frameworks */,
+				38C4BC3019FE2D49005430B2 /* libosg.3.2.1.dylib in Frameworks */,
+				38C4BC3119FE2D49005430B2 /* libosg.100.dylib in Frameworks */,
+				38C4BC3219FE2D49005430B2 /* libosg.dylib in Frameworks */,
+				38C4BC3319FE2D49005430B2 /* libosgAnimation.3.2.1.dylib in Frameworks */,
+				38C4BC3419FE2D49005430B2 /* libosgAnimation.100.dylib in Frameworks */,
+				38C4BC3519FE2D49005430B2 /* libosgAnimation.dylib in Frameworks */,
+				38C4BC3619FE2D49005430B2 /* libosgDB.3.2.1.dylib in Frameworks */,
+				38C4BC3719FE2D49005430B2 /* libosgDB.100.dylib in Frameworks */,
+				38C4BC3819FE2D49005430B2 /* libosgDB.dylib in Frameworks */,
+				38C4BC3919FE2D49005430B2 /* libosgFX.3.2.1.dylib in Frameworks */,
+				38C4BC3A19FE2D49005430B2 /* libosgFX.100.dylib in Frameworks */,
+				38C4BC3B19FE2D49005430B2 /* libosgFX.dylib in Frameworks */,
+				38C4BC3C19FE2D49005430B2 /* libosgGA.3.2.1.dylib in Frameworks */,
+				38C4BC3D19FE2D49005430B2 /* libosgGA.100.dylib in Frameworks */,
+				38C4BC3E19FE2D49005430B2 /* libosgGA.dylib in Frameworks */,
+				38C4BC3F19FE2D49005430B2 /* libosgManipulator.3.2.1.dylib in Frameworks */,
+				38C4BC4019FE2D49005430B2 /* libosgManipulator.100.dylib in Frameworks */,
+				38C4BC4119FE2D49005430B2 /* libosgManipulator.dylib in Frameworks */,
+				38C4BC4219FE2D49005430B2 /* libosgParticle.3.2.1.dylib in Frameworks */,
+				38C4BC4319FE2D49005430B2 /* libosgParticle.100.dylib in Frameworks */,
+				38C4BC4419FE2D49005430B2 /* libosgParticle.dylib in Frameworks */,
+				38C4BC4519FE2D49005430B2 /* libosgPresentation.3.2.1.dylib in Frameworks */,
+				38C4BC4619FE2D49005430B2 /* libosgPresentation.100.dylib in Frameworks */,
+				38C4BC4719FE2D49005430B2 /* libosgPresentation.dylib in Frameworks */,
+				38C4BC4819FE2D49005430B2 /* libosgShadow.3.2.1.dylib in Frameworks */,
+				38C4BC4919FE2D49005430B2 /* libosgShadow.100.dylib in Frameworks */,
+				38C4BC4A19FE2D49005430B2 /* libosgShadow.dylib in Frameworks */,
+				38C4BC4B19FE2D49005430B2 /* libosgSim.3.2.1.dylib in Frameworks */,
+				38C4BC4C19FE2D49005430B2 /* libosgSim.100.dylib in Frameworks */,
+				38C4BC4D19FE2D49005430B2 /* libosgSim.dylib in Frameworks */,
+				38C4BC4E19FE2D49005430B2 /* libosgTerrain.3.2.1.dylib in Frameworks */,
+				38C4BC4F19FE2D49005430B2 /* libosgTerrain.100.dylib in Frameworks */,
+				38C4BC5019FE2D49005430B2 /* libosgTerrain.dylib in Frameworks */,
+				38C4BC5119FE2D49005430B2 /* libosgText.3.2.1.dylib in Frameworks */,
+				38C4BC5219FE2D49005430B2 /* libosgText.100.dylib in Frameworks */,
+				38C4BC5319FE2D49005430B2 /* libosgText.dylib in Frameworks */,
+				38C4BC5419FE2D49005430B2 /* libosgUtil.3.2.1.dylib in Frameworks */,
+				38C4BC5519FE2D49005430B2 /* libosgUtil.100.dylib in Frameworks */,
+				38C4BC5619FE2D49005430B2 /* libosgUtil.dylib in Frameworks */,
+				38C4BC5719FE2D49005430B2 /* libosgViewer.3.2.1.dylib in Frameworks */,
+				38C4BC5819FE2D49005430B2 /* libosgViewer.100.dylib in Frameworks */,
+				38C4BC5919FE2D49005430B2 /* libosgViewer.dylib in Frameworks */,
+				38C4BC5A19FE2D49005430B2 /* libosgVolume.3.2.1.dylib in Frameworks */,
+				38C4BC5B19FE2D49005430B2 /* libosgVolume.100.dylib in Frameworks */,
+				38C4BC5C19FE2D49005430B2 /* libosgVolume.dylib in Frameworks */,
+				38C4BC5D19FE2D49005430B2 /* libosgWidget.3.2.1.dylib in Frameworks */,
+				38C4BC5E19FE2D49005430B2 /* libosgWidget.100.dylib in Frameworks */,
+				38C4BC5F19FE2D49005430B2 /* libosgWidget.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		38C4BBE719FE2CBE005430B2 = {
+			isa = PBXGroup;
+			children = (
+				38D648B31A0C8B4C0088AF3C /* shaders */,
+				38D648B01A0C7C4D0088AF3C /* data */,
+				38CC31ED19FF0E810076EE97 /* libs */,
+				38C4BBF219FE2CBE005430B2 /* vrphysics */,
+				38C4BBF119FE2CBE005430B2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		38C4BBF119FE2CBE005430B2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				38C4BBF019FE2CBE005430B2 /* vrphysics */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		38C4BBF219FE2CBE005430B2 /* vrphysics */ = {
+			isa = PBXGroup;
+			children = (
+				388D900E1A135A31006AA441 /* GeometryPass.cpp */,
+				388D900F1A135A31006AA441 /* GeometryPass.h */,
+				388D90101A135A31006AA441 /* LightingPass.cpp */,
+				388D90111A135A31006AA441 /* LightingPass.h */,
+				388D90121A135A31006AA441 /* main.cpp */,
+				388D90131A135A31006AA441 /* LightGroup.cpp */,
+				388D90141A135A31006AA441 /* LightGroup.h */,
+				388D90151A135A31006AA441 /* ScreenPass.cpp */,
+				388D90161A135A31006AA441 /* ScreenPass.h */,
+				388D90171A135A31006AA441 /* Shared.cpp */,
+				388D90181A135A31006AA441 /* Shared.h */,
+				388D90191A135A31006AA441 /* SSAOPass.cpp */,
+				388D901A1A135A31006AA441 /* SSAOPass.h */,
+				388D900D1A135855006AA441 /* PointLight.h */,
+				384385A91A169DF800A5EA27 /* PointLight.cpp */,
+				38F701411A1455FE00DC8AD8 /* Utils.h */,
+				38A423CA1A15D44C0079AD58 /* Utils.cpp */,
+				38DFB4661A15791C00F5AA6D /* FinalPass.cpp */,
+				38DFB4671A15791C00F5AA6D /* FinalPass.h */,
+				38AB05411A15D2B3005FAEC3 /* LightCallback.cpp */,
+				38AB05421A15D2B3005FAEC3 /* LightCallback.h */,
+			);
+			path = vrphysics;
+			sourceTree = "<group>";
+		};
+		38CC31ED19FF0E810076EE97 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				38C4BC6019FE3F6D005430B2 /* osgdb_deprecated_osg.so */,
+				38C4BC6119FE3F6D005430B2 /* osgdb_osg.so */,
+				38C4BBFA19FE2D49005430B2 /* libOpenThreads.3.2.1.dylib */,
+				38C4BBFB19FE2D49005430B2 /* libOpenThreads.20.dylib */,
+				38C4BBFC19FE2D49005430B2 /* libOpenThreads.dylib */,
+				38C4BBFD19FE2D49005430B2 /* libosg.3.2.1.dylib */,
+				38C4BBFE19FE2D49005430B2 /* libosg.100.dylib */,
+				38C4BBFF19FE2D49005430B2 /* libosg.dylib */,
+				38C4BC0019FE2D49005430B2 /* libosgAnimation.3.2.1.dylib */,
+				38C4BC0119FE2D49005430B2 /* libosgAnimation.100.dylib */,
+				38C4BC0219FE2D49005430B2 /* libosgAnimation.dylib */,
+				38C4BC0319FE2D49005430B2 /* libosgDB.3.2.1.dylib */,
+				38C4BC0419FE2D49005430B2 /* libosgDB.100.dylib */,
+				38C4BC0519FE2D49005430B2 /* libosgDB.dylib */,
+				38C4BC0619FE2D49005430B2 /* libosgFX.3.2.1.dylib */,
+				38C4BC0719FE2D49005430B2 /* libosgFX.100.dylib */,
+				38C4BC0819FE2D49005430B2 /* libosgFX.dylib */,
+				38C4BC0919FE2D49005430B2 /* libosgGA.3.2.1.dylib */,
+				38C4BC0A19FE2D49005430B2 /* libosgGA.100.dylib */,
+				38C4BC0B19FE2D49005430B2 /* libosgGA.dylib */,
+				38C4BC0C19FE2D49005430B2 /* libosgManipulator.3.2.1.dylib */,
+				38C4BC0D19FE2D49005430B2 /* libosgManipulator.100.dylib */,
+				38C4BC0E19FE2D49005430B2 /* libosgManipulator.dylib */,
+				38C4BC0F19FE2D49005430B2 /* libosgParticle.3.2.1.dylib */,
+				38C4BC1019FE2D49005430B2 /* libosgParticle.100.dylib */,
+				38C4BC1119FE2D49005430B2 /* libosgParticle.dylib */,
+				38C4BC1219FE2D49005430B2 /* libosgPresentation.3.2.1.dylib */,
+				38C4BC1319FE2D49005430B2 /* libosgPresentation.100.dylib */,
+				38C4BC1419FE2D49005430B2 /* libosgPresentation.dylib */,
+				38C4BC1519FE2D49005430B2 /* libosgShadow.3.2.1.dylib */,
+				38C4BC1619FE2D49005430B2 /* libosgShadow.100.dylib */,
+				38C4BC1719FE2D49005430B2 /* libosgShadow.dylib */,
+				38C4BC1819FE2D49005430B2 /* libosgSim.3.2.1.dylib */,
+				38C4BC1919FE2D49005430B2 /* libosgSim.100.dylib */,
+				38C4BC1A19FE2D49005430B2 /* libosgSim.dylib */,
+				38C4BC1B19FE2D49005430B2 /* libosgTerrain.3.2.1.dylib */,
+				38C4BC1C19FE2D49005430B2 /* libosgTerrain.100.dylib */,
+				38C4BC1D19FE2D49005430B2 /* libosgTerrain.dylib */,
+				38C4BC1E19FE2D49005430B2 /* libosgText.3.2.1.dylib */,
+				38C4BC1F19FE2D49005430B2 /* libosgText.100.dylib */,
+				38C4BC2019FE2D49005430B2 /* libosgText.dylib */,
+				38C4BC2119FE2D49005430B2 /* libosgUtil.3.2.1.dylib */,
+				38C4BC2219FE2D49005430B2 /* libosgUtil.100.dylib */,
+				38C4BC2319FE2D49005430B2 /* libosgUtil.dylib */,
+				38C4BC2419FE2D49005430B2 /* libosgViewer.3.2.1.dylib */,
+				38C4BC2519FE2D49005430B2 /* libosgViewer.100.dylib */,
+				38C4BC2619FE2D49005430B2 /* libosgViewer.dylib */,
+				38C4BC2719FE2D49005430B2 /* libosgVolume.3.2.1.dylib */,
+				38C4BC2819FE2D49005430B2 /* libosgVolume.100.dylib */,
+				38C4BC2919FE2D49005430B2 /* libosgVolume.dylib */,
+				38C4BC2A19FE2D49005430B2 /* libosgWidget.3.2.1.dylib */,
+				38C4BC2B19FE2D49005430B2 /* libosgWidget.100.dylib */,
+				38C4BC2C19FE2D49005430B2 /* libosgWidget.dylib */,
+			);
+			name = libs;
+			sourceTree = "<group>";
+		};
+		38D648B01A0C7C4D0088AF3C /* data */ = {
+			isa = PBXGroup;
+			children = (
+				38D648B61A0C8C890088AF3C /* concrete.jpg */,
+				38D648B71A0C8C890088AF3C /* random.png */,
+			);
+			name = data;
+			sourceTree = "<group>";
+		};
+		38D648B31A0C8B4C0088AF3C /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				38F7013D1A142CEE00DC8AD8 /* v.frag */,
+				38F7013E1A142CEE00DC8AD8 /* v.vert */,
+				3881FAB91A0CA4AB000AB452 /* mainScene.frag */,
+				3881FABA1A0CA4AB000AB452 /* mainScene.vert */,
+				3881FABB1A0CA4AB000AB452 /* pointLightPass.frag */,
+				3881FABC1A0CA4AB000AB452 /* pointLightPass.vert */,
+				3881FABD1A0CA4AB000AB452 /* pointLightStencil.frag */,
+				3881FABE1A0CA4AB000AB452 /* pointLightStencil.vert */,
+				3881FABF1A0CA4AB000AB452 /* ssao.frag */,
+				38D648B41A0C8B720088AF3C /* gbuffer.frag */,
+				3881FAC01A0CA4AB000AB452 /* ssao.vert */,
+				38D648B51A0C8B720088AF3C /* gbuffer.vert */,
+				3846AF9B1A158008004A871F /* finalPass.vert */,
+				3846AF9C1A15801C004A871F /* finalPass.frag */,
+			);
+			name = shaders;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		38C4BBEF19FE2CBE005430B2 /* vrphysics */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 38C4BBF719FE2CBE005430B2 /* Build configuration list for PBXNativeTarget "vrphysics" */;
+			buildPhases = (
+				38C4BBEC19FE2CBE005430B2 /* Sources */,
+				38C4BBED19FE2CBE005430B2 /* Frameworks */,
+				38C4BBEE19FE2CBE005430B2 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = vrphysics;
+			productName = vrphysics;
+			productReference = 38C4BBF019FE2CBE005430B2 /* vrphysics */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		38C4BBE819FE2CBE005430B2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = WSH;
+				TargetAttributes = {
+					38C4BBEF19FE2CBE005430B2 = {
+						CreatedOnToolsVersion = 6.1;
+					};
+				};
+			};
+			buildConfigurationList = 38C4BBEB19FE2CBE005430B2 /* Build configuration list for PBXProject "vrphysics" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 38C4BBE719FE2CBE005430B2;
+			productRefGroup = 38C4BBF119FE2CBE005430B2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				38C4BBEF19FE2CBE005430B2 /* vrphysics */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		38C4BBEC19FE2CBE005430B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				388D90201A135A31006AA441 /* Shared.cpp in Sources */,
+				384385AF1A169DF800A5EA27 /* PointLight.cpp in Sources */,
+				388D901F1A135A31006AA441 /* ScreenPass.cpp in Sources */,
+				38DFB4681A15791C00F5AA6D /* FinalPass.cpp in Sources */,
+				38A423CB1A15D44C0079AD58 /* Utils.cpp in Sources */,
+				388D901E1A135A31006AA441 /* LightGroup.cpp in Sources */,
+				388D90211A135A31006AA441 /* SSAOPass.cpp in Sources */,
+				388D901C1A135A31006AA441 /* LightingPass.cpp in Sources */,
+				38AB05431A15D2B3005FAEC3 /* LightCallback.cpp in Sources */,
+				388D901B1A135A31006AA441 /* GeometryPass.cpp in Sources */,
+				388D901D1A135A31006AA441 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		38C4BBF519FE2CBE005430B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		38C4BBF619FE2CBE005430B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		38C4BBF819FE2CBE005430B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				DYLIB_INSTALL_NAME_BASE = "";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/Wqxhouse-Mac/vrproject/OpenSceneGraph-3.2.1/include",
+				);
+				LD_DYLIB_INSTALL_NAME = "";
+				LD_NO_PIE = NO;
+				LIBRARY_SEARCH_PATHS = "/Users/Wqxhouse-Mac/vrproject/OpenSceneGraph-3.2.1/releaselib/**";
+				PRELINK_LIBS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		38C4BBF919FE2CBE005430B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				DYLIB_INSTALL_NAME_BASE = "";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/Wqxhouse-Mac/vrproject/OpenSceneGraph-3.2.1/include",
+				);
+				LD_DYLIB_INSTALL_NAME = "";
+				LD_NO_PIE = NO;
+				LIBRARY_SEARCH_PATHS = "/Users/Wqxhouse-Mac/vrproject/OpenSceneGraph-3.2.1/releaselib/**";
+				PRELINK_LIBS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		38C4BBEB19FE2CBE005430B2 /* Build configuration list for PBXProject "vrphysics" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				38C4BBF519FE2CBE005430B2 /* Debug */,
+				38C4BBF619FE2CBE005430B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		38C4BBF719FE2CBE005430B2 /* Build configuration list for PBXNativeTarget "vrphysics" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				38C4BBF819FE2CBE005430B2 /* Debug */,
+				38C4BBF919FE2CBE005430B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 38C4BBE819FE2CBE005430B2 /* Project object */;
+}
