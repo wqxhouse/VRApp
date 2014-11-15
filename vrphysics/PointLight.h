@@ -17,10 +17,23 @@
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
 #include <osg/MatrixTransform>
+#include "Utils.h"
 
 class PointLight {
 public:
+    static const int maxEffectiveRadius = 8;
+    
     PointLight();
+    
+    void setGeometryRadius(float radius)
+    {
+        _light_geom_radius = radius;
+    }
+    
+    void setMaxEffectiveRadius(float radius)
+    {
+        _light_max_effective_radius = radius;
+    }
     
     void setAmbient(float r, float g, float b, float a=1.0f) {
         ambient[0] = r;
@@ -88,31 +101,43 @@ public:
 //    }
     void genGeomTransform(float scaleFactor)
     {
-        osg::ref_ptr<osg::MatrixTransform> mt(new osg::MatrixTransform);
-        osg::Matrix m;
-        osg::Matrix trans;
-        trans.makeTranslate(position);
-        m.makeScale(osg::Vec3(scaleFactor, scaleFactor, scaleFactor));
-        m = m * trans;
+        osg::ref_ptr<osg::MatrixTransform> mt;
+        if(_lightGeomTransform.get() == NULL)
+        {
+            mt = new osg::MatrixTransform;
+            _lightGeomTransform = mt;
+            mt->addChild(getRoot());
+        }
+        else
+        {
+            mt = _lightGeomTransform;
+        }
         
+        osg::Matrix m;
+        m.postMultScale(osg::Vec3(scaleFactor, scaleFactor, scaleFactor));
+        m.postMultTranslate(position);
         mt->setMatrix(m);
-        mt->addChild(getRoot());
-        _lightGeomTransform = mt;
     }
     
     
     void genLightSphereTransform(float scaleFactor)
     {
-        osg::ref_ptr<osg::MatrixTransform> mt(new osg::MatrixTransform);
-        osg::Matrix m;
-        osg::Matrix trans;
-        trans.makeTranslate(position);
-        m.makeScale(osg::Vec3(scaleFactor, scaleFactor, scaleFactor));
-        m = m * trans;
+        osg::ref_ptr<osg::MatrixTransform> mt;
+        if(_lightSphereTransform.get() == NULL)
+        {
+            mt = new osg::MatrixTransform;
+            _lightSphereTransform = mt;
+            mt->addChild(getRoot());
+        }
+        else
+        {
+            mt = _lightSphereTransform;
+        }
         
+        osg::Matrix m;
+        m.postMultScale(osg::Vec3(scaleFactor, scaleFactor, scaleFactor));
+        m.postMultTranslate(position);
         mt->setMatrix(m);
-        mt->addChild(getRoot());
-        _lightSphereTransform = mt;
     }
     
     osg::ref_ptr<osg::Geode> getRoot()
@@ -156,6 +181,10 @@ public:
     
     int _id;
     static int _highest_id;
+    
+    float _light_geom_radius;
+    float _light_effective_radius;
+    float _light_max_effective_radius;
 };
 
 #endif /* defined(__deferred__pointlight__) */

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3832F9571A16C96C00E8E127 /* LightGroupAnimationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3832F9551A16C96C00E8E127 /* LightGroupAnimationCallback.cpp */; };
 		384385AF1A169DF800A5EA27 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 384385A91A169DF800A5EA27 /* PointLight.cpp */; };
 		3846AF9D1A15881A004A871F /* finalPass.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3846AF9B1A158008004A871F /* finalPass.vert */; };
 		3846AF9E1A15881A004A871F /* finalPass.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3846AF9C1A15801C004A871F /* finalPass.frag */; };
@@ -114,6 +115,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3832F9551A16C96C00E8E127 /* LightGroupAnimationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LightGroupAnimationCallback.cpp; sourceTree = "<group>"; };
+		3832F9561A16C96C00E8E127 /* LightGroupAnimationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightGroupAnimationCallback.h; sourceTree = "<group>"; };
 		384385A91A169DF800A5EA27 /* PointLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLight.cpp; sourceTree = "<group>"; };
 		3846AF9B1A158008004A871F /* finalPass.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = finalPass.vert; sourceTree = "<group>"; };
 		3846AF9C1A15801C004A871F /* finalPass.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = finalPass.frag; sourceTree = "<group>"; };
@@ -314,6 +317,8 @@
 				38DFB4671A15791C00F5AA6D /* FinalPass.h */,
 				38AB05411A15D2B3005FAEC3 /* LightCallback.cpp */,
 				38AB05421A15D2B3005FAEC3 /* LightCallback.h */,
+				3832F9551A16C96C00E8E127 /* LightGroupAnimationCallback.cpp */,
+				3832F9561A16C96C00E8E127 /* LightGroupAnimationCallback.h */,
 			);
 			path = vrphysics;
 			sourceTree = "<group>";
@@ -470,6 +475,7 @@
 				38DFB4681A15791C00F5AA6D /* FinalPass.cpp in Sources */,
 				38A423CB1A15D44C0079AD58 /* Utils.cpp in Sources */,
 				388D901E1A135A31006AA441 /* LightGroup.cpp in Sources */,
+				3832F9571A16C96C00E8E127 /* LightGroupAnimationCallback.cpp in Sources */,
 				388D90211A135A31006AA441 /* SSAOPass.cpp in Sources */,
 				388D901C1A135A31006AA441 /* LightingPass.cpp in Sources */,
 				38AB05431A15D2B3005FAEC3 /* LightCallback.cpp in Sources */,

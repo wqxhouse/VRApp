@@ -67,7 +67,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "OSG_NOTIFY_LEVEL"
-            value = "DEBUG"
+            value = "INFO"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable

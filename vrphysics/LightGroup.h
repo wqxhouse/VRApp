@@ -18,16 +18,14 @@
 class LightGroup
 {
 public:
-    static const int skNumBoxes = 50;
     static const int skNumLights = 100;
-    static const int skRadius = 20;
-    static const int skMaxPointLightRadius = 8;
+    static const int skRadius = 13;
     
     LightGroup();
     ~LightGroup();
     
     void addLight(const osg::Vec3 &position, const osg::Vec3 &color);
-    const std::vector<PointLight *> &getPointLightsArrayReference();
+    std::vector<PointLight *> &getPointLightsArrayReference();
     void addRandomLight();
     osg::ref_ptr<osg::Group> getGeomTransformLightGroup();
     int getLightNum() { return _lightNum; };

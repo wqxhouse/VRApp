@@ -16,7 +16,10 @@ intensity(1.0f)
     memset(specular, 0, sizeof(specular));
     memset(attenuation, 1.0f, sizeof(attenuation));
     genGeometry();
-    
+  
+    _light_geom_radius = 0.25;
+    _light_max_effective_radius = 8;
+    _light_effective_radius = intensity * _light_max_effective_radius;
     _id = _highest_id++;
 }
 

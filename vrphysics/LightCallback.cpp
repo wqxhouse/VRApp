@@ -11,7 +11,9 @@
 void LightCallback::operator()(osg::StateSet *ss, osg::NodeVisitor *nv)
 {
     // update uniform and other data to the light shader
-    float radius = _light->intensity * LightGroup::skMaxPointLightRadius;
+//    float radius = _light->intensity * LightGroup::skMaxPointLightRadius;
+    float radius = _light->_light_effective_radius;
+    
     osg::Vec3f lightPosInViewSpace = _light->getPosition() * _mainCamera->getViewMatrix();
     
     // transform light sphere

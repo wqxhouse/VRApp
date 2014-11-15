@@ -25,6 +25,9 @@ public:
     {
         return getOutputTexture(_out_lighting_tex_id);
     }
+   
+    // override
+    virtual int addOutTexture();
     
 protected:
     virtual void configureStateSet();

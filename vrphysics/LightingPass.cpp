@@ -59,13 +59,9 @@ void LightingPass::configureStateSet()
     
     for (std::vector<PointLight *>::iterator it = pointLights.begin(); it != pointLights.end(); it++)
     {
-        float radius = (*it)->intensity * LightGroup::skMaxPointLightRadius;
+//        float radius = (*it)->intensity * LightGroup::skMaxPointLightRadius;
+        float radius = (*it)->_light_effective_radius;
         
-        // SHADING/LIGHTING CALCULATION
-        // this pass draws the spheres representing the area of influence each light has
-        // in a fragment shader, only the pixels that are affected by the drawn geometry are processed
-        // drawing light volumes (spheres for point lights) ensures that we're only running light calculations on
-        // the areas that the spheres affect
         osg::Vec3f lightPosInViewSpace = (*it)->getPosition() * mainCameraModelViewMatrix;
 //        printf("%.2f, %.2f, %.2f\n", (*it)->getPosition().x(), (*it)->getPosition().y(), (*it)->getPosition().z());
 //        printf("%.2f, %.2f, %.2f\n", lightPosInViewSpace.x(), lightPosInViewSpace.y(), lightPosInViewSpace.z());
@@ -107,3 +103,21 @@ void LightingPass::configureStateSet()
     }
 }
 
+int LightingPass::addOutTexture()
+{
+    osg::ref_ptr<osg::TextureRectangle> tex = new osg::TextureRectangle;
+    
+    tex->setTextureSize(_screenWidth, _screenHeight);
+    tex->setSourceType(GL_UNSIGNED_BYTE);
+    tex->setSourceFormat(GL_RGBA);
+    tex->setInternalFormat(GL_RGBA);
+    
+    tex->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::LINEAR);
+    tex->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::LINEAR);
+    tex->setWrap(osg::TextureRectangle::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+    tex->setWrap(osg::TextureRectangle::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+    
+    _screenOutTexture.push_back(tex);
+    
+    return (int)_screenOutTexture.size() - 1;
+}

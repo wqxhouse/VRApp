@@ -84,35 +84,35 @@ void main(void)
       attenuation *= damping_factor;
       
       vec4 diffuseContribution = material1.diffuse * u_lightDiffuse * lambert;
-      //diffuseContribution *= u_lightIntensity;
-      //diffuseContribution *= attenuation;
+      diffuseContribution *= u_lightIntensity;
+      diffuseContribution *= attenuation;
       
       vec4 specularContribution = material1.specular * u_lightSpecular * pow(max(dot(R, V), 0.0), material1.shininess);
-      //specularContribution *= u_lightIntensity;
-      //specularContribution *= attenuation;
+      specularContribution *= u_lightIntensity;
+      specularContribution *= attenuation;
       
       diffuse += diffuseContribution;
       specular += specularContribution;
-        gl_FragColor = vec4(0.0, 1.0, 0, 1);
+        //gl_FragColor = vec4(0.0, 1.0, 0, 1);
     }
     else
     {
-        gl_FragColor = vec4(1, 0.0, 0.0, 1);
+        //gl_FragColor = vec4(1, 0.0, 0.0, 1);
     }
   }
     else
     {
-        gl_FragColor = vec4(1, 1, 1, 1);
+        //gl_FragColor = vec4(1, 1, 1, 1);
     }
     //gl_FragColor = vec4(normal, 1);
     //gl_FragColor = vec4(1,  0, 1, 1);
     //gl_FragColor = u_lightDiffuse;
     //gl_FragColor = vec4(u_lightPosition, 1);
     
-    //gl_FragColor = vec4(vertex, 1);
-    //gl_FragColor = vec4(lightDir, 1);
+//    gl_FragColor = vec4(vertex, 1);
+//    gl_FragColor = vec4(lightDir, 1);
     
-  //vec4 final_color = vec4(ambient + diffuse + specular);
-   // gl_FragColor = vec4(final_color.rgb, 1.0);
+  vec4 final_color = vec4(ambient + diffuse + specular);
+    gl_FragColor = vec4(final_color.rgb, 1.0);
     //gl_FragColor = vec4(1, 1, 0, 1);
 }

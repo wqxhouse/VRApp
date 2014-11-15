@@ -34,7 +34,8 @@ osg::Camera *createHUDCamera(double left,
 
 osg::Geode *createScreenQuad(float width,
                              float height,
-                             float scale,
+                             float scaleX,
+                             float scaleY,
                              osg::Vec3 corner)
 {
     osg::Geometry* geom = osg::createTexturedQuadGeometry(
@@ -43,8 +44,8 @@ osg::Geode *createScreenQuad(float width,
                                                           osg::Vec3(0, height, 0),
                                                           0,
                                                           0,
-                                                          scale,
-                                                          scale);
+                                                          scaleX,
+                                                          scaleY);
     osg::ref_ptr<osg::Geode> quad = new osg::Geode;
     quad->addDrawable(geom);
     int values = osg::StateAttribute::OFF | osg::StateAttribute::PROTECTED;
@@ -59,12 +60,13 @@ osg::Geode *createScreenQuad(float width,
 osg::ref_ptr<osg::Camera> createTextureDisplayQuad(
                                                    const osg::Vec3 &pos,
                                                    osg::StateAttribute *tex,
-                                                   float scale,
+                                                   float scaleX,
+                                                   float scaleY,
                                                    float width,
                                                    float height)
 {
     osg::ref_ptr<osg::Camera> hc = createHUDCamera(0,1,0,1);
-    hc->addChild(createScreenQuad(width, height, scale, pos));
+    hc->addChild(createScreenQuad(width, height, scaleX, scaleY, pos));
     hc->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex);
     return hc;
 }
@@ -115,29 +117,39 @@ osg::ref_ptr<osg::Geode> createTexturedQuad(int _TextureWidth, int _TextureHeigh
 int main()
 {
     osgViewer::Viewer viewer;
-    viewer.getCamera()->setViewport(new osg::Viewport(0, 0, 1024, 1024));
+    viewer.getCamera()->setViewport(new osg::Viewport(0, 0, 800, 600));
     osg::Camera *camera = viewer.getCamera();
     
-    osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile("cessna.osg");
+    osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile("avatar.osg");
     osg::ref_ptr<osg::Group> sceneRoot(new osg::Group);
     
     LightGroup lightGroup;
-//    for(int i = 0; i < 50; i++)
-//    {
-//        lightGroup.addRandomLight();
-//    }
-//    
+    for(int i = 0; i < 50; i++)
+    {
+        lightGroup.addRandomLight();
+    }
+//
     lightGroup.addLight(osg::Vec3(5, 0, 0), osg::Vec3(1, 1, 0));
-//    lightGroup.addLight(osg::Vec3(5, 5, 5), osg::Vec3(1, 1, 0));
-//    lightGroup.addLight(osg::Vec3(-5, 5, 5), osg::Vec3(1, 0, 1));
-//    lightGroup.addLight(osg::Vec3(5, -5, 5), osg::Vec3(1, 1, 1));
-//    lightGroup.addLight(osg::Vec3(5, 5, -5), osg::Vec3(1, 0, 0));
-//    lightGroup.addLight(osg::Vec3(-5, 5, -5), osg::Vec3(0, 1, 1));
-//    lightGroup.addLight(osg::Vec3(-5, -5, 5), osg::Vec3(0, 1, 0));
+    lightGroup.addLight(osg::Vec3(5, 5, 5), osg::Vec3(1, 1, 0));
+    lightGroup.addLight(osg::Vec3(-5, 5, 5), osg::Vec3(1, 0, 1));
+    lightGroup.addLight(osg::Vec3(5, -5, 5), osg::Vec3(1, 1, 1));
+    lightGroup.addLight(osg::Vec3(5, 5, -5), osg::Vec3(1, 0, 0));
+    lightGroup.addLight(osg::Vec3(-5, 5, -5), osg::Vec3(0, 1, 1));
+    lightGroup.addLight(osg::Vec3(-5, -5, 5), osg::Vec3(0, 1, 0));
     
     
     osg::ref_ptr<osg::Group> geometryGroup(new osg::Group);
-    geometryGroup->addChild(loadedModel);
+    
+    osg::ref_ptr<osg::MatrixTransform> enlargeAvatar(new osg::MatrixTransform);
+    osg::Matrix tranlate;
+    tranlate.makeTranslate(0, 0, -14);
+    osg::Matrix enlarge;
+    enlarge.makeScale(osg::Vec3(2, 2, 2));
+    enlarge = enlarge * tranlate;
+    enlargeAvatar->setMatrix(enlarge);
+    enlargeAvatar->addChild(loadedModel);
+    
+    geometryGroup->addChild(enlargeAvatar);
     geometryGroup->addChild(lightGroup.getGeomTransformLightGroup());
     GeometryPass geomPass(camera, createTextureImage("concrete.jpg"), geometryGroup);
     sceneRoot->addChild(geomPass.getRoot());
@@ -145,12 +157,12 @@ int main()
     osg::ref_ptr<osg::Camera> qTexN =
     createTextureDisplayQuad(osg::Vec3(0, 0.7, 0),
                              geomPass.getNormalDepthOutTexture(),
-                             1024, 0.4, 0.3);
+                             800, 600, 0.3333, 0.3);
     
     osg::ref_ptr<osg::Camera> qTexD =
-    createTextureDisplayQuad(osg::Vec3(0.3, 0.7, 0),
+    createTextureDisplayQuad(osg::Vec3(0.3333, 0.7, 0),
                              geomPass.getPositionOutTexure(),
-                             1024, 0.4, 0.3);
+                             800, 600, 0.3333, 0.3);
     
     LightingPass lightPass(camera,
                            geomPass.getPositionOutTexure(),
@@ -161,18 +173,18 @@ int main()
     sceneRoot->addChild(lightPass.getRoot());
     
     osg::ref_ptr<osg::Camera> qTexP =
-    createTextureDisplayQuad(osg::Vec3(0.0, 0.0, 0),
+    createTextureDisplayQuad(osg::Vec3(0.6666, 0.7, 0),
                              lightPass.getLightingOutTexture(),
-                             1024, 0.4, 0.3);
+                             800, 600, 0.3333, 0.3);
     
     FinalPass finalPass(camera, geomPass.getAlbedoOutTexture(),
                         lightPass.getLightingOutTexture());
     
     sceneRoot->addChild(finalPass.getRoot());
     osg::ref_ptr<osg::Camera> qTexF =
-    createTextureDisplayQuad(osg::Vec3(0.6, 0.7, 0),
+    createTextureDisplayQuad(osg::Vec3(0.0, 0.0, 0),
                              finalPass.getFinalPassTexture(),
-                             1024, 0.4, 0.3);
+                             800, 600, 1, 1);
     
     
     
@@ -191,11 +203,13 @@ int main()
     sceneRoot->addChild(plane);
     
     sceneRoot->addChild(geometryGroup);
-    sceneRoot->addChild(qTexN);
-    sceneRoot->addChild(qTexP);
+    
     sceneRoot->addChild(qTexF);
     
+    sceneRoot->addChild(qTexN);
     sceneRoot->addChild(qTexD);
+    sceneRoot->addChild(qTexP);
+    
     viewer.setSceneData(sceneRoot);
     viewer.setUpViewInWindow(0, 0, 800, 600);
     viewer.run();

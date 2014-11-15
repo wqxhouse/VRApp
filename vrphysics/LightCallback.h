@@ -31,6 +31,7 @@ public:
     ~LightCallback() {}
     
     virtual void operator()(osg::StateSet *ss, osg::NodeVisitor *nv);
+    
  
 private:
     osg::ref_ptr<osg::Camera> _mainCamera;

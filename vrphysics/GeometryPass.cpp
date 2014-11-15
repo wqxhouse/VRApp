@@ -23,10 +23,10 @@ GeometryPass::GeometryPass(osg::Camera *mainCamera, osg::TextureRectangle *defau
     ScreenPass::setShader("gbuffer.vert", "gbuffer.frag");
     ScreenPass::setupCamera();
     // TODO: figure out why higher prcision textures doesn't work
-    _out_albedo_tex_id = ScreenPass::addOutTexture();
-//    _out_albedo_tex_id = addOutTexture(false);
-    _out_normal_depth_tex_id = ScreenPass::addOutTexture();
-//    _out_normal_depth_tex_id = addOutTexture(true);
+//    _out_albedo_tex_id = ScreenPass::addOutTexture();
+    _out_albedo_tex_id = addOutTexture(false);
+//    _out_normal_depth_tex_id = ScreenPass::addOutTexture();
+    _out_normal_depth_tex_id = addOutTexture(true);
     _out_position_tex_id = addOutTexture(true);
     
     _stateSet = _rttCamera->getOrCreateStateSet(); // important, at the geom pass, shader is bind to the camera
@@ -66,6 +66,8 @@ int GeometryPass::addOutTexture(bool isDepth)
     osg::ref_ptr<osg::TextureRectangle> tex = new osg::TextureRectangle;
     
     tex->setTextureSize(_screenWidth, _screenHeight);
+    tex->setSourceType(GL_FLOAT);
+    tex->setSourceFormat(GL_RGBA);
     if(isDepth)
     {
         tex->setInternalFormat(GL_RGBA32F_ARB);
