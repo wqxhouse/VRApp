@@ -1,3 +1,4 @@
+// Point light fragment shader
 #version 120
 
 // deferred g buffers
@@ -43,7 +44,7 @@ void main(void)
   vec2 texCoord = gl_FragCoord.xy ;
 //  vec2 texCoord = gl_FragCoord.xy * u_inverseScreenSize.xy;
   
-  float linearDepth = texture2DRect(u_normalAndDepthTex, texCoord.st).a;
+  //float linearDepth = texture2DRect(u_normalAndDepthTex, texCoord.st).a;
   
   // vector to far plane
   //vec3 viewRay = vec3(v_vertex.xy * (-u_farDistance/v_vertex.z), -u_farDistance);

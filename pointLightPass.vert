@@ -1,3 +1,4 @@
+// point light vertex shader
 #version 120
 
 varying vec4 v_vertex;

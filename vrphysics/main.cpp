@@ -13,6 +13,8 @@
 #include <osg/PolygonMode>
 
 #include "GeometryPass.h"
+#include "DirectionalLightingPass.h"
+#include "DirectionalLightGroup.h"
 #include "LightingPass.h"
 #include "LightGroup.h"
 #include "FinalPass.h"
@@ -120,36 +122,38 @@ int main()
     viewer.getCamera()->setViewport(new osg::Viewport(0, 0, 800, 600));
     osg::Camera *camera = viewer.getCamera();
     
-    osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile("avatar.osg");
+    osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile("table.3ds");
+    // transform to center
+    osg::Vec3 loadedModelCenter = loadedModel->getBound().center();
+    printf("%f, %f, %f\n", loadedModelCenter.x(), loadedModelCenter.y(), loadedModelCenter.z());
+    osg::ref_ptr<osg::PositionAttitudeTransform> modelToCenter(new osg::PositionAttitudeTransform);
+    modelToCenter->setPosition(-loadedModelCenter);
+    modelToCenter->addChild(loadedModel);
+    
     osg::ref_ptr<osg::Group> sceneRoot(new osg::Group);
+    // Directional Lights
+    DirectionalLightGroup dirLightGroup;
+    dirLightGroup.addLight(osg::Vec3(0, 0, 1), osg::Vec3(0, 0, 0), osg::Vec3(1, 1, 1));
     
+    // Point lights
     LightGroup lightGroup;
-    for(int i = 0; i < 50; i++)
-    {
-        lightGroup.addRandomLight();
-    }
-//
-    lightGroup.addLight(osg::Vec3(5, 0, 0), osg::Vec3(1, 1, 0));
-    lightGroup.addLight(osg::Vec3(5, 5, 5), osg::Vec3(1, 1, 0));
-    lightGroup.addLight(osg::Vec3(-5, 5, 5), osg::Vec3(1, 0, 1));
-    lightGroup.addLight(osg::Vec3(5, -5, 5), osg::Vec3(1, 1, 1));
-    lightGroup.addLight(osg::Vec3(5, 5, -5), osg::Vec3(1, 0, 0));
-    lightGroup.addLight(osg::Vec3(-5, 5, -5), osg::Vec3(0, 1, 1));
-    lightGroup.addLight(osg::Vec3(-5, -5, 5), osg::Vec3(0, 1, 0));
+//    osg::BoundingSphere sp;
+//    for(int i = 0; i < 50; i++)
+//    {
+//        lightGroup.addRandomLightWithBoundingSphere(loadedModel->getBound());
+//    }
     
+//    lightGroup.addLight(osg::Vec3(5, 0, 0), osg::Vec3(1, 1, 0));
+//    lightGroup.addLight(osg::Vec3(5, 5, 5), osg::Vec3(1, 1, 0));
+//    lightGroup.addLight(osg::Vec3(-5, 5, 5), osg::Vec3(1, 0, 1));
+//    lightGroup.addLight(osg::Vec3(5, -5, 5), osg::Vec3(1, 1, 1));
+//    lightGroup.addLight(osg::Vec3(5, 5, -5), osg::Vec3(1, 0, 0));
+//    lightGroup.addLight(osg::Vec3(-5, 5, -5), osg::Vec3(0, 1, 1));
+//    lightGroup.addLight(osg::Vec3(-5, -5, 5), osg::Vec3(0, 1, 0));
     
     osg::ref_ptr<osg::Group> geometryGroup(new osg::Group);
     
-    osg::ref_ptr<osg::MatrixTransform> enlargeAvatar(new osg::MatrixTransform);
-    osg::Matrix tranlate;
-    tranlate.makeTranslate(0, 0, -14);
-    osg::Matrix enlarge;
-    enlarge.makeScale(osg::Vec3(2, 2, 2));
-    enlarge = enlarge * tranlate;
-    enlargeAvatar->setMatrix(enlarge);
-    enlargeAvatar->addChild(loadedModel);
-    
-    geometryGroup->addChild(enlargeAvatar);
+    geometryGroup->addChild(modelToCenter);
     geometryGroup->addChild(lightGroup.getGeomTransformLightGroup());
     GeometryPass geomPass(camera, createTextureImage("concrete.jpg"), geometryGroup);
     sceneRoot->addChild(geomPass.getRoot());
@@ -163,7 +167,15 @@ int main()
     createTextureDisplayQuad(osg::Vec3(0.3333, 0.7, 0),
                              geomPass.getPositionOutTexure(),
                              800, 600, 0.3333, 0.3);
+  
+    // directional light pass
+    DirectionalLightingPass dirLightPass(camera, geomPass.getPositionOutTexure(),
+                                      geomPass.getAlbedoOutTexture(),
+                                      geomPass.getNormalDepthOutTexture(),
+                                      &dirLightGroup);
+    sceneRoot->addChild(dirLightPass.getRoot());
     
+    // point light pass
     LightingPass lightPass(camera,
                            geomPass.getPositionOutTexure(),
                            geomPass.getAlbedoOutTexture(),
@@ -174,10 +186,11 @@ int main()
     
     osg::ref_ptr<osg::Camera> qTexP =
     createTextureDisplayQuad(osg::Vec3(0.6666, 0.7, 0),
-                             lightPass.getLightingOutTexture(),
+                             dirLightPass.getLightingOutTexture(),
                              800, 600, 0.3333, 0.3);
     
     FinalPass finalPass(camera, geomPass.getAlbedoOutTexture(),
+                        dirLightPass.getLightingOutTexture(),
                         lightPass.getLightingOutTexture());
     
     sceneRoot->addChild(finalPass.getRoot());
@@ -188,19 +201,18 @@ int main()
     
     
     
-    // ========================================================================
-    auto plane = createTexturedQuad(320, 240);
-    auto ss = plane->getOrCreateStateSet();
-    
-    // ======================================================================
-    
-    osg::ref_ptr<osg::Program> program(new osg::Program);
-    program->addShader(osgDB::readShaderFile("v.vert"));
-    program->addShader(osgDB::readShaderFile("v.frag"));
-    ss->setAttributeAndModes(program, osg::StateAttribute::ON);
-    ss->setTextureAttributeAndModes(0, geomPass.getOutputTexture(1), osg::StateAttribute::ON);
-    
-    sceneRoot->addChild(plane);
+//    // ========================================================================
+//    auto plane = createTexturedQuad(320, 240);
+//    auto ss = plane->getOrCreateStateSet();
+//    
+//    // ======================================================================
+//    
+//    osg::ref_ptr<osg::Program> program(new osg::Program);
+//    program->addShader(osgDB::readShaderFile("v.vert"));
+//    program->addShader(osgDB::readShaderFile("v.frag"));
+//    ss->setAttributeAndModes(program, osg::StateAttribute::ON);
+//    ss->setTextureAttributeAndModes(0, geomPass.getOutputTexture(1), osg::StateAttribute::ON);
+//    sceneRoot->addChild(plane);
     
     sceneRoot->addChild(geometryGroup);
     

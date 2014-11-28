@@ -1,3 +1,4 @@
+// Geometry pass fragment shader
 #version 120
 
 uniform sampler2DRect u_texture;

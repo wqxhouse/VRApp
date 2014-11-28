@@ -1,3 +1,4 @@
+// final pass vertex shader
 #version 120
 
 varying vec2 v_texCoord;

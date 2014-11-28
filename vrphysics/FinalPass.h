@@ -17,7 +17,7 @@
 class FinalPass : public ScreenPass
 {
 public:
-    FinalPass(osg::Camera *mainCamera, osg::TextureRectangle *albedoTexture, osg::TextureRectangle *lightTexture);
+    FinalPass(osg::Camera *mainCamera, osg::TextureRectangle *albedoTexture, osg::TextureRectangle *dirLightTexture, osg::TextureRectangle *lightTexture);
     virtual ~FinalPass();
     
     osg::ref_ptr<osg::TextureRectangle> getFinalPassTexture()
@@ -33,7 +33,8 @@ protected:
     void configRTTCamera();
     
     int _albedo_tex_id;
-    int _light_tex_id;
+    int _dirLight_tex_id;
+    int _light_tex_id; // point light
     
     int _out_finalpass_tex_id;
 };

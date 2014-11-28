@@ -10,14 +10,14 @@
 	<string>vrphysics</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>FDD398763C9ED21C458E5D7D6D76CF8B253A3D3F</key>
+		<key>082A35C19A3AE1DFE340C724E077D8BC7F9F023B</key>
 		<string>github.com:wqxhouse/VRApp.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>vrphysics.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>FDD398763C9ED21C458E5D7D6D76CF8B253A3D3F</key>
+		<key>082A35C19A3AE1DFE340C724E077D8BC7F9F023B</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
@@ -25,14 +25,14 @@
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>FDD398763C9ED21C458E5D7D6D76CF8B253A3D3F</string>
+	<string>082A35C19A3AE1DFE340C724E077D8BC7F9F023B</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>FDD398763C9ED21C458E5D7D6D76CF8B253A3D3F</string>
+			<string>082A35C19A3AE1DFE340C724E077D8BC7F9F023B</string>
 			<key>IDESourceControlWCCName</key>
 			<string>vrphysics</string>
 		</dict>

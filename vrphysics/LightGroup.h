@@ -27,6 +27,7 @@ public:
     void addLight(const osg::Vec3 &position, const osg::Vec3 &color);
     std::vector<PointLight *> &getPointLightsArrayReference();
     void addRandomLight();
+    void addRandomLightWithBoundingSphere(const osg::BoundingSphere &boundSphere);
     osg::ref_ptr<osg::Group> getGeomTransformLightGroup();
     int getLightNum() { return _lightNum; };
     

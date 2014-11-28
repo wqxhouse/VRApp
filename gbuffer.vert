@@ -1,3 +1,4 @@
+// Geometry pass vertex shader
 #version 120
 
 uniform float u_farDistance;

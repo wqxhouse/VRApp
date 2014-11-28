@@ -32,24 +32,33 @@ void LightGroup::addLight(const osg::Vec3 &position, const osg::Vec3 &color)
     _lightNum++;
 }
 
-void LightGroup::addRandomLight()
+void LightGroup::addRandomLightWithBoundingSphere(const osg::BoundingSphere &boundSphere)
 {
     // create a random light that is positioned on bounding sphere of scene (skRadius)
     PointLight *l = new PointLight;
     osg::Vec3f posOnSphere(randomf(-1.0f, 1.0f), randomf(-1.0f, 1.0f), randomf(-1.0f, 1.0f));
     posOnSphere.normalize();
+    
     posOnSphere *= randomf(0.95f, 1.05f);
     
     osg::Vec3f orbitAxis(randomf(0.0f, 1.0f), randomf(0.0f, 1.0f), randomf(0.0f, 1.0f));
     orbitAxis.normalize();
     l->orbitAxis = orbitAxis;
-    
-    posOnSphere *= skRadius-1;
+   
+    if(boundSphere.valid())
+    {
+        float radius = boundSphere.radius();
+        posOnSphere *= radius;
+    }
+    else
+    {
+        posOnSphere *= skRadius-1;
+    }
     
     l->setPosition(posOnSphere);
     l->setAmbient(0.0f, 0.0f, 0.0f);
     
-   // osg::Vec3f col(randomf(0.3f, 0.5f), randomf(0.2f, 0.4f), randomf(0.7f, 1.0f));
+    // osg::Vec3f col(randomf(0.3f, 0.5f), randomf(0.2f, 0.4f), randomf(0.7f, 1.0f));
     
     // randomize color
     osg::Vec3 col = osg::Vec3(randomf(0.4f, 1.0f), randomf(0.1f, 1.0f), randomf(0.3f, 1.0f));
@@ -63,6 +72,13 @@ void LightGroup::addRandomLight()
     _geomTransformLightGroup->addChild(l->_lightGeomTransform);
     _pointLights.push_back(l);
     _lightNum++;
+}
+
+void LightGroup::addRandomLight()
+{
+    osg::BoundingSphere sp;
+    sp.radius() = -1.0f; // invalid bsphere
+    addRandomLightWithBoundingSphere(sp);
 }
 
 
