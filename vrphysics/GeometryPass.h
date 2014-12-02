@@ -11,12 +11,13 @@
 
 #include <stdio.h>
 #include "ScreenPass.h"
+#include "AssetDB.h"
 
 class GeometryPass : public ScreenPass
 {
 public:
     
-    GeometryPass(osg::Camera *mainCamera, osg::TextureRectangle *defaultTexture, osg::Node *worldObjects);
+    GeometryPass(osg::Camera *mainCamera, AssetDB &assetDB);
     virtual ~GeometryPass();
     
     osg::ref_ptr<osg::TextureRectangle> getAlbedoOutTexture()
@@ -37,18 +38,27 @@ public:
     // overload
     virtual int addOutTexture(bool isDepth);
     
+    virtual int addShader(const char *vert, const char *frag);
+    osg::Program *getShader(int _id);
+    
 protected:
     virtual void configureStateSet();
 private:
     float _nearPlaneDist;
     float _farPlaneDist;
-    osg::ref_ptr<osg::TextureRectangle> _defaultTexture;
     osg::ref_ptr<osg::Node> _worldObjects;
     
     int _out_albedo_tex_id;
     int _out_normal_depth_tex_id;
     
     int _out_position_tex_id;
+    
+    AssetDB &_assetDB;
+   
+    // TODO: move this to ScreenPass class
+    std::vector<osg::ref_ptr<osg::Program> > _shaderPrograms;
+    int _gbuffer_tex_shader;
+    int _gbuffer_notex_shader;
 };
 
 #endif /* defined(__vrphysics__GeometryPass__) */

@@ -18,6 +18,7 @@
 #include "LightingPass.h"
 #include "LightGroup.h"
 #include "FinalPass.h"
+#include "AssetDB.h"
 
 osg::Camera *createHUDCamera(double left,
                              double right,
@@ -116,9 +117,44 @@ osg::ref_ptr<osg::Geode> createTexturedQuad(int _TextureWidth, int _TextureHeigh
     return quad_geode;
 }
 
+// Derive a class from NodeVisitor to find a node with a
+//   specific name.
+class FindNamedNode : public osg::NodeVisitor
+{
+public:
+    FindNamedNode( )
+    : osg::NodeVisitor( // Traverse all children.
+                       osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ){}
+    
+    // This method gets called for every node in the scene
+    //   graph. Check each node to see if its name matches
+    //   out target. If so, save the node's address.
+    virtual void apply( osg::Node& node )
+    {
+        if(node.getOrCreateStateSet()->getAttributeList().size() != 0)
+        {
+            printf("GOTCHA = %s\n", node.getName().c_str());
+        }
+        
+        // Keep traversing the rest of the scene graph.
+        traverse( node );
+    }
+    
+    osg::Node* getNode() { return _node.get(); }
+    
+protected:
+    std::string _name;
+    osg::ref_ptr<osg::Node> _node;
+};
+
 osg::ref_ptr<osg::Node> addTable()
 {
-    osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile("table.3ds");
+    osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile("Testing/NewlyTest/new.osg");
+    FindNamedNode abc;
+    loadedModel->accept(abc);
+    
+    
+  
     // transform to center
     osg::Vec3 loadedModelCenter = loadedModel->getBound().center();
     osg::ref_ptr<osg::PositionAttitudeTransform> modelToCenter(new osg::PositionAttitudeTransform);
@@ -138,7 +174,7 @@ DirectionalLightGroup *addDirectionalLights(osg::Group *geomGroup)
 {
     // Directional Lights
     DirectionalLightGroup *dirLightGroup = new DirectionalLightGroup;
-    dirLightGroup->addLight(osg::Vec3(0, 0, 1), osg::Vec3(0, 0, 0), osg::Vec3(1, 1, 1));
+    dirLightGroup->addLight(osg::Vec3(0, 0, 1), osg::Vec3(0, 0, 0), osg::Vec3(0.3, 0.3, 0.3));
     // here we can optionally choose to display the geom of the directional light
     
     return dirLightGroup;
@@ -148,11 +184,18 @@ LightGroup *addPointLights(osg::Group *geomGroup)
 {
     // Point lights
     LightGroup *lightGroup = new LightGroup;
-    //    osg::BoundingSphere sp;
-    //    for(int i = 0; i < 50; i++)
-    //    {
-    //        lightGroup.addRandomLightWithBoundingSphere(loadedModel->getBound());
-    //    }
+        osg::BoundingSphere sp;
+    sp.center() = osg::Vec3(0, 0, 0);
+    sp.radius() = 10;
+//    for(int i = 0; i < 50; i++)
+//    {
+//        lightGroup->addRandomLightWithBoundingSphere(sp);
+//    }
+//    for(int i = -20; i < 20; i += 4)
+//    {
+//        lightGroup->addLight(osg::Vec3(i, 0, -60), osg::Vec3(1, 1, 0));
+//    }
+
     
     //    lightGroup.addLight(osg::Vec3(5, 0, 0), osg::Vec3(1, 1, 0));
     //    lightGroup.addLight(osg::Vec3(5, 5, 5), osg::Vec3(1, 1, 0));
@@ -165,9 +208,9 @@ LightGroup *addPointLights(osg::Group *geomGroup)
     return lightGroup;
 }
 
-GeometryPass *configGeomPass(osg::Camera *camera, osg::Group *geometryGroup)
+GeometryPass *configGeomPass(osg::Camera *camera, AssetDB &assetDB)
 {
-    GeometryPass *geomPass = new GeometryPass(camera, createTextureImage("concrete.jpg"), geometryGroup);
+    GeometryPass *geomPass = new GeometryPass(camera, assetDB);
     return geomPass;
 }
 
@@ -204,7 +247,7 @@ void setupHUDForPasses(GeometryPass *gp, DirectionalLightingPass *dp, LightingPa
 {
     osg::ref_ptr<osg::Camera> qTexN =
     createTextureDisplayQuad(osg::Vec3(0, 0.7, 0),
-                             gp->getNormalDepthOutTexture(),
+                             gp->getAlbedoOutTexture(),
                              800, 600, 0.3333, 0.3);
     
     osg::ref_ptr<osg::Camera> qTexD =
@@ -228,9 +271,9 @@ void setupHUDForPasses(GeometryPass *gp, DirectionalLightingPass *dp, LightingPa
     sceneRoot->addChild(qTexP);
 }
 
-std::vector<ScreenPass *> configPasses(osg::Group *geomGroup, osg::Camera *camera, DirectionalLightGroup *dirLightGroup, LightGroup *pointLightGroup, osg::Group *sceneRoot)
+std::vector<ScreenPass *> configPasses(AssetDB &assetDB, osg::Camera *camera, DirectionalLightGroup *dirLightGroup, LightGroup *pointLightGroup, osg::Group *sceneRoot)
 {
-    GeometryPass *gp = configGeomPass(camera, geomGroup);
+    GeometryPass *gp = configGeomPass(camera, assetDB);
     DirectionalLightingPass *dirLightPass = configDirectionalLightPass(camera, gp, dirLightGroup);
     LightingPass *pointLightPass = configPointLightPass(camera, gp, pointLightGroup);
     FinalPass *finalPass = configFinalPass(camera, gp, dirLightPass, pointLightPass);
@@ -266,12 +309,16 @@ int main()
     osg::Camera *mainCamera = viewer.getCamera();
     mainCamera->setViewport(new osg::Viewport(0, 0, 800, 600));
     osg::ref_ptr<osg::Group> sceneRoot(new osg::Group);
+   
+    AssetDB assets;
+    assets.addGeometryWithFile("Testing/NewlyTest/new.osg");
+    sceneRoot->addChild(assets.getGeomRoot());
     
-    osg::ref_ptr<osg::Group> geomGroup = addGeometries();
-    sceneRoot->addChild(geomGroup);
-    DirectionalLightGroup *dirLightGroup = addDirectionalLights(geomGroup);
-    LightGroup *pointLightGroup = addPointLights(geomGroup);
-    std::vector<ScreenPass *> passes = configPasses(geomGroup, mainCamera, dirLightGroup, pointLightGroup, sceneRoot);
+    DirectionalLightGroup *dirLightGroup = addDirectionalLights(assets.getGeomRoot());
+    dirLightGroup->addMultipleLights(assets.getDirectionalLights());
+    LightGroup *pointLightGroup = addPointLights(assets.getGeomRoot());
+    pointLightGroup->addMultipleLights(assets.getPointLights());
+    std::vector<ScreenPass *> passes = configPasses(assets, mainCamera, dirLightGroup, pointLightGroup, sceneRoot);
     
     viewer.setSceneData(sceneRoot);
     viewer.setUpViewInWindow(0, 0, 800, 600);
@@ -280,115 +327,3 @@ int main()
     freeHeap(passes, dirLightGroup, pointLightGroup);
     return 0;
 }
-
-//// below is the main before refactoring
-//int main()
-//{
-//    osgViewer::Viewer viewer;
-//    viewer.getCamera()->setViewport(new osg::Viewport(0, 0, 800, 600));
-//    osg::Camera *camera = viewer.getCamera();
-//    
-//    osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile("table.3ds");
-//    // transform to center
-//    osg::Vec3 loadedModelCenter = loadedModel->getBound().center();
-//    osg::ref_ptr<osg::PositionAttitudeTransform> modelToCenter(new osg::PositionAttitudeTransform);
-//    modelToCenter->setPosition(-loadedModelCenter);
-//    modelToCenter->addChild(loadedModel);
-//    
-//    osg::ref_ptr<osg::Group> sceneRoot(new osg::Group);
-//    // Directional Lights
-//    DirectionalLightGroup dirLightGroup;
-//    dirLightGroup.addLight(osg::Vec3(0, 0, 1), osg::Vec3(0, 0, 0), osg::Vec3(1, 1, 1));
-//    
-//    // Point lights
-//    LightGroup lightGroup;
-////    osg::BoundingSphere sp;
-////    for(int i = 0; i < 50; i++)
-////    {
-////        lightGroup.addRandomLightWithBoundingSphere(loadedModel->getBound());
-////    }
-//    
-////    lightGroup.addLight(osg::Vec3(5, 0, 0), osg::Vec3(1, 1, 0));
-////    lightGroup.addLight(osg::Vec3(5, 5, 5), osg::Vec3(1, 1, 0));
-////    lightGroup.addLight(osg::Vec3(-5, 5, 5), osg::Vec3(1, 0, 1));
-////    lightGroup.addLight(osg::Vec3(5, -5, 5), osg::Vec3(1, 1, 1));
-////    lightGroup.addLight(osg::Vec3(5, 5, -5), osg::Vec3(1, 0, 0));
-////    lightGroup.addLight(osg::Vec3(-5, 5, -5), osg::Vec3(0, 1, 1));
-////    lightGroup.addLight(osg::Vec3(-5, -5, 5), osg::Vec3(0, 1, 0));
-//    
-//    osg::ref_ptr<osg::Group> geometryGroup(new osg::Group);
-//    
-//    geometryGroup->addChild(modelToCenter);
-//    geometryGroup->addChild(lightGroup.getGeomTransformLightGroup()); // point light geoms
-//    GeometryPass geomPass(camera, createTextureImage("concrete.jpg"), geometryGroup);
-//    sceneRoot->addChild(geomPass.getRoot());
-//    
-//    osg::ref_ptr<osg::Camera> qTexN =
-//    createTextureDisplayQuad(osg::Vec3(0, 0.7, 0),
-//                             geomPass.getNormalDepthOutTexture(),
-//                             800, 600, 0.3333, 0.3);
-//    
-//    osg::ref_ptr<osg::Camera> qTexD =
-//    createTextureDisplayQuad(osg::Vec3(0.3333, 0.7, 0),
-//                             geomPass.getPositionOutTexure(),
-//                             800, 600, 0.3333, 0.3);
-//  
-//    // directional light pass
-//    DirectionalLightingPass dirLightPass(camera, geomPass.getPositionOutTexure(),
-//                                      geomPass.getAlbedoOutTexture(),
-//                                      geomPass.getNormalDepthOutTexture(),
-//                                      &dirLightGroup);
-//    sceneRoot->addChild(dirLightPass.getRoot());
-//    
-//    // point light pass
-//    LightingPass lightPass(camera,
-//                           geomPass.getPositionOutTexure(),
-//                           geomPass.getAlbedoOutTexture(),
-//                           geomPass.getNormalDepthOutTexture(),
-//                           &lightGroup);
-//    
-//    sceneRoot->addChild(lightPass.getRoot());
-//    
-//    osg::ref_ptr<osg::Camera> qTexP =
-//    createTextureDisplayQuad(osg::Vec3(0.6666, 0.7, 0),
-//                             dirLightPass.getLightingOutTexture(),
-//                             800, 600, 0.3333, 0.3);
-//    
-//    FinalPass finalPass(camera, geomPass.getAlbedoOutTexture(),
-//                        dirLightPass.getLightingOutTexture(),
-//                        lightPass.getLightingOutTexture());
-//    
-//    sceneRoot->addChild(finalPass.getRoot());
-//    osg::ref_ptr<osg::Camera> qTexF =
-//    createTextureDisplayQuad(osg::Vec3(0.0, 0.0, 0),
-//                             finalPass.getFinalPassTexture(),
-//                             800, 600, 1, 1);
-//    
-//    
-////    // ========================================================================
-////    auto plane = createTexturedQuad(320, 240);
-////    auto ss = plane->getOrCreateStateSet();
-////    
-////    // ======================================================================
-////    
-////    osg::ref_ptr<osg::Program> program(new osg::Program);
-////    program->addShader(osgDB::readShaderFile("v.vert"));
-////    program->addShader(osgDB::readShaderFile("v.frag"));
-////    ss->setAttributeAndModes(program, osg::StateAttribute::ON);
-////    ss->setTextureAttributeAndModes(0, geomPass.getOutputTexture(1), osg::StateAttribute::ON);
-////    sceneRoot->addChild(plane);
-//    
-//    sceneRoot->addChild(geometryGroup);
-//    
-//    sceneRoot->addChild(qTexF);
-//    
-//    sceneRoot->addChild(qTexN);
-//    sceneRoot->addChild(qTexD);
-//    sceneRoot->addChild(qTexP);
-//    
-//    viewer.setSceneData(sceneRoot);
-//    viewer.setUpViewInWindow(0, 0, 800, 600);
-//    viewer.run();
-//    
-//    return 0;
-//}

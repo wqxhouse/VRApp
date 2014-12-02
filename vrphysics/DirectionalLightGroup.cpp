@@ -23,6 +23,16 @@ std::vector<DirectionalLight *> & DirectionalLightGroup::getDirectionalLightsRef
     return _directionalLights;
 }
 
+void DirectionalLightGroup::addMultipleLights(const std::vector<DirectionalLight *> &lights)
+{
+    _lightnum += lights.size();
+    for(unsigned long i = 0; i < lights.size(); i++)
+    {
+        _directionalLightGroup->addChild(lights[i]->_lightGeomTransform);
+        _directionalLights.push_back(lights[i]);
+    }
+}
+
 void DirectionalLightGroup::addLight(const osg::Vec3 &pos, const osg::Vec3 &lookAt, const osg::Vec3 &color)
 {
     DirectionalLight *light = new DirectionalLight();

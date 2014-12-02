@@ -8,8 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		380C4ED01A27E71A00301094 /* DirectionalLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 380C4ECE1A27E71A00301094 /* DirectionalLight.cpp */; };
+		381E9AA01A2DE4380062FAFF /* gbuffertex.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 383BB61E1A295F3E004DCC82 /* gbuffertex.frag */; };
+		381E9AA11A2DE4380062FAFF /* gbuffertex.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38EBEFEC1A2DD88000A91DD9 /* gbuffertex.vert */; };
 		3832F9571A16C96C00E8E127 /* LightGroupAnimationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3832F9551A16C96C00E8E127 /* LightGroupAnimationCallback.cpp */; };
 		383BB5E41A2817F0004DCC82 /* DirectionalLightCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 383BB5E21A2817F0004DCC82 /* DirectionalLightCallback.cpp */; };
+		383BB5E61A28970B004DCC82 /* castle.3DS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 383BB5E51A289704004DCC82 /* castle.3DS */; };
+		383BB61D1A295EC9004DCC82 /* tablewood.jpg in CopyFiles */ = {isa = PBXBuildFile; fileRef = 383BB61C1A295EB5004DCC82 /* tablewood.jpg */; };
 		384385AF1A169DF800A5EA27 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 384385A91A169DF800A5EA27 /* PointLight.cpp */; };
 		3846AF9D1A15881A004A871F /* finalPass.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3846AF9B1A158008004A871F /* finalPass.vert */; };
 		3846AF9E1A15881A004A871F /* finalPass.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3846AF9C1A15801C004A871F /* finalPass.frag */; };
@@ -90,6 +94,8 @@
 		38DFB4681A15791C00F5AA6D /* FinalPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38DFB4661A15791C00F5AA6D /* FinalPass.cpp */; };
 		38F7013F1A142D2A00DC8AD8 /* dirLight.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38F7013D1A142CEE00DC8AD8 /* dirLight.frag */; };
 		38F701401A142D2A00DC8AD8 /* dirLight.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38F7013E1A142CEE00DC8AD8 /* dirLight.vert */; };
+		38FBC4FC1A2C5BD40024CD24 /* AssetDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38FBC4FA1A2C5BD40024CD24 /* AssetDB.cpp */; };
+		38FBC4FF1A2C6F830024CD24 /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38FBC4FD1A2C6F830024CD24 /* Material.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -99,6 +105,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				381E9AA01A2DE4380062FAFF /* gbuffertex.frag in CopyFiles */,
+				381E9AA11A2DE4380062FAFF /* gbuffertex.vert in CopyFiles */,
+				383BB61D1A295EC9004DCC82 /* tablewood.jpg in CopyFiles */,
+				383BB5E61A28970B004DCC82 /* castle.3DS in CopyFiles */,
 				3846AF9D1A15881A004A871F /* finalPass.vert in CopyFiles */,
 				3846AF9E1A15881A004A871F /* finalPass.frag in CopyFiles */,
 				38F7013F1A142D2A00DC8AD8 /* dirLight.frag in CopyFiles */,
@@ -125,6 +135,9 @@
 		3832F9561A16C96C00E8E127 /* LightGroupAnimationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightGroupAnimationCallback.h; sourceTree = "<group>"; };
 		383BB5E21A2817F0004DCC82 /* DirectionalLightCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectionalLightCallback.cpp; sourceTree = "<group>"; };
 		383BB5E31A2817F0004DCC82 /* DirectionalLightCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectionalLightCallback.h; sourceTree = "<group>"; };
+		383BB5E51A289704004DCC82 /* castle.3DS */ = {isa = PBXFileReference; lastKnownFileType = file; name = castle.3DS; path = vrphysics/data/castle.3DS; sourceTree = "<group>"; };
+		383BB61C1A295EB5004DCC82 /* tablewood.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tablewood.jpg; sourceTree = "<group>"; };
+		383BB61E1A295F3E004DCC82 /* gbuffertex.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gbuffertex.frag; sourceTree = "<group>"; };
 		384385A91A169DF800A5EA27 /* PointLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLight.cpp; sourceTree = "<group>"; };
 		3846AF9B1A158008004A871F /* finalPass.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = finalPass.vert; sourceTree = "<group>"; };
 		3846AF9C1A15801C004A871F /* finalPass.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = finalPass.frag; sourceTree = "<group>"; };
@@ -217,9 +230,14 @@
 		38D648B71A0C8C890088AF3C /* random.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = random.png; sourceTree = "<group>"; };
 		38DFB4661A15791C00F5AA6D /* FinalPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FinalPass.cpp; sourceTree = "<group>"; };
 		38DFB4671A15791C00F5AA6D /* FinalPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinalPass.h; sourceTree = "<group>"; };
+		38EBEFEC1A2DD88000A91DD9 /* gbuffertex.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gbuffertex.vert; sourceTree = "<group>"; };
 		38F7013D1A142CEE00DC8AD8 /* dirLight.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = dirLight.frag; path = vrphysics/dirLight.frag; sourceTree = "<group>"; };
 		38F7013E1A142CEE00DC8AD8 /* dirLight.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = dirLight.vert; path = vrphysics/dirLight.vert; sourceTree = "<group>"; };
 		38F701411A1455FE00DC8AD8 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		38FBC4FA1A2C5BD40024CD24 /* AssetDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AssetDB.cpp; sourceTree = "<group>"; };
+		38FBC4FB1A2C5BD40024CD24 /* AssetDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetDB.h; sourceTree = "<group>"; };
+		38FBC4FD1A2C6F830024CD24 /* Material.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Material.cpp; sourceTree = "<group>"; };
+		38FBC4FE1A2C6F830024CD24 /* Material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Material.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -355,6 +373,10 @@
 				38A423CA1A15D44C0079AD58 /* Utils.cpp */,
 				38DFB4661A15791C00F5AA6D /* FinalPass.cpp */,
 				38DFB4671A15791C00F5AA6D /* FinalPass.h */,
+				38FBC4FA1A2C5BD40024CD24 /* AssetDB.cpp */,
+				38FBC4FB1A2C5BD40024CD24 /* AssetDB.h */,
+				38FBC4FD1A2C6F830024CD24 /* Material.cpp */,
+				38FBC4FE1A2C6F830024CD24 /* Material.h */,
 			);
 			path = vrphysics;
 			sourceTree = "<group>";
@@ -422,6 +444,8 @@
 		38D648B01A0C7C4D0088AF3C /* data */ = {
 			isa = PBXGroup;
 			children = (
+				383BB61C1A295EB5004DCC82 /* tablewood.jpg */,
+				383BB5E51A289704004DCC82 /* castle.3DS */,
 				38D648B61A0C8C890088AF3C /* concrete.jpg */,
 				38D648B71A0C8C890088AF3C /* random.png */,
 			);
@@ -441,8 +465,10 @@
 				3881FABE1A0CA4AB000AB452 /* pointLightStencil.vert */,
 				3881FABF1A0CA4AB000AB452 /* ssao.frag */,
 				38D648B41A0C8B720088AF3C /* gbuffer.frag */,
-				3881FAC01A0CA4AB000AB452 /* ssao.vert */,
 				38D648B51A0C8B720088AF3C /* gbuffer.vert */,
+				383BB61E1A295F3E004DCC82 /* gbuffertex.frag */,
+				38EBEFEC1A2DD88000A91DD9 /* gbuffertex.vert */,
+				3881FAC01A0CA4AB000AB452 /* ssao.vert */,
 				3846AF9B1A158008004A871F /* finalPass.vert */,
 				3846AF9C1A15801C004A871F /* finalPass.frag */,
 			);
@@ -513,11 +539,13 @@
 				38DFB4681A15791C00F5AA6D /* FinalPass.cpp in Sources */,
 				38A423CB1A15D44C0079AD58 /* Utils.cpp in Sources */,
 				388D901E1A135A31006AA441 /* LightGroup.cpp in Sources */,
+				38FBC4FF1A2C6F830024CD24 /* Material.cpp in Sources */,
 				3832F9571A16C96C00E8E127 /* LightGroupAnimationCallback.cpp in Sources */,
 				388D90211A135A31006AA441 /* SSAOPass.cpp in Sources */,
 				388D901C1A135A31006AA441 /* LightingPass.cpp in Sources */,
 				38AB05431A15D2B3005FAEC3 /* LightCallback.cpp in Sources */,
 				38C0B8E71A27ECDD0060E169 /* DirectionalLightingPass.cpp in Sources */,
+				38FBC4FC1A2C5BD40024CD24 /* AssetDB.cpp in Sources */,
 				38C0B8E41A27E8EF0060E169 /* DirectionalLightGroup.cpp in Sources */,
 				388D901B1A135A31006AA441 /* GeometryPass.cpp in Sources */,
 				388D901D1A135A31006AA441 /* main.cpp in Sources */,

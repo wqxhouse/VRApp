@@ -68,7 +68,7 @@
          <EnvironmentVariable
             key = "OSG_NOTIFY_LEVEL"
             value = "INFO"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "OSG_FILE_PATH"

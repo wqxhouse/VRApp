@@ -10,22 +10,21 @@
 #include <osg/Depth>
 
 // protected
-GeometryPass::GeometryPass(osg::Camera *mainCamera, osg::TextureRectangle *defaultTexture, osg::Node *worldObjects)
-: ScreenPass(mainCamera)
+GeometryPass::GeometryPass(osg::Camera *mainCamera, AssetDB &assetDB)
+: ScreenPass(mainCamera), _assetDB(assetDB)
 {
     osg::Matrix projMatrix = mainCamera->getProjectionMatrix();
     float dummy;
     projMatrix.getFrustum(dummy, dummy, dummy, dummy, _nearPlaneDist, _farPlaneDist);
     
-    _defaultTexture = defaultTexture;
-    _worldObjects = worldObjects;
+    _worldObjects = _assetDB.getGeomRoot();
  
-    ScreenPass::setShader("gbuffer.vert", "gbuffer.frag");
+    //ScreenPass::setShader("gbuffer.vert", "gbuffer.frag");
+    _gbuffer_notex_shader = addShader("gbuffer.vert", "gbuffer.frag");
+    _gbuffer_tex_shader = addShader("gbuffertex.vert", "gbuffertex.frag");
+    
     ScreenPass::setupCamera();
-    // TODO: figure out why higher prcision textures doesn't work
-//    _out_albedo_tex_id = ScreenPass::addOutTexture();
     _out_albedo_tex_id = addOutTexture(false);
-//    _out_normal_depth_tex_id = ScreenPass::addOutTexture();
     _out_normal_depth_tex_id = addOutTexture(true);
     _out_position_tex_id = addOutTexture(true);
     
@@ -33,9 +32,9 @@ GeometryPass::GeometryPass(osg::Camera *mainCamera, osg::TextureRectangle *defau
     _rttCamera->attach(osg::Camera::COLOR_BUFFER0, getAlbedoOutTexture());
     _rttCamera->attach(osg::Camera::COLOR_BUFFER1, getNormalDepthOutTexture());
     _rttCamera->attach(osg::Camera::COLOR_BUFFER2, getPositionOutTexure());
-    
+
     osg::ref_ptr<osg::Group> worldObjectGeomPassNode(new osg::Group);
-    worldObjectGeomPassNode->addChild(worldObjects);
+    worldObjectGeomPassNode->addChild(_worldObjects);
     auto worldObjectGeomPassSS = worldObjectGeomPassNode->getOrCreateStateSet();
     worldObjectGeomPassSS->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
     osg::ref_ptr<osg::Depth> depth(new osg::Depth);
@@ -54,11 +53,52 @@ GeometryPass::~GeometryPass()
 
 void GeometryPass::configureStateSet()
 {
-    _stateSet->setAttributeAndModes(_shaderProgram, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
-    _stateSet->setTextureAttributeAndModes(0, _defaultTexture, osg::StateAttribute::ON);
-    
-    _stateSet->addUniform(new osg::Uniform("u_texture", 0));
+    _stateSet->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
     _stateSet->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
+    
+    // attach shader to objects other than light geom
+    // TODO: consider the shading of the flying light object, currently overriden by _stateSet
+    auto nodeMaterialPairs = _assetDB.getGeometryNodesAndMaterials();
+    for(unsigned long i = 0; i < nodeMaterialPairs.size(); i++)
+    {
+        auto p = nodeMaterialPairs[i];
+        osg::Node *node = p.first;
+        Material *mat = p.second;
+        if(mat->hasTexture())
+        {
+            osg::StateSet *ss = node->getOrCreateStateSet();
+            ss->setAttributeAndModes(getShader(_gbuffer_tex_shader), osg::StateAttribute::ON | osg::StateAttribute::PROTECTED| osg::StateAttribute::OVERRIDE);
+            osg::Texture2D *tex = mat->getAlbedoTexture();
+            ss->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
+            ss->addUniform(new osg::Uniform("u_texture", 0));
+            ss->setTextureAttribute(0, tex);
+            
+            auto d = node->asTransform()->getChild(0)->asGeode()->getDrawable(0);
+            auto g = d->asGeometry();
+            auto arr = g->getTexCoordArrayList();
+            
+        }
+        else
+        {
+            osg::StateSet *ss = node->getOrCreateStateSet();
+            ss->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE );
+            ss->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
+        }
+    }
+}
+
+int GeometryPass::addShader(const char *vert, const char *frag)
+{
+    osg::ref_ptr<osg::Program> p(new osg::Program);
+    p->addShader(osgDB::readShaderFile(vert));
+    p->addShader(osgDB::readShaderFile(frag));
+    _shaderPrograms.push_back(p);
+    return (int)_shaderPrograms.size() - 1;
+}
+
+osg::Program * GeometryPass::getShader(int _id)
+{
+    return _shaderPrograms[_id];
 }
 
 int GeometryPass::addOutTexture(bool isDepth)

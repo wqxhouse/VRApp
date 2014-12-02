@@ -32,6 +32,16 @@ void LightGroup::addLight(const osg::Vec3 &position, const osg::Vec3 &color)
     _lightNum++;
 }
 
+void LightGroup::addMultipleLights(const std::vector<PointLight *> &lights)
+{
+    _lightNum += lights.size();
+    for(unsigned long i = 0; i < lights.size(); i++)
+    {
+        _geomTransformLightGroup->addChild(lights[i]->_lightGeomTransform);
+        _pointLights.push_back(lights[i]);
+    }
+}
+
 void LightGroup::addRandomLightWithBoundingSphere(const osg::BoundingSphere &boundSphere)
 {
     // create a random light that is positioned on bounding sphere of scene (skRadius)
