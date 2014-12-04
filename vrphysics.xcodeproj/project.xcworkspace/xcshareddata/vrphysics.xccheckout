@@ -12,6 +12,8 @@
 	<dict>
 		<key>082A35C19A3AE1DFE340C724E077D8BC7F9F023B</key>
 		<string>github.com:wqxhouse/VRApp.git</string>
+		<key>297ef086-28dd-11de-a0a5-a9ea28672ce9++9627</key>
+		<string>http://osgocean.googlecode.com/svn/tags/osgOcean-1.0.1</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>vrphysics.xcodeproj</string>
@@ -19,6 +21,13 @@
 	<dict>
 		<key>082A35C19A3AE1DFE340C724E077D8BC7F9F023B</key>
 		<string>../..</string>
+		<key>297ef086-28dd-11de-a0a5-a9ea28672ce9++9627</key>
+		<string>../../../osgocean</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>297ef086-28dd-11de-a0a5-a9ea28672ce9++9627</key>
+		<string>http://osgocean.googlecode.com/svn</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>github.com:wqxhouse/VRApp.git</string>
@@ -28,6 +37,14 @@
 	<string>082A35C19A3AE1DFE340C724E077D8BC7F9F023B</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>297ef086-28dd-11de-a0a5-a9ea28672ce9++9627</string>
+			<key>IDESourceControlWCCName</key>
+			<string>osgocean</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>

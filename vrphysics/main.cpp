@@ -11,6 +11,7 @@
 #include <osgViewer/viewer>
 #include <osg/Camera>
 #include <osg/PolygonMode>
+#include <osgOcean/OceanScene>
 
 #include "GeometryPass.h"
 #include "DirectionalLightingPass.h"
@@ -174,7 +175,6 @@ DirectionalLightGroup *addDirectionalLights(osg::Group *geomGroup)
 {
     // Directional Lights
     DirectionalLightGroup *dirLightGroup = new DirectionalLightGroup;
-    dirLightGroup->addLight(osg::Vec3(0, 0, 1), osg::Vec3(0, 0, 0), osg::Vec3(0.3, 0.3, 0.3));
     // here we can optionally choose to display the geom of the directional light
     
     return dirLightGroup;
@@ -311,8 +311,29 @@ int main()
     osg::ref_ptr<osg::Group> sceneRoot(new osg::Group);
    
     AssetDB assets;
-    assets.addGeometryWithFile("Testing/NewlyTest/new.osg");
+    assets.addGeometryWithFile("Testing/balss/Colorful-Balls.dae");
     sceneRoot->addChild(assets.getGeomRoot());
+    
+//    osg::ref_ptr<osgOcean::OceanScene> _oceanScene(new osgOcean::OceanScene);
+//    _oceanScene->setLightID(0);
+//    _oceanScene->enableReflections(true);
+//    _oceanScene->enableRefractions(true); 
+    
+    // Set the size of _oceanCylinder which follows the camera underwater.
+    // This cylinder prevents the clear from being visible past the far plane
+    // instead it will be the fog color.
+    // The size of the cylinder should be changed according the size of the ocean surface.
+//    _oceanScene->setCylinderSize( 1900.f, 4000.f );
+//    
+//    _oceanScene->setSunDirection( osg::Vec3(-1, -1, -1 ) );
+//    _oceanScene->enableGodRays(true);
+//    _oceanScene->enableSilt(true);
+//    _oceanScene->enableUnderwaterDOF(true);
+//    _oceanScene->enableDistortion(true);
+//    _oceanScene->enableGlare(true);
+//    _oceanScene->setGlareAttenuation(0.8f);
+//    sceneRoot->addChild(_oceanScene);
+    
     
     DirectionalLightGroup *dirLightGroup = addDirectionalLights(assets.getGeomRoot());
     dirLightGroup->addMultipleLights(assets.getDirectionalLights());

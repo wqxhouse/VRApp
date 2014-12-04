@@ -92,6 +92,7 @@
 		38C4BC6219FE3F6D005430B2 /* osgdb_deprecated_osg.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC6019FE3F6D005430B2 /* osgdb_deprecated_osg.so */; };
 		38C4BC6319FE3F6D005430B2 /* osgdb_osg.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC6119FE3F6D005430B2 /* osgdb_osg.so */; };
 		38DFB4681A15791C00F5AA6D /* FinalPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38DFB4661A15791C00F5AA6D /* FinalPass.cpp */; };
+		38EDCBE01A2DED62008B5C88 /* libosgOcean.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38EDCBDF1A2DED62008B5C88 /* libosgOcean.dylib */; };
 		38F7013F1A142D2A00DC8AD8 /* dirLight.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38F7013D1A142CEE00DC8AD8 /* dirLight.frag */; };
 		38F701401A142D2A00DC8AD8 /* dirLight.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38F7013E1A142CEE00DC8AD8 /* dirLight.vert */; };
 		38FBC4FC1A2C5BD40024CD24 /* AssetDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38FBC4FA1A2C5BD40024CD24 /* AssetDB.cpp */; };
@@ -231,6 +232,7 @@
 		38DFB4661A15791C00F5AA6D /* FinalPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FinalPass.cpp; sourceTree = "<group>"; };
 		38DFB4671A15791C00F5AA6D /* FinalPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinalPass.h; sourceTree = "<group>"; };
 		38EBEFEC1A2DD88000A91DD9 /* gbuffertex.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gbuffertex.vert; sourceTree = "<group>"; };
+		38EDCBDF1A2DED62008B5C88 /* libosgOcean.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgOcean.dylib; path = ../osgocean/lib/libosgOcean.dylib; sourceTree = "<group>"; };
 		38F7013D1A142CEE00DC8AD8 /* dirLight.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = dirLight.frag; path = vrphysics/dirLight.frag; sourceTree = "<group>"; };
 		38F7013E1A142CEE00DC8AD8 /* dirLight.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = dirLight.vert; path = vrphysics/dirLight.vert; sourceTree = "<group>"; };
 		38F701411A1455FE00DC8AD8 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				38EDCBE01A2DED62008B5C88 /* libosgOcean.dylib in Frameworks */,
 				38C4BC6219FE3F6D005430B2 /* osgdb_deprecated_osg.so in Frameworks */,
 				38C4BC6319FE3F6D005430B2 /* osgdb_osg.so in Frameworks */,
 				38C4BC2D19FE2D49005430B2 /* libOpenThreads.3.2.1.dylib in Frameworks */,
@@ -339,6 +342,7 @@
 		38C4BBE719FE2CBE005430B2 = {
 			isa = PBXGroup;
 			children = (
+				38EDCBDF1A2DED62008B5C88 /* libosgOcean.dylib */,
 				38D648B31A0C8B4C0088AF3C /* shaders */,
 				38D648B01A0C7C4D0088AF3C /* data */,
 				38CC31ED19FF0E810076EE97 /* libs */,
@@ -639,10 +643,14 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"/Users/Wqxhouse-Mac/vrproject/OpenSceneGraph-3.2.1/include",
+					"/Users/Wqxhouse-Mac/vrproject/osgocean/include",
 				);
 				LD_DYLIB_INSTALL_NAME = "";
 				LD_NO_PIE = NO;
-				LIBRARY_SEARCH_PATHS = "/Users/Wqxhouse-Mac/vrproject/OpenSceneGraph-3.2.1/releaselib/**";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/Wqxhouse-Mac/vrproject/OpenSceneGraph-3.2.1/releaselib/**",
+					"/Users/Wqxhouse-Mac/vrproject/osgocean/lib",
+				);
 				PRELINK_LIBS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -658,10 +666,14 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"/Users/Wqxhouse-Mac/vrproject/OpenSceneGraph-3.2.1/include",
+					"/Users/Wqxhouse-Mac/vrproject/osgocean/include",
 				);
 				LD_DYLIB_INSTALL_NAME = "";
 				LD_NO_PIE = NO;
-				LIBRARY_SEARCH_PATHS = "/Users/Wqxhouse-Mac/vrproject/OpenSceneGraph-3.2.1/releaselib/**";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/Wqxhouse-Mac/vrproject/OpenSceneGraph-3.2.1/releaselib/**",
+					"/Users/Wqxhouse-Mac/vrproject/osgocean/lib",
+				);
 				PRELINK_LIBS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

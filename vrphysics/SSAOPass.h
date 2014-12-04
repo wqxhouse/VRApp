@@ -12,10 +12,9 @@
 #include <stdio.h>
 #include "ScreenPass.h"
 
-class GeometryPass : public ScreenPass
+class SSAOPass: public ScreenPass
 {
 public:
-    virtual void setShader(std::string filename);
     
 protected:
     virtual osg::ref_ptr<osg::Group> createTexturedQuad();

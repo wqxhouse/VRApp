@@ -28,12 +28,15 @@ public:
     virtual ~ScreenPass();
     virtual osg::ref_ptr<osg::Group> getRoot() { return _rootGroup; }
     virtual osg::ref_ptr<osg::TextureRectangle> getOutputTexture(int _id) { return _screenOutTexture[_id]; }
-    virtual void setShader(std::string vertex, std::string fragment);
+    // virtual void setShader(std::string vertex, std::string fragment);
    
     virtual int addInTexture(osg::TextureRectangle *texture);
     virtual int addOutTexture();
     virtual osg::ref_ptr<osg::TextureRectangle> getInTexture(int _id);
     virtual osg::ref_ptr<osg::TextureRectangle> getOutTexture(int _id);
+    
+    virtual int addShader(const char *vert, const char *frag);
+    virtual osg::Program *getShader(int _id);
     
 protected:
     virtual void configureStateSet() = 0;
@@ -47,9 +50,11 @@ protected:
     std::vector<osg::ref_ptr<osg::TextureRectangle> > _screenOutTexture;
     int _screenWidth;
     int _screenHeight;
-    osg::ref_ptr<osg::Program> _shaderProgram;
+    //osg::ref_ptr<osg::Program> _shaderProgram;
     osg::ref_ptr<osg::StateSet> _stateSet;
     osg::ref_ptr<osg::Camera> _mainCamera;
+    
+    std::vector<osg::ref_ptr<osg::Program> > _shaderPrograms;
 };
 
 #endif /* defined(__vrphysics__ScreenPass__) */

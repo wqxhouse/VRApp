@@ -24,7 +24,8 @@ LightingPass::LightingPass(osg::Camera *mainCamera, osg::TextureRectangle *posit
     _normal_tex_id = ScreenPass::addInTexture(normal_tex);
     _position_tex_id = ScreenPass::addInTexture(position_tex);
     
-    ScreenPass::setShader("pointLightPass.vert", "pointLightPass.frag");
+    //ScreenPass::setShader("pointLightPass.vert", "pointLightPass.frag");
+    _light_shader_id = addShader("pointLightPass.vert", "pointLightPass.frag");
     ScreenPass::setupCamera();
     
     configureStateSet();
@@ -81,7 +82,8 @@ void LightingPass::configureStateSet()
         ss->setAttributeAndModes(blendEquation, osg::StateAttribute::ON);
         
         // passing uniforms
-        ss->setAttributeAndModes(_shaderProgram, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+        //ss->setAttributeAndModes(_shaderProgram, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+        ss->setAttributeAndModes(getShader(_light_shader_id), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
         ss->addUniform(new osg::Uniform("u_lightPosition", lightPosInViewSpace));
         ss->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
         

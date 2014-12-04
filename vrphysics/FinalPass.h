@@ -37,6 +37,7 @@ protected:
     int _light_tex_id; // point light
     
     int _out_finalpass_tex_id;
+    int _final_shader_id;
 };
 
 #endif /* defined(__vrphysics__FinalPass__) */

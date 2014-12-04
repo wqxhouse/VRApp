@@ -11,7 +11,8 @@
 FinalPass::FinalPass(osg::Camera *mainCamera, osg::TextureRectangle *albedoTexture, osg::TextureRectangle *dirLightTexture, osg::TextureRectangle *lightTexture)
 : ScreenPass(mainCamera)
 {
-    ScreenPass::setShader("finalPass.vert", "finalPass.frag");
+    //ScreenPass::setShader("finalPass.vert", "finalPass.frag");
+    _final_shader_id = addShader("finalPass.vert", "finalPass.frag");
     _albedo_tex_id = addInTexture(albedoTexture);
     _dirLight_tex_id = addInTexture(dirLightTexture);
     _light_tex_id = addInTexture(lightTexture);
@@ -27,7 +28,8 @@ FinalPass::~FinalPass() {}
 
 void FinalPass::configureStateSet()
 {
-    _stateSet->setAttributeAndModes(_shaderProgram, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+    //_stateSet->setAttributeAndModes(_shaderProgram, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+    _stateSet->setAttributeAndModes(getShader(_final_shader_id), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
     _stateSet->setTextureAttribute(0, getInTexture(_albedo_tex_id), osg::StateAttribute::ON);
     _stateSet->setTextureAttribute(1, getInTexture(_dirLight_tex_id), osg::StateAttribute::ON);
     _stateSet->setTextureAttribute(2, getInTexture(_light_tex_id), osg::StateAttribute::ON);

@@ -38,9 +38,6 @@ public:
     // overload
     virtual int addOutTexture(bool isDepth);
     
-    virtual int addShader(const char *vert, const char *frag);
-    osg::Program *getShader(int _id);
-    
 protected:
     virtual void configureStateSet();
 private:
@@ -55,8 +52,6 @@ private:
     
     AssetDB &_assetDB;
    
-    // TODO: move this to ScreenPass class
-    std::vector<osg::ref_ptr<osg::Program> > _shaderPrograms;
     int _gbuffer_tex_shader;
     int _gbuffer_notex_shader;
 };

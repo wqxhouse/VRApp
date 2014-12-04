@@ -23,7 +23,8 @@ DirectionalLightingPass::DirectionalLightingPass(osg::Camera *mainCamera, osg::T
     _normal_tex_id = ScreenPass::addInTexture(normal_tex);
     _position_tex_id = ScreenPass::addInTexture(position_tex);
     
-    ScreenPass::setShader("dirLight.vert", "dirLight.frag");
+    //ScreenPass::setShader("dirLight.vert", "dirLight.frag");
+    _light_shader_id = addShader("dirLight.vert", "dirLight.frag");
     ScreenPass::setupCamera();
     
     configureStateSet();
@@ -87,7 +88,8 @@ void DirectionalLightingPass::configureStateSet()
         ss->setAttributeAndModes(blendEquation, osg::StateAttribute::ON);
         
         // passing uniforms
-        ss->setAttributeAndModes(_shaderProgram, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+        //ss->setAttributeAndModes(_shaderProgram, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+        ss->setAttributeAndModes(getShader(_light_shader_id), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 //        ss->addUniform(new osg::Uniform("u_lightPosition", lightPosInViewSpace));
         
         ss->addUniform(new osg::Uniform("u_lightDir", lightDir));

@@ -16,19 +16,33 @@ ScreenPass::ScreenPass(osg::Camera *mainCamera)
     _mainCamera = mainCamera;
     _screenWidth = mainCamera->getViewport()->width();
     _screenHeight = mainCamera->getViewport()->height();
-    _shaderProgram = new osg::Program;
+    //_shaderProgram = new osg::Program;
 }
 
 ScreenPass::~ScreenPass()
 {
 }
 
-// public
-void ScreenPass::setShader(std::string vertex, std::string fragment)
+int ScreenPass::addShader(const char *vert, const char *frag)
 {
-    _shaderProgram->addShader(osgDB::readShaderFile(vertex));
-    _shaderProgram->addShader(osgDB::readShaderFile(fragment));
+    osg::ref_ptr<osg::Program> p(new osg::Program);
+    p->addShader(osgDB::readShaderFile(vert));
+    p->addShader(osgDB::readShaderFile(frag));
+    _shaderPrograms.push_back(p);
+    return (int)_shaderPrograms.size() - 1;
 }
+
+osg::Program * ScreenPass::getShader(int _id)
+{
+    return _shaderPrograms[_id];
+}
+
+// public
+//void ScreenPass::setShader(std::string vertex, std::string fragment)
+//{
+//    _shaderProgram->addShader(osgDB::readShaderFile(vertex));
+//    _shaderProgram->addShader(osgDB::readShaderFile(fragment));
+//}
 
 // protected, default implementations
 osg::ref_ptr<osg::Group> ScreenPass::createTexturedQuad()

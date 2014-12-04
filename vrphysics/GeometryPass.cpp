@@ -87,20 +87,6 @@ void GeometryPass::configureStateSet()
     }
 }
 
-int GeometryPass::addShader(const char *vert, const char *frag)
-{
-    osg::ref_ptr<osg::Program> p(new osg::Program);
-    p->addShader(osgDB::readShaderFile(vert));
-    p->addShader(osgDB::readShaderFile(frag));
-    _shaderPrograms.push_back(p);
-    return (int)_shaderPrograms.size() - 1;
-}
-
-osg::Program * GeometryPass::getShader(int _id)
-{
-    return _shaderPrograms[_id];
-}
-
 int GeometryPass::addOutTexture(bool isDepth)
 {
     osg::ref_ptr<osg::TextureRectangle> tex = new osg::TextureRectangle;

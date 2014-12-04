@@ -46,6 +46,8 @@ private:
     
     DirectionalLightGroup *_lightGroup;
     osg::ref_ptr<osg::Group> _lightPassGroupNode;
+    
+    int _light_shader_id;
 };
 
 #endif /* defined(__vrphysics__DirectionalLightingPass__) */
