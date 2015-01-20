@@ -75,8 +75,8 @@ osg::ref_ptr<osg::Group> ScreenPass::createTexturedQuad()
     quad_geom->addPrimitiveSet(quad_da.get());
     quad_geom->setColorArray(quad_colors.get(), osg::Array::BIND_OVERALL);
     
-    _stateSet = quad_geom->getOrCreateStateSet();
-    _stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+//    _stateSet = quad_geom->getOrCreateStateSet();
+//    _stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
     quad_geode->addDrawable(quad_geom);
     top_group->addChild(quad_geode);
     return top_group;
@@ -115,7 +115,8 @@ osg::ref_ptr<osg::TextureRectangle> ScreenPass::getInTexture(int _id)
 void ScreenPass::setupCamera()
 {
     // clearing
-    _rttCamera->setClearColor(osg::Vec4(0.1f,0.1f,0.3f,1.0f));
+//    _rttCamera->setClearColor(osg::Vec4(0.1f,0.1f,0.3f,1.0f));
+    _rttCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f,1.0f));
 //    _rttCamera->setClearColor(osg::Vec4(1.0f,1.0f,1.0f,1.0f));
 //    _rttCamera->setClearColor(osg::Vec4(0.4f,0.4f, 0.4f,1.0f));
     _rttCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

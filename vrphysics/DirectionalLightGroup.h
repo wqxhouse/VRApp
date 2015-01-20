@@ -20,14 +20,16 @@ public:
     DirectionalLightGroup();
     ~DirectionalLightGroup();
     
-    void addLight(const osg::Vec3 &pos, const osg::Vec3 &lookAt, const osg::Vec3 &color);
+    int addLight(const osg::Vec3 &pos, const osg::Vec3 &lookAt, const osg::Vec3 &color);
     std::vector<DirectionalLight *> &getDirectionalLightsReference();
+    DirectionalLight *getDirectionalLight(int _id);
+    void addMultipleLights(std::vector<DirectionalLight *> lights);
     
-    void addMultipleLights(const std::vector<DirectionalLight *> &lights);
 private:
+    int _lightnum;
     osg::ref_ptr<osg::Group> _directionalLightGroup;
     std::vector<DirectionalLight *> _directionalLights;
-    int _lightnum;
+    std::map<int, DirectionalLight *> _directionalLightsMap;
 };
 
 #endif /* defined(__vrphysics__DirectionalLightGroup__) */

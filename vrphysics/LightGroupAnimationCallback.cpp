@@ -10,6 +10,7 @@
 
 #include <vector>
 #include "PointLight.h"
+#include "Utils.h"
 
 LightGroupAnimationCallback::LightGroupAnimationCallback(LightGroup *group)
 {

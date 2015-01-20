@@ -7,6 +7,7 @@
 //
 
 #include "DirectionalLightCallback.h"
+#include "Utils.h"
 
 DirectionalLightCallback::DirectionalLightCallback(osg::Camera *mainCamera, DirectionalLight *light)
 : _light(light), _mainCamera(mainCamera)

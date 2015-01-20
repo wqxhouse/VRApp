@@ -17,7 +17,7 @@ class GeometryPass : public ScreenPass
 {
 public:
     
-    GeometryPass(osg::Camera *mainCamera, AssetDB &assetDB);
+    GeometryPass(osg::Camera *mainCamera, AssetDB *assetDB);
     virtual ~GeometryPass();
     
     osg::ref_ptr<osg::TextureRectangle> getAlbedoOutTexture()
@@ -50,7 +50,7 @@ private:
     
     int _out_position_tex_id;
     
-    AssetDB &_assetDB;
+    AssetDB *_assetDB;
    
     int _gbuffer_tex_shader;
     int _gbuffer_notex_shader;

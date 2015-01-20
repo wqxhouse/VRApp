@@ -23,18 +23,21 @@ public:
     
     LightGroup();
     ~LightGroup();
-    
-    void addLight(const osg::Vec3 &position, const osg::Vec3 &color);
+    int addLight(const osg::Vec3 &position, const osg::Vec3 &color, const osg::Vec3 &orbitAxis, const osg::Vec3 &attenuation, float effectiveRadius);
     std::vector<PointLight *> &getPointLightsArrayReference();
     void addRandomLight();
     void addRandomLightWithBoundingSphere(const osg::BoundingSphere &boundSphere);
     osg::ref_ptr<osg::Group> getGeomTransformLightGroup();
     int getLightNum() { return _lightNum; };
-    void addMultipleLights(const std::vector<PointLight *> &lights);
+    void addMultipleLights(std::vector<PointLight *> lights);
+    
+    PointLight *getPointLight(int _id);
     
 private:
     osg::ref_ptr<osg::Group> _geomTransformLightGroup;
     std::vector<PointLight *> _pointLights;
+    std::map<int, PointLight *> _pointLightsMap;
+    
     float randomf(float a, float b) {
         float random = ((float) rand()) / (float) RAND_MAX;
         float diff = b - a;

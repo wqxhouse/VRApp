@@ -41,6 +41,8 @@ void LightingPass::configRTTCamera()
     _out_lighting_tex_id = ScreenPass::addOutTexture();
     _rttCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+0),
                        getLightingOutTexture());
+    _rttCamera->setClearColor(osg::Vec4(0.0f,0.0f,0.0f,1.0f));
+    _rttCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     _rttCamera->addChild(_lightPassGroupNode);
     _rootGroup->addChild(_rttCamera);
 }

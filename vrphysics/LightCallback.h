@@ -36,6 +36,11 @@ public:
 private:
     osg::ref_ptr<osg::Camera> _mainCamera;
     PointLight *_light;
+    
+    // TODO: add calvr transform of object space
+#ifndef DEFAULT_DEV
+    //osg::Matrix
+#endif
 };
 
 #endif /* defined(__vrphysics__LightCallback__) */

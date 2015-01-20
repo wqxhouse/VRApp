@@ -7,7 +7,7 @@
 //
 
 #include "AssetDB.h"
-
+#include <stdio.h>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -33,6 +33,11 @@ AssetDB::~AssetDB()
 void AssetDB::addGeometryWithFile(const std::string &fileURL)
 {
     osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile(fileURL);
+    if(loadedModel == NULL)
+    {
+        fprintf(stderr, "load model %s failed", fileURL.c_str());
+        return;
+    }
     if(loadedModel->getName() == "")
     {
         loadedModel->setName("loaded: " + fileURL);
@@ -134,11 +139,14 @@ void AssetDB::processCurrentNode(osg::Node *node)
         }
         if(_geomNodeAndMaterials.find(objRealName) != _geomNodeAndMaterials.end())
         {
+            // copy node so that it default node settings are not modified by other modules
             _geomNodeAndMaterials.insert(std::make_pair(objRealName, std::make_pair(node, material)));
         }
         else
         {
             std::string newName = objRealName + "_new";
+            
+            // copy node so that it default node settings are not modified by other modules
             _geomNodeAndMaterials.insert(std::make_pair(objRealName, std::make_pair(node, material)));
         }
     }
@@ -173,7 +181,7 @@ void AssetDB::processCurrentNode(osg::Node *node)
             pt->genGeomTransform(0.25);
             pt->orbitAxis = osg::Vec3(0, 0, 1);
             // TODO: additional cue implemented later
-            pt->setMaxEffectiveRadius(6.0f);
+            pt->setMaxEffectiveRadius(15.0f);
             if(_pointLights.find(objRealName) != _pointLights.end())
             {
                 _pointLights.insert(std::make_pair(objRealName, pt));

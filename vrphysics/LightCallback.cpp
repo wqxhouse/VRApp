@@ -19,10 +19,9 @@ void LightCallback::operator()(osg::StateSet *ss, osg::NodeVisitor *nv)
     // transform light sphere
     _light->genLightSphereTransform(radius);
     
-    auto m = _mainCamera->getViewMatrix();
-    //Utils::print(m);
-//    printf("%d: ", _light->_id);
-//    Utils::print(lightPosInViewSpace, ' ');
+//    auto m = _mainCamera->getViewMatrix();
+//    Utils::print(m);
+    
     // passing uniforms
     ss->getUniform("u_lightPosition")->set(lightPosInViewSpace);
     //        ss->getUniform("u_lightPosition")->set(_light->getPosition());

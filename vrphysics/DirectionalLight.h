@@ -67,6 +67,11 @@ public:
         return this->lookAt;
     }
     
+    inline int getId()
+    {
+        return _id;
+    }
+    
     void genGeometry()
     {
         osg::ref_ptr<osg::Sphere> sphere(new osg::Sphere(osg::Vec3(0, 0, 0), 1.0));

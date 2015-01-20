@@ -10,14 +10,14 @@
 #include <osg/Depth>
 
 // protected
-GeometryPass::GeometryPass(osg::Camera *mainCamera, AssetDB &assetDB)
+GeometryPass::GeometryPass(osg::Camera *mainCamera, AssetDB *assetDB)
 : ScreenPass(mainCamera), _assetDB(assetDB)
 {
     osg::Matrix projMatrix = mainCamera->getProjectionMatrix();
     float dummy;
     projMatrix.getFrustum(dummy, dummy, dummy, dummy, _nearPlaneDist, _farPlaneDist);
     
-    _worldObjects = _assetDB.getGeomRoot();
+    _worldObjects = _assetDB->getGeomRoot();
  
     //ScreenPass::setShader("gbuffer.vert", "gbuffer.frag");
     _gbuffer_notex_shader = addShader("gbuffer.vert", "gbuffer.frag");
@@ -53,12 +53,13 @@ GeometryPass::~GeometryPass()
 
 void GeometryPass::configureStateSet()
 {
-    _stateSet->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+//    _stateSet->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+    _stateSet->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON );
     _stateSet->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
     
     // attach shader to objects other than light geom
     // TODO: consider the shading of the flying light object, currently overriden by _stateSet
-    auto nodeMaterialPairs = _assetDB.getGeometryNodesAndMaterials();
+    auto nodeMaterialPairs = _assetDB->getGeometryNodesAndMaterials();
     for(unsigned long i = 0; i < nodeMaterialPairs.size(); i++)
     {
         auto p = nodeMaterialPairs[i];
@@ -67,21 +68,24 @@ void GeometryPass::configureStateSet()
         if(mat->hasTexture())
         {
             osg::StateSet *ss = node->getOrCreateStateSet();
-            ss->setAttributeAndModes(getShader(_gbuffer_tex_shader), osg::StateAttribute::ON | osg::StateAttribute::PROTECTED| osg::StateAttribute::OVERRIDE);
+            // TODO: figure out why must protected here --> b/c _stateSet is overriding
+            //ss->setAttributeAndModes(getShader(_gbuffer_tex_shader), osg::StateAttribute::ON | osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE);
+            ss->setAttributeAndModes(getShader(_gbuffer_tex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
             osg::Texture2D *tex = mat->getAlbedoTexture();
             ss->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
             ss->addUniform(new osg::Uniform("u_texture", 0));
             ss->setTextureAttribute(0, tex);
             
-            auto d = node->asTransform()->getChild(0)->asGeode()->getDrawable(0);
-            auto g = d->asGeometry();
-            auto arr = g->getTexCoordArrayList();
+//            auto d = node->asTransform()->getChild(0)->asGeode()->getDrawable(0);
+//            auto g = d->asGeometry();
+//            auto arr = g->getTexCoordArrayList();
             
         }
         else
         {
             osg::StateSet *ss = node->getOrCreateStateSet();
-            ss->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE );
+            //ss->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE );
+            ss->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
             ss->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
         }
     }

@@ -11,6 +11,8 @@
 #include <osg/BlendFunc>
 #include "DirectionalLightCallback.h"
 
+#include "Utils.h"
+
 DirectionalLightingPass::DirectionalLightingPass(osg::Camera *mainCamera, osg::TextureRectangle *position_tex, osg::TextureRectangle *diffuse_tex, osg::TextureRectangle *normal_tex, DirectionalLightGroup *lightGroup)
 : ScreenPass(mainCamera)
 {
@@ -114,9 +116,13 @@ int DirectionalLightingPass::addOutTexture()
     osg::ref_ptr<osg::TextureRectangle> tex = new osg::TextureRectangle;
     
     tex->setTextureSize(_screenWidth, _screenHeight);
-    tex->setSourceType(GL_UNSIGNED_BYTE);
+//    tex->setSourceType(GL_UNSIGNED_BYTE);
+//    tex->setSourceFormat(GL_RGBA);
+//    tex->setInternalFormat(GL_RGBA);
+    
+    tex->setSourceType(GL_FLOAT);
     tex->setSourceFormat(GL_RGBA);
-    tex->setInternalFormat(GL_RGBA);
+    tex->setInternalFormat(GL_RGBA16F_ARB);
     
     tex->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::LINEAR);
     tex->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::LINEAR);

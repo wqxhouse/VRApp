@@ -33,6 +33,7 @@ public:
     void setMaxEffectiveRadius(float radius)
     {
         _light_max_effective_radius = radius;
+        _light_effective_radius = _light_max_effective_radius * intensity;
     }
     
     void setAmbient(float r, float g, float b, float a=1.0f) {

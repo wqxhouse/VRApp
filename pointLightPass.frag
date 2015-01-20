@@ -37,8 +37,6 @@ const material material1 = material(
   127.0
 );
 
-const vec4 ambientGlobal = vec4(0.05, 0.05, 0.05, 1.0);
-
 // TODO: fix when camera in light sphere, light disappear
 
 void main(void)
