@@ -10,8 +10,25 @@
 #define __vrphysics__GeometryPass__
 
 #include <stdio.h>
+#include <osg/Camera>
+#include <osg/StateSet>
 #include "ScreenPass.h"
 #include "AssetDB.h"
+
+class GeometryPassCallback : public osg::StateSet::Callback
+{
+public:
+    GeometryPassCallback(osg::Camera *mainCamera);
+    virtual ~GeometryPassCallback();
+    
+private:
+    void getNearFarPlane();
+    virtual void operator ()(osg::StateSet *ss, osg::NodeVisitor *visitor);
+    
+    osg::ref_ptr<osg::Camera> _mainCamera;
+    float _nearPlane;
+    float _farPlane;
+};
 
 class GeometryPass : public ScreenPass
 {

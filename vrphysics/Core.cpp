@@ -25,7 +25,21 @@ Core::Core()
     
     _assetDB = new AssetDB;
     _geometryGroup = _assetDB->getGeomRoot();
-    _assetDB->addGeometryWithFile("Testing/uu.dae");
+    //_assetDB->addGeometryWithFile("Testing/uu.dae");
+    
+    osg::ref_ptr<osg::Geode> aa(new osg::Geode);
+    osg::ref_ptr<osg::Box> box(new osg::Box);
+    box->set(osg::Vec3(0, 0, 2), osg::Vec3(2, 2, 2));
+    osg::ref_ptr<osg::ShapeDrawable> draw(new osg::ShapeDrawable);
+    draw->setShape(box);
+    aa->addDrawable(draw);
+    _geometryGroup->addChild(aa);
+    
+    osg::ref_ptr<osg::Box> ground(new osg::Box);
+    ground->set(osg::Vec3(0, 0, 0), osg::Vec3(10, 10, 0.01));
+    osg::ref_ptr<osg::ShapeDrawable> drawGround(new osg::ShapeDrawable);
+    drawGround->setShape(ground);
+    aa->addDrawable(drawGround);
     
     osg::ref_ptr<osg::Geode> db(new osg::Geode);
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
@@ -44,7 +58,7 @@ Core::Core()
     quad->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
     
     db->addDrawable(quad);
-    _geometryGroup->addChild(db);
+    //_geometryGroup->addChild(db);
     
     _sceneRoot->addChild(_geometryGroup);
    
@@ -222,7 +236,7 @@ osg::ref_ptr<osg::Geode> Core::createTexturedQuad(int _TextureWidth, int _Textur
     quad_geom->addPrimitiveSet(quad_da.get());
     
     auto _StateSet = quad_geom->getOrCreateStateSet();
-    _StateSet->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+    _StateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
     
     quad_geode->addDrawable(quad_geom.get());
     
@@ -238,9 +252,10 @@ DirectionalLightGroup *Core::addDirectionalLights()
     // add lights from db
     // TODO: determine whether enable shadow
     dirLightGroup->addMultipleLights(_assetDB->getDirectionalLights());
+    _shadowGroup->addMultipleDirectionalLights(_assetDB->getDirectionalLights(), ShadowGroup::BASIC);
     
     // custom lights
-    int _id = dirLightGroup->addLight(osg::Vec3(10, 10, 10), osg::Vec3(0, 0, 0), osg::Vec3(0.6, 0.6, 0.8));
+    int _id = dirLightGroup->addLight(osg::Vec3(5, -5, 5), osg::Vec3(0, 0, 0), osg::Vec3(0.6, 0.6, 0.8));
     DirectionalLight *light = dirLightGroup->getDirectionalLight(_id);
     _shadowGroup->addDirectionalLight(light, ShadowGroup::BASIC);
     
@@ -285,6 +300,7 @@ void Core::configDirectionalLightPass()
     _directionalLightPass = new DirectionalLightingPass(_mainCamera, _geomPass->getPositionOutTexure(),
                                                                         _geomPass->getAlbedoOutTexture(),
                                                                         _geomPass->getNormalDepthOutTexture(),
+                                                                        _shadowGroup,
                                                                         _dirLightGroup);
 }
 
@@ -333,7 +349,8 @@ void Core::setupHUDForPasses()
 //                             _winWidth, _winHeight, 0.3333, 0.3);
     osg::ref_ptr<osg::Camera> qTexN =
     createTextureDisplayQuad(osg::Vec3(0, 0.7, 0),
-                             _shadowGroup->getDirLightShadowTexture(0),
+                             //_shadowGroup->getDirLightShadowTexture(0),
+                             _geomPass->getPositionOutTexure(),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexD =
@@ -343,7 +360,7 @@ void Core::setupHUDForPasses()
     
     osg::ref_ptr<osg::Camera> qTexP =
     createTextureDisplayQuad(osg::Vec3(0.6666, 0.7, 0),
-                             _pointLightPass->getLightingOutTexture(),
+                             _directionalLightPass->getLightingOutTexture(),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexF =

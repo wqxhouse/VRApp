@@ -2,6 +2,7 @@
 #version 120
 
 uniform float u_farDistance;
+uniform float u_nearDistance;
 
 varying vec3 v_normal;
 varying vec2 v_texCoord;
@@ -15,7 +16,7 @@ void main (void)
     
     v_normal = gl_NormalMatrix * gl_Normal;
     v_texCoord = gl_MultiTexCoord1.st; // dae loader puts textureCoords in 1; therefore, force 1 for all
-    v_depth = -viewSpaceVertex.z / u_farDistance; // figure out -z or y
+    v_depth = (-viewSpaceVertex.z - u_nearDistance) / (u_farDistance - u_nearDistance);
     
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

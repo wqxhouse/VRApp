@@ -1,10 +1,9 @@
 // Directional Light vertex shader
 #version 120
 
-varying vec4 v_vertex;
+uniform mat4 u_viewMatrixInverse;
 
 void main(void)
 {
-    v_vertex = gl_ModelViewMatrix * gl_Vertex;
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

@@ -55,7 +55,10 @@ void GeometryPass::configureStateSet()
 {
 //    _stateSet->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
     _stateSet->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON );
+    _stateSet->addUniform(new osg::Uniform("u_nearDistance", _nearPlaneDist));
     _stateSet->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
+    osg::ref_ptr<GeometryPassCallback> geomPassCallback(new GeometryPassCallback(_mainCamera));
+    _stateSet->setUpdateCallback(geomPassCallback);
     
     // attach shader to objects other than light geom
     // TODO: consider the shading of the flying light object, currently overriden by _stateSet
@@ -72,9 +75,12 @@ void GeometryPass::configureStateSet()
             //ss->setAttributeAndModes(getShader(_gbuffer_tex_shader), osg::StateAttribute::ON | osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE);
             ss->setAttributeAndModes(getShader(_gbuffer_tex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
             osg::Texture2D *tex = mat->getAlbedoTexture();
+            ss->addUniform(new osg::Uniform ("u_nearDistance", _nearPlaneDist));
             ss->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
             ss->addUniform(new osg::Uniform("u_texture", 0));
             ss->setTextureAttribute(0, tex);
+            
+            ss->setUpdateCallback(geomPassCallback);
             
 //            auto d = node->asTransform()->getChild(0)->asGeode()->getDrawable(0);
 //            auto g = d->asGeometry();
@@ -86,7 +92,10 @@ void GeometryPass::configureStateSet()
             osg::StateSet *ss = node->getOrCreateStateSet();
             //ss->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE );
             ss->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
+            ss->addUniform(new osg::Uniform ("u_nearDistance", _nearPlaneDist));
             ss->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
+            
+            ss->setUpdateCallback(geomPassCallback);
         }
     }
 }
@@ -117,3 +126,29 @@ int GeometryPass::addOutTexture(bool isDepth)
     return (int)_screenOutTexture.size() - 1;
 }
 
+GeometryPassCallback::GeometryPassCallback(osg::Camera *camera)
+: _mainCamera(camera)
+{
+}
+
+GeometryPassCallback::~GeometryPassCallback()
+{
+}
+
+void GeometryPassCallback::operator()(osg::StateSet *ss, osg::NodeVisitor *visitor)
+{
+    getNearFarPlane();
+    ss->getUniform("u_nearDistance")->set(_nearPlane);
+    ss->getUniform("u_farDistance")->set(_farPlane);
+}
+
+void GeometryPassCallback::getNearFarPlane()
+{
+    double dummy;
+    double nearPlane;
+    double farPlane;
+    const osg::Matrix &projectionMatrix = _mainCamera->getProjectionMatrix();
+    projectionMatrix.getFrustum(dummy, dummy, dummy, dummy, nearPlane, farPlane);
+    _nearPlane = nearPlane;
+    _farPlane = farPlane;
+}

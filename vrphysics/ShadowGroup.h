@@ -29,6 +29,7 @@ public:
     ~ShadowGroup() {};
     
     void addDirectionalLight(DirectionalLight *dirLight, enum ShadowMode mode);
+    void addMultipleDirectionalLights(std::vector<DirectionalLight *> lights, enum ShadowMode mode);
     void setDepthMapResolution(float width, float height);
     
     osg::ref_ptr<osg::TextureRectangle> getDirLightShadowTexture(int light_id);
@@ -57,7 +58,8 @@ private:
     float _depthTexWidth;
     float _depthTexHeight;
     
-    float getFarPlane();
+    float _nearPlane;
+    float _farPlane;
 };
 
 #endif /* defined(__vrphysics__ShadowGroup__) */

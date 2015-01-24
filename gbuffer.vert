@@ -2,6 +2,7 @@
 #version 120
 
 uniform float u_farDistance;
+uniform float u_nearDistance;
 
 varying vec3 v_normal;
 varying float v_depth;
@@ -13,9 +14,9 @@ void main (void)
   vec4 viewSpaceVertex = gl_ModelViewMatrix * gl_Vertex;
   v_position = viewSpaceVertex;
   v_normal = gl_NormalMatrix * gl_Normal;
-//    v_normal = vec3(-viewSpaceVertex.z, 0, 0);
- //   v_normal = vec3(viewSpaceVertex.x, 0, 0);
-  v_depth = -viewSpaceVertex.z / u_farDistance; // figure out -z or y
+  v_depth = (-viewSpaceVertex.z - u_nearDistance) / (u_farDistance - u_nearDistance);
+    
+//    v_depth = -viewSpaceVertex.z / u_farDistance;
     
   v_color = gl_Color;
   gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;

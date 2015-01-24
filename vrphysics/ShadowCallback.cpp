@@ -28,19 +28,13 @@ void ShadowCallback::operator()(osg::StateSet *ss, osg::NodeVisitor* nv)
     {
         shadowMV.makeLookAt(_dirLight->getPosition(), _dirLight->getLookAt(), osg::Vec3(0, 0, 1));
     }
-    
+
     osg::Matrixf shadowMVP = shadowMV * _shadowProjection;
-    float farPlane = getFarPlane();
-    ss->getUniform("u_farDistance")->set(farPlane);
+    // TODO: pass in near/ far plane
     ss->getUniform("u_lightViewMatrix")->set(shadowMV);
     ss->getUniform("u_lightViewProjectionMatrix")->set(shadowMVP);
-}
-
-float ShadowCallback::getFarPlane()
-{
-    double dummy;
-    double farPlane;
-    osg::Matrix proj = _mainCamera->getProjectionMatrix();
-    proj.getFrustum(dummy, dummy, dummy, dummy, dummy, farPlane);
-    return farPlane;
+    
+    _dirLight->_lightProjectionMatrix = _shadowProjection;
+    _dirLight->_lightViewMatrix = shadowMV;
+    _dirLight->_lightMVP = shadowMVP;
 }

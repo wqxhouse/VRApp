@@ -16,11 +16,12 @@
 
 #include "ScreenPass.h"
 #include "DirectionalLightGroup.h"
+#include "ShadowGroup.h"
 
 class DirectionalLightingPass : public ScreenPass
 {
 public:
-    DirectionalLightingPass(osg::Camera *mainCamera, osg::TextureRectangle *position_tex, osg::TextureRectangle *diffuse_tex, osg::TextureRectangle *normal_tex, DirectionalLightGroup *lightGroup);
+    DirectionalLightingPass(osg::Camera *mainCamera, osg::TextureRectangle *position_tex, osg::TextureRectangle *diffuse_tex, osg::TextureRectangle *normal_tex, ShadowGroup *shadowGroup, DirectionalLightGroup *lightGroup);
     virtual ~DirectionalLightingPass();
     
     osg::ref_ptr<osg::TextureRectangle> getLightingOutTexture()
@@ -48,6 +49,8 @@ private:
     osg::ref_ptr<osg::Group> _lightPassGroupNode;
     
     int _light_shader_id;
+    
+    ShadowGroup *_shadowGroup;
 };
 
 #endif /* defined(__vrphysics__DirectionalLightingPass__) */

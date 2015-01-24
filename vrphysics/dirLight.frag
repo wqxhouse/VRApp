@@ -6,6 +6,13 @@ uniform sampler2DRect u_albedoTex;  // albedo (diffuse without lighting)
 uniform sampler2DRect u_normalAndDepthTex;  // view space normal and linear depth
 uniform sampler2DRect u_positionTex;
 
+uniform sampler2DRect u_depthMapTex;
+uniform mat4 u_viewMatrixInverse;
+
+uniform vec2 u_depthMapSize;
+uniform float u_lightNearDistance;
+uniform float u_lightFarDistance;
+
 // LIGHTS
 //uniform vec3 u_lightPosition;
 uniform vec3 u_lightDir;
@@ -14,7 +21,9 @@ uniform vec4 u_lightDiffuse;
 uniform vec4 u_lightSpecular;
 uniform float u_lightIntensity;
 
-varying vec4 v_vertex;
+uniform mat4 u_lightViewMatrix;
+uniform mat4 u_lightProjectionMatrix;
+
 varying vec2 v_texCoord;
 varying mat4 v_modelViewMatrix;
 
@@ -33,6 +42,36 @@ const material material1 = material(
                                     );
 
 const vec4 ambientGlobal = vec4(0.05, 0.05, 0.05, 1.0);
+
+float sampleShadowMap(vec3 viewVertex)
+{
+    vec4 lightViewSpaceVec = u_lightViewMatrix * u_viewMatrixInverse * vec4(viewVertex, 1);
+    vec4 lightProjSpaceVec = u_lightProjectionMatrix * lightViewSpaceVec;
+    
+    vec3 projCoords = lightProjSpaceVec.xyz / lightProjSpaceVec.w;
+    vec2 uvCoords;
+    uvCoords.x = 0.5 * projCoords.x + 0.5;
+    uvCoords.y = 0.5 * projCoords.y + 0.5;
+    
+    vec2 rectCoords;
+    
+    rectCoords.x = uvCoords.x * u_depthMapSize.x;
+    rectCoords.y = uvCoords.y * u_depthMapSize.y;
+    float sampleDepth = texture2DRect(u_depthMapTex, rectCoords).x;
+    
+    float linearZ = (-lightViewSpaceVec.z - u_lightNearDistance) / (u_lightFarDistance - u_lightNearDistance);
+    
+    gl_FragColor = vec4(vec3(sampleDepth), 1);
+    
+    if (sampleDepth + 0.001 < linearZ)
+    {
+        return 0.5;
+    }
+    else
+    {
+        return 1.0;
+    }
+}
 
 void main(void)
 {
@@ -72,7 +111,7 @@ void main(void)
         gl_FragColor = vec4(1, 1, 1, 1);
     }
     
-    vec4 final_color = vec4(ambient + diffuse + specular);
-    gl_FragColor = vec4(final_color.rgb, 1.0);
-//    gl_FragColor = vec4(linearDepth, linearDepth, linearDepth, 1);
+    float depth = sampleShadowMap(vertex);
+    vec4 final_color = ambient + depth * (diffuse + specular);
+    // gl_FragColor = vec4(final_color.rgb, 1.0);
 }

@@ -107,6 +107,7 @@ osg::LightSource *AssetDB::extractLight(osg::Transform *mt)
 void AssetDB::processCurrentNode(osg::Node *node)
 {
     std::string name = node->getName();
+    printf("%s\n", name.c_str());
     std::vector<std::string> splitArr = split(name, '_');
     if(splitArr.size() <= 1)
     {

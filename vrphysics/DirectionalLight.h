@@ -166,6 +166,12 @@ public:
     osg::ref_ptr<osg::Geode> _renderQuad;
     osg::ref_ptr<osg::MatrixTransform> _lightGeomTransform;
     
+    osg::Matrixf _lightViewMatrix;
+    osg::Matrixf _lightProjectionMatrix;
+    osg::Matrixf _lightMVP;
+    float _lightNearDistance;
+    float _lightFarDistance;
+    
     int _id;
     static int _highest_id;
     

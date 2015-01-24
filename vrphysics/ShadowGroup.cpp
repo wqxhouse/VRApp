@@ -15,7 +15,9 @@
 ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms)
 : _mainCamera(mainCamera), _geoms(geoms)
 {
-    _shadowProjection.makeOrtho(-20, 20, -20, 20, -20, 20);
+    _nearPlane = -10;
+    _farPlane = 20;
+    _shadowProjection.makeOrtho(-20, 20, -20, 10, _nearPlane, _farPlane);
     
     _depthMapShader = new osg::Program();
     _depthMapShader->addShader(osgDB::readShaderFile("orthoDepthMap.vert"));
@@ -51,19 +53,10 @@ void ShadowGroup::setDepthMapResolution(float width, float height)
     _depthTexHeight = height;
 }
 
-float ShadowGroup::getFarPlane()
-{
-    double dummy;
-    double farPlane;
-    osg::Matrix proj = _mainCamera->getProjectionMatrix();
-    proj.getFrustum(dummy, dummy, dummy, dummy, dummy, farPlane);
-    return farPlane;
-}
-
 void ShadowGroup::addBasicShadowCam(osg::TextureRectangle *outDepthTex, const osg::Matrixf &shadowMV, const osg::Matrixf &shadowMVP, DirectionalLight *dirLight)
 {
     osg::ref_ptr<osg::Camera> cam(new osg::Camera);
-    //cam->setProjectionMatrix(_shadowProjection);
+    cam->setProjectionMatrix(_shadowProjection);
     
     osg::StateSet *ss = cam->getOrCreateStateSet();
     ss->setAttributeAndModes(_depthMapShader, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
@@ -71,21 +64,23 @@ void ShadowGroup::addBasicShadowCam(osg::TextureRectangle *outDepthTex, const os
     ss->setMode(GL_BLEND, osg::StateAttribute::OFF);
     cam->attach(osg::Camera::COLOR_BUFFER0, outDepthTex);
     
-    cam->setClearColor(osg::Vec4());
+    cam->setClearColor(osg::Vec4(1, 1, 1, 1));
     cam->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     cam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
     cam->setRenderOrder(osg::Camera::PRE_RENDER);
-    //cam->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+    cam->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
     cam->setViewMatrix(osg::Matrix::identity());
+    cam->setViewport(0, 0, _depthTexWidth, _depthTexHeight);
    
     // need to use osg::Matrixf as uniform, or invalid operation
-    ss->addUniform(new osg::Uniform("u_farDistance", getFarPlane()));
+    ss->addUniform(new osg::Uniform("u_nearDistance", _nearPlane));
+    ss->addUniform(new osg::Uniform("u_farDistance", _farPlane));
     ss->addUniform(new osg::Uniform("u_lightViewMatrix", shadowMV));
     ss->addUniform(new osg::Uniform("u_lightViewProjectionMatrix", shadowMVP));
     
     osg::ref_ptr<ShadowCallback> shadowCallback(new ShadowCallback(_mainCamera, _shadowProjection));
     shadowCallback->setDirectionalLight(dirLight);
-    ss->setUpdateCallback(new ShadowCallback(_mainCamera, _shadowProjection));
+    ss->setUpdateCallback(shadowCallback);
     
     cam->addChild(_geoms);
     _shadowCameras->addChild(cam);
@@ -113,6 +108,10 @@ void ShadowGroup::addDirectionalLight(DirectionalLight *dirLight, enum ShadowMod
     {
         shadowView.makeLookAt(dirLight->getPosition(), dirLight->getLookAt(), osg::Vec3(0, 0, 1)); // z-up
         osg::Matrixf shadowMVP = shadowView * _shadowProjection;
+        dirLight->_lightViewMatrix = shadowView;
+        dirLight->_lightProjectionMatrix = _shadowProjection;
+        dirLight->_lightNearDistance = _nearPlane;
+        dirLight->_lightFarDistance = _farPlane;
         
         osg::ref_ptr<osg::TextureRectangle> depthTex = createShadowTexture(_depthTexWidth, _depthTexHeight);
         addBasicShadowCam(depthTex, shadowView, shadowMVP, dirLight);
@@ -120,4 +119,13 @@ void ShadowGroup::addDirectionalLight(DirectionalLight *dirLight, enum ShadowMod
         _dir_depthMaps.insert(std::make_pair(light_id, depthTex));
     }
     
+}
+
+void ShadowGroup::addMultipleDirectionalLights(std::vector<DirectionalLight *> lights, enum ShadowMode mode)
+{
+    for(int i = 0; i < lights.size(); i++)
+    {
+        DirectionalLight *light = lights[i];
+        addDirectionalLight(light, mode);
+    }
 }

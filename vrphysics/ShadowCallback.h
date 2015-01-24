@@ -28,7 +28,6 @@ public:
     void operator()(osg::StateSet *ss, osg::NodeVisitor* nv);
     
 private:
-    float getFarPlane();
 
     osg::ref_ptr<osg::Camera> _mainCamera;
     osg::Matrix _shadowProjection;

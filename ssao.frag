@@ -57,7 +57,7 @@ float rand(vec2 co)
 void main()
 {
   // random jitter
-  vec2 randVec = normalize(texture2D(u_randomJitterTex, v_texCoord / vec2(800.0, 600/0) ).xy * 2.0 - 1.0);
+  vec2 randVec = normalize(texture2D(u_randomJitterTex, v_texCoord / u_screen_wh ).xy * 2.0 - 1.0);
   //vec2 randVec = normalize(vec2(rand(vec2(1,2)), rand(vec2(4, 2))));
 
   vec3 srcNormal = texture2DRect(u_normalAndDepthTex, v_texCoord).xyz;

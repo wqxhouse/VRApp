@@ -13,8 +13,8 @@
 
 #include "Utils.h"
 
-DirectionalLightingPass::DirectionalLightingPass(osg::Camera *mainCamera, osg::TextureRectangle *position_tex, osg::TextureRectangle *diffuse_tex, osg::TextureRectangle *normal_tex, DirectionalLightGroup *lightGroup)
-: ScreenPass(mainCamera)
+DirectionalLightingPass::DirectionalLightingPass(osg::Camera *mainCamera, osg::TextureRectangle *position_tex, osg::TextureRectangle *diffuse_tex, osg::TextureRectangle *normal_tex, ShadowGroup *shadowGroup, DirectionalLightGroup *lightGroup)
+: ScreenPass(mainCamera), _shadowGroup(shadowGroup)
 {
     _lightGroup = lightGroup;
     osg::Matrix projMatrix = mainCamera->getProjectionMatrix();
@@ -100,14 +100,30 @@ void DirectionalLightingPass::configureStateSet()
         ss->addUniform(new osg::Uniform("u_normalAndDepthTex", 1));
         ss->addUniform(new osg::Uniform("u_positionTex", 2));
         
+        int light_id = (*it)->_id;
+        osg::ref_ptr<osg::TextureRectangle> depthTex = _shadowGroup->getDirLightShadowTexture(light_id);
+//        osg::ref_ptr<osg::Texture2D> depthTex = _shadowGroup->getDirLightShadowTexture(light_id);
+        ss->addUniform(new osg::Uniform("u_depthMapTex", 3));
+       
+        osg::Vec2 depthMapSize = osg::Vec2(depthTex->getTextureWidth(), depthTex->getTextureHeight());
+        ss->addUniform(new osg::Uniform("u_depthMapSize", depthMapSize));
+        ss->addUniform(new osg::Uniform("u_viewMatrixInverse", osg::Matrixf(_mainCamera->getInverseViewMatrix())));
+        ss->addUniform(new osg::Uniform("u_lightNearDistance", (*it)->_lightNearDistance));
+        ss->addUniform(new osg::Uniform("u_lightFarDistance", (*it)->_lightFarDistance));
+        
         ss->setTextureAttributeAndModes(0, ScreenPass::getInTexture(_diffuse_tex_id));
         ss->setTextureAttributeAndModes(1, ScreenPass::getInTexture(_normal_tex_id));
         ss->setTextureAttributeAndModes(2, ScreenPass::getInTexture(_position_tex_id));
+        ss->setTextureAttributeAndModes(3, depthTex);
         
         ss->addUniform(new osg::Uniform("u_lightAmbient", (*it)->getAmbient()));
         ss->addUniform(new osg::Uniform("u_lightDiffuse", (*it)->getDiffuse()));
         ss->addUniform(new osg::Uniform("u_lightSpecular", (*it)->getSpecular()));
         ss->addUniform(new osg::Uniform("u_lightIntensity", (*it)->intensity));
+        
+        ss->addUniform(new osg::Uniform("u_lightViewMatrix", (*it)->_lightViewMatrix));
+        ss->addUniform(new osg::Uniform("u_lightProjectionMatrix",(*it)->_lightProjectionMatrix));
+        ss->addUniform(new osg::Uniform("u_lightMVP", (*it)->_lightMVP));
     }
 }
 

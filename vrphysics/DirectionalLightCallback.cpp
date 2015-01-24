@@ -22,7 +22,11 @@ void DirectionalLightCallback::operator()(osg::StateSet *ss, osg::NodeVisitor* n
     osg::Vec3f lookAtInViewSpace = _light->getLookAt() * _mainCamera->getViewMatrix();
     osg::Vec3f lightDir = lightPosInViewSpace - lookAtInViewSpace;
     
-    auto m = _mainCamera->getViewMatrix();
+//    auto m = _mainCamera->getViewMatrix();
+    ss->getUniform("u_viewMatrixInverse")->set(osg::Matrixf(_mainCamera->getInverseViewMatrix()));
+    ss->getUniform("u_lightViewMatrix")->set(_light->_lightViewMatrix);
+    ss->getUniform("u_lightProjectionMatrix")->set(_light->_lightProjectionMatrix);
+    
     //ss->getUniform("u_lightPosition")->set(lightPosInViewSpace);
     ss->getUniform("u_lightDir")->set(lightDir);
     
@@ -30,4 +34,7 @@ void DirectionalLightCallback::operator()(osg::StateSet *ss, osg::NodeVisitor* n
     ss->getUniform("u_lightDiffuse")->set(_light->getDiffuse());
     ss->getUniform("u_lightSpecular")->set(_light->getSpecular());
     ss->getUniform("u_lightIntensity")->set(_light->intensity);
+    
+    ss->getUniform("u_lightNearDistance")->set(_light->_lightNearDistance);
+    ss->getUniform("u_lightFarDistance")->set(_light->_lightFarDistance);
 }
