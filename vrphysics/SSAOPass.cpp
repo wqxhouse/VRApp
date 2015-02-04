@@ -27,6 +27,7 @@ SSAOPass::SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, 
     // get matrix and farPlaneDist
     osg::Matrix projMatrix = mainCamera->getProjectionMatrix();
     float dummy;
+    // TODO: fix nearPlane
     projMatrix.getFrustum(dummy, dummy, dummy, dummy, dummy, _farPlaneDist);
     
     configureStateSet();

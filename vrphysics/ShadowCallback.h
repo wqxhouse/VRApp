@@ -28,6 +28,7 @@ public:
     void operator()(osg::StateSet *ss, osg::NodeVisitor* nv);
     
 private:
+    std::pair<float, float> getNearFarPlane();
 
     osg::ref_ptr<osg::Camera> _mainCamera;
     osg::Matrix _shadowProjection;

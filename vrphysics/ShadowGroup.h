@@ -34,6 +34,10 @@ public:
     
     osg::ref_ptr<osg::TextureRectangle> getDirLightShadowTexture(int light_id);
     
+    osg::ref_ptr<osg::TextureRectangle> getDirLightFluxTexture(int light_id);
+    osg::ref_ptr<osg::TextureRectangle> getDirLightPositionTexture(int light_id);
+    osg::ref_ptr<osg::Texture2D> getDirMipmapFluxTexture(int light_id);
+    
     inline osg::ref_ptr<osg::Group> getShadowCamerasRoot()
     {
         return _shadowCameras;
@@ -41,11 +45,14 @@ public:
     
 private:
     osg::ref_ptr<osg::TextureRectangle> createShadowTexture(int width, int height);
-    void addBasicShadowCam(osg::TextureRectangle *outDepthTex, const osg::Matrixf &shadowMV, const osg::Matrixf &shadowMVP, DirectionalLight *dirLight);
+    osg::ref_ptr<osg::TextureRectangle> createFluxTexture(int width, int height);
+    osg::ref_ptr<osg::Texture2D> createFluxMipmapTexture(int width, int height);
+    osg::ref_ptr<osg::TextureRectangle> createLightPositionTexture(int width, int height);
+    void addBasicShadowCam(osg::TextureRectangle *outDepthTex, osg::TextureRectangle *outFluxTex, osg::TextureRectangle *outPosTex, const osg::Matrixf &shadowMV, const osg::Matrixf &shadowMVP, DirectionalLight *dirLight);
     
     osg::ref_ptr<osg::Camera> _mainCamera;
     
-    std::map<int, osg::ref_ptr<osg::TextureRectangle> > _dir_depthMaps;
+    std::map<int, osg::ref_ptr<osg::TextureRectangle> > _dir_depthMaps; // if gi enabled, then rgb is normal; alpha is depth
     std::map<int, osg::ref_ptr<osg::Texture2D> > _spot_depthMaps;
     std::map<int, std::vector<osg::ref_ptr<osg::Texture2D> > > _point_depthMaps;
     osg::Matrix _shadowProjection;
@@ -60,6 +67,15 @@ private:
     
     float _nearPlane;
     float _farPlane;
+    
+    // global illumination
+    std::map<int, osg::ref_ptr<osg::TextureRectangle> > _dir_fluxMaps;
+    std::map<int, osg::ref_ptr<osg::Texture2D> > _dir_mipmapFluxMaps;
+    std::map<int, osg::ref_ptr<osg::TextureRectangle> > _dir_lightPosMaps;
+    float _rsmTexWidth;
+    float _rsmTexHeight;
+    
+    bool _isGIEnabled;
 };
 
 #endif /* defined(__vrphysics__ShadowGroup__) */

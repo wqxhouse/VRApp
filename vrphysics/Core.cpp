@@ -25,42 +25,43 @@ Core::Core()
     
     _assetDB = new AssetDB;
     _geometryGroup = _assetDB->getGeomRoot();
-    //_assetDB->addGeometryWithFile("Testing/uu.dae");
+    _assetDB->addGeometryWithFile("Testing/uu.dae");
     
-    osg::ref_ptr<osg::Geode> aa(new osg::Geode);
-    osg::ref_ptr<osg::Box> box(new osg::Box);
-    box->set(osg::Vec3(0, 0, 2), osg::Vec3(2, 2, 2));
-    osg::ref_ptr<osg::ShapeDrawable> draw(new osg::ShapeDrawable);
-    draw->setShape(box);
-    aa->addDrawable(draw);
-    _geometryGroup->addChild(aa);
+//    osg::ref_ptr<osg::Geode> aa(new osg::Geode);
+//    osg::ref_ptr<osg::Box> box(new osg::Box);
+//    box->set(osg::Vec3(0, 0, 2), osg::Vec3(2, 2, 2));
+//    osg::ref_ptr<osg::ShapeDrawable> draw(new osg::ShapeDrawable);
+//    draw->setShape(box);
+//    aa->addDrawable(draw);
+//    _geometryGroup->addChild(aa);
+//    
+//    osg::ref_ptr<osg::Box> ground(new osg::Box);
+//    ground->set(osg::Vec3(0, 0, 0), osg::Vec3(10, 10, 0.01));
+//    osg::ref_ptr<osg::ShapeDrawable> drawGround(new osg::ShapeDrawable);
+//    drawGround->setShape(ground);
+//    aa->addDrawable(drawGround);
+//    
+//    osg::ref_ptr<osg::Geode> db(new osg::Geode);
+//    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+//    vertices->push_back( osg::Vec3(0.0f, 0.0f, 0.0f) );
+//    vertices->push_back( osg::Vec3(10.0f, 0.0f, 0.0f) );
+//    vertices->push_back( osg::Vec3(10.0f, 0.0f, 15.0f) );
+//    vertices->push_back( osg::Vec3(0.0f, 0.0f, 10.0f) );
+//    
+//    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+//    normals->push_back( osg::Vec3(0.0f,-1.0f, 0.0f) );
+//    
+//    osg::ref_ptr<osg::Geometry> quad = new osg::Geometry;
+//    quad->setVertexArray(vertices);
+//    quad->setNormalArray(normals);
+//    quad->setNormalBinding(osg::Geometry::BIND_OVERALL);
+//    quad->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
+//    
+//    db->addDrawable(quad);
+//    _geometryGroup->addChild(db);
     
-    osg::ref_ptr<osg::Box> ground(new osg::Box);
-    ground->set(osg::Vec3(0, 0, 0), osg::Vec3(10, 10, 0.01));
-    osg::ref_ptr<osg::ShapeDrawable> drawGround(new osg::ShapeDrawable);
-    drawGround->setShape(ground);
-    aa->addDrawable(drawGround);
-    
-    osg::ref_ptr<osg::Geode> db(new osg::Geode);
-    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
-    vertices->push_back( osg::Vec3(0.0f, 0.0f, 0.0f) );
-    vertices->push_back( osg::Vec3(10.0f, 0.0f, 0.0f) );
-    vertices->push_back( osg::Vec3(10.0f, 0.0f, 15.0f) );
-    vertices->push_back( osg::Vec3(0.0f, 0.0f, 10.0f) );
-//
-    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-    normals->push_back( osg::Vec3(0.0f,-1.0f, 0.0f) );
-    
-    osg::ref_ptr<osg::Geometry> quad = new osg::Geometry;
-    quad->setVertexArray(vertices);
-    quad->setNormalArray(normals);
-    quad->setNormalBinding(osg::Geometry::BIND_OVERALL);
-    quad->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
-    
-    db->addDrawable(quad);
-    //_geometryGroup->addChild(db);
-    
-    _sceneRoot->addChild(_geometryGroup);
+    // for debugging
+    //_sceneRoot->addChild(_geometryGroup);
    
     configShadowGroup();
     
@@ -349,13 +350,14 @@ void Core::setupHUDForPasses()
 //                             _winWidth, _winHeight, 0.3333, 0.3);
     osg::ref_ptr<osg::Camera> qTexN =
     createTextureDisplayQuad(osg::Vec3(0, 0.7, 0),
-                             //_shadowGroup->getDirLightShadowTexture(0),
-                             _geomPass->getPositionOutTexure(),
+                             _shadowGroup->getDirLightShadowTexture(0),
+                             //_geomPass->getPositionOutTexure(),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexD =
     createTextureDisplayQuad(osg::Vec3(0.3333, 0.7, 0),
-                             _ssaoPass->getOutputTexture(0),
+                             //_ssaoPass->getOutputTexture(0),
+                             _geomPass->getPositionOutTexure(),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexP =
@@ -383,7 +385,7 @@ void Core::configPasses()
     configSSAOPass();
     configFinalPass();
     configHDRPass();
-    
+
     _sceneRoot->addChild(_geomPass->getRoot());
     _sceneRoot->addChild(_directionalLightPass->getRoot());
     _sceneRoot->addChild(_pointLightPass->getRoot());

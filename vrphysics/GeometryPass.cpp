@@ -60,6 +60,10 @@ void GeometryPass::configureStateSet()
     osg::ref_ptr<GeometryPassCallback> geomPassCallback(new GeometryPassCallback(_mainCamera));
     _stateSet->setUpdateCallback(geomPassCallback);
     
+    _stateSet->addUniform(new osg::Uniform("u_inv_viewMat", osg::Matrixf(_mainCamera->getInverseViewMatrix())));
+    _stateSet->addUniform(new osg::Uniform("u_viewMat", osg::Matrixf(_mainCamera->getViewMatrix())));
+    _stateSet->addUniform(new osg::Uniform("u_projMat", osg::Matrixf(_mainCamera->getProjectionMatrix())));
+    
     // attach shader to objects other than light geom
     // TODO: consider the shading of the flying light object, currently overriden by _stateSet
     auto nodeMaterialPairs = _assetDB->getGeometryNodesAndMaterials();
@@ -85,17 +89,24 @@ void GeometryPass::configureStateSet()
 //            auto d = node->asTransform()->getChild(0)->asGeode()->getDrawable(0);
 //            auto g = d->asGeometry();
 //            auto arr = g->getTexCoordArrayList();
-            
+            ss->addUniform(new osg::Uniform("u_inv_viewMat", osg::Matrixf(_mainCamera->getInverseViewMatrix())));
+            ss->addUniform(new osg::Uniform("u_viewMat", osg::Matrixf(_mainCamera->getViewMatrix())));
+            ss->addUniform(new osg::Uniform("u_projMat", osg::Matrixf(_mainCamera->getProjectionMatrix())));
         }
         else
         {
             osg::StateSet *ss = node->getOrCreateStateSet();
             //ss->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::PROTECTED | osg::StateAttribute::OVERRIDE );
             ss->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
-            ss->addUniform(new osg::Uniform ("u_nearDistance", _nearPlaneDist));
+            ss->addUniform(new osg::Uniform("u_nearDistance", _nearPlaneDist));
             ss->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
             
             ss->setUpdateCallback(geomPassCallback);
+            
+            ss->addUniform(new osg::Uniform("u_inv_viewMat", osg::Matrixf(_mainCamera->getInverseViewMatrix())));
+            ss->addUniform(new osg::Uniform("u_viewMat", osg::Matrixf(_mainCamera->getViewMatrix())));
+            ss->addUniform(new osg::Uniform("u_projMat", osg::Matrixf(_mainCamera->getProjectionMatrix())));
+            
         }
     }
 }
@@ -113,7 +124,7 @@ int GeometryPass::addOutTexture(bool isDepth)
     }
     else
     {
-        tex->setInternalFormat(GL_RGBA16F_ARB);
+        tex->setInternalFormat(GL_RGBA8);
     }
     
     tex->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::LINEAR);
@@ -140,6 +151,10 @@ void GeometryPassCallback::operator()(osg::StateSet *ss, osg::NodeVisitor *visit
     getNearFarPlane();
     ss->getUniform("u_nearDistance")->set(_nearPlane);
     ss->getUniform("u_farDistance")->set(_farPlane);
+    
+    ss->getUniform("u_viewMat")->set(osg::Matrixf(_mainCamera->getViewMatrix()));
+    ss->getUniform("u_inv_viewMat")->set(osg::Matrixf(_mainCamera->getInverseViewMatrix()));
+    ss->getUniform("u_projMat")->set(osg::Matrixf(_mainCamera->getProjectionMatrix()));
 }
 
 void GeometryPassCallback::getNearFarPlane()
