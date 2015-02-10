@@ -18,7 +18,4 @@ void main(void)
     gl_FragData[0] = vec4(diffuse, 1.0); // albedo
     gl_FragData[1] = vec4(normalize(v_normal), v_depth); // normals + depth
     gl_FragData[2] = vec4(v_position.xyz, 0);
-    
-    // gl_FragData[2] = v_world;
-    //    gl_FragData[2] = vec4(vec3(-v_position.z), 0);
 }

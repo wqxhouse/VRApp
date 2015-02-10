@@ -182,7 +182,8 @@ void AssetDB::processCurrentNode(osg::Node *node)
             pt->genGeomTransform(0.25);
             pt->orbitAxis = osg::Vec3(0, 0, 1);
             // TODO: additional cue implemented later
-            pt->setMaxEffectiveRadius(15.0f);
+            
+            pt->setMaxEffectiveRadius(4.0f);
             if(_pointLights.find(objRealName) != _pointLights.end())
             {
                 _pointLights.insert(std::make_pair(objRealName, pt));

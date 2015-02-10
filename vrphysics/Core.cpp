@@ -10,59 +10,62 @@
 #include <osgGA/TrackballManipulator>
 #include "Utils.h"
 
+void optGeoms()
+{
+    //    osg::ref_ptr<osg::Geode> aa(new osg::Geode);
+    //    osg::ref_ptr<osg::Box> box(new osg::Box);
+    //    box->set(osg::Vec3(0, 0, 2), osg::Vec3(2, 2, 2));
+    //    osg::ref_ptr<osg::ShapeDrawable> draw(new osg::ShapeDrawable);
+    //    draw->setShape(box);
+    //    aa->addDrawable(draw);
+    //    _geometryGroup->addChild(aa);
+    //
+    //    osg::ref_ptr<osg::Box> ground(new osg::Box);
+    //    ground->set(osg::Vec3(0, 0, 0), osg::Vec3(10, 10, 0.01));
+    //    osg::ref_ptr<osg::ShapeDrawable> drawGround(new osg::ShapeDrawable);
+    //    drawGround->setShape(ground);
+    //    aa->addDrawable(drawGround);
+    //
+    //    osg::ref_ptr<osg::Geode> db(new osg::Geode);
+    //    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+    //    vertices->push_back( osg::Vec3(0.0f, 0.0f, 0.0f) );
+    //    vertices->push_back( osg::Vec3(10.0f, 0.0f, 0.0f) );
+    //    vertices->push_back( osg::Vec3(10.0f, 0.0f, 15.0f) );
+    //    vertices->push_back( osg::Vec3(0.0f, 0.0f, 10.0f) );
+    //
+    //    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    //    normals->push_back( osg::Vec3(0.0f,-1.0f, 0.0f) );
+    //
+    //    osg::ref_ptr<osg::Geometry> quad = new osg::Geometry;
+    //    quad->setVertexArray(vertices);
+    //    quad->setNormalArray(normals);
+    //    quad->setNormalBinding(osg::Geometry::BIND_OVERALL);
+    //    quad->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
+    //
+    //    db->addDrawable(quad);
+    //    _geometryGroup->addChild(db);
+    
+    // for debugging
+    //_sceneRoot->addChild(_geometryGroup);
+}
+
 Core::Core()
 {
     _winWidth = 800;
     _winHeight = 600;
-   
+    
     _viewer = new osgViewer::Viewer;
     
     _mainCamera = _viewer->getCamera();
     _mainCamera->setViewport(new osg::Viewport(0, 0, _winWidth, _winHeight));
     _sceneRoot = new osg::Group;
-    //_viewer->setCameraManipulator(new osgGA::TrackballManipulator);
-    //_viewer->getCameraManipulator()->setHomePosition(osg::Vec3(1, 1, 1), osg::Vec3(0, 0, 0), osg::Vec3(0, 0, 1));
     
     _assetDB = new AssetDB;
     _geometryGroup = _assetDB->getGeomRoot();
-    _assetDB->addGeometryWithFile("Testing/uu.dae");
+    _assetDB->addGeometryWithFile("Testing/uuu.dae");
     
-//    osg::ref_ptr<osg::Geode> aa(new osg::Geode);
-//    osg::ref_ptr<osg::Box> box(new osg::Box);
-//    box->set(osg::Vec3(0, 0, 2), osg::Vec3(2, 2, 2));
-//    osg::ref_ptr<osg::ShapeDrawable> draw(new osg::ShapeDrawable);
-//    draw->setShape(box);
-//    aa->addDrawable(draw);
-//    _geometryGroup->addChild(aa);
-//    
-//    osg::ref_ptr<osg::Box> ground(new osg::Box);
-//    ground->set(osg::Vec3(0, 0, 0), osg::Vec3(10, 10, 0.01));
-//    osg::ref_ptr<osg::ShapeDrawable> drawGround(new osg::ShapeDrawable);
-//    drawGround->setShape(ground);
-//    aa->addDrawable(drawGround);
-//    
-//    osg::ref_ptr<osg::Geode> db(new osg::Geode);
-//    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
-//    vertices->push_back( osg::Vec3(0.0f, 0.0f, 0.0f) );
-//    vertices->push_back( osg::Vec3(10.0f, 0.0f, 0.0f) );
-//    vertices->push_back( osg::Vec3(10.0f, 0.0f, 15.0f) );
-//    vertices->push_back( osg::Vec3(0.0f, 0.0f, 10.0f) );
-//    
-//    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-//    normals->push_back( osg::Vec3(0.0f,-1.0f, 0.0f) );
-//    
-//    osg::ref_ptr<osg::Geometry> quad = new osg::Geometry;
-//    quad->setVertexArray(vertices);
-//    quad->setNormalArray(normals);
-//    quad->setNormalBinding(osg::Geometry::BIND_OVERALL);
-//    quad->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
-//    
-//    db->addDrawable(quad);
-//    _geometryGroup->addChild(db);
     
-    // for debugging
-    //_sceneRoot->addChild(_geometryGroup);
-   
+    
     configShadowGroup();
     
     // coupling here, addDirectionalLights & addPointLights needs to be called after configShadowGroup
@@ -93,9 +96,9 @@ void Core::setWindow(float width, float height)
 }
 
 osg::Camera *Core::createHUDCamera(double left,
-                             double right,
-                             double bottom,
-                             double top)
+                                   double right,
+                                   double bottom,
+                                   double top)
 {
     osg::ref_ptr<osg::Camera> camera = new osg::Camera;
     camera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
@@ -139,10 +142,10 @@ osg::ref_ptr<osg::TextureCubeMap> Core::loadCubeMapTextures()
 }
 
 osg::Geode *Core::createScreenQuad(float width,
-                             float height,
-                             float scaleX,
-                             float scaleY,
-                             osg::Vec3 corner, bool isRect)
+                                   float height,
+                                   float scaleX,
+                                   float scaleY,
+                                   osg::Vec3 corner, bool isRect)
 {
     osg::Geometry *geom;
     if(isRect)
@@ -159,9 +162,9 @@ osg::Geode *Core::createScreenQuad(float width,
     else
     {
         geom = osg::createTexturedQuadGeometry(
-                                                          corner,
-                                                          osg::Vec3(1024, 0, 0),
-                                                          osg::Vec3(0, 1024, 0), 1, 1);
+                                               corner,
+                                               osg::Vec3(width, 0, 0),
+                                               osg::Vec3(0, height, 0), 1, 1);
         
     }
     
@@ -177,12 +180,12 @@ osg::Geode *Core::createScreenQuad(float width,
 }
 
 osg::ref_ptr<osg::Camera> Core::createTextureDisplayQuad(
-                                                   const osg::Vec3 &pos,
-                                                   osg::StateAttribute *tex,
-                                                   float scaleX,
-                                                   float scaleY,
-                                                   float width,
-                                                   float height, bool isRect)
+                                                         const osg::Vec3 &pos,
+                                                         osg::StateAttribute *tex,
+                                                         float scaleX,
+                                                         float scaleY,
+                                                         float width,
+                                                         float height, bool isRect)
 {
     osg::ref_ptr<osg::Camera> hc = createHUDCamera(0,1,0,1);
     hc->addChild(createScreenQuad(width, height, scaleX, scaleY, pos, isRect));
@@ -249,7 +252,7 @@ DirectionalLightGroup *Core::addDirectionalLights()
     // Directional Lights
     DirectionalLightGroup *dirLightGroup = new DirectionalLightGroup;
     // here we can optionally choose to display the geom of the directional light
-   
+    
     // add lights from db
     // TODO: determine whether enable shadow
     dirLightGroup->addMultipleLights(_assetDB->getDirectionalLights());
@@ -278,7 +281,7 @@ LightGroup *Core::addPointLights()
     //    lightGroup->addLight(osg::Vec3(-1.09, -3.71, 2.97), osg::Vec3(0.213, 1, 0.305), osg::Vec3(0, 0, 0), osg::Vec3(0.6, 0.4, 0.4), 8.0);
     //    lightGroup->addLight(osg::Vec3(2.54, -2.26, -1.47), osg::Vec3(0.98, 0.54, 1), osg::Vec3(0, 0, 0), osg::Vec3(0.6, 0.4, 0.4), 8.0);
     //    lightGroup->addLight(osg::Vec3(-0.26, 2.08, 4.89), osg::Vec3(0.24, 1, 0.222), osg::Vec3(0, 0, 0), osg::Vec3(0.6, 0.2, 0.1), 8.0);
-   
+    
     // optionally display light geometry
     _geometryGroup->addChild(lightGroup->getGeomTransformLightGroup()); // point light geoms
     
@@ -299,39 +302,36 @@ void Core::configDirectionalLightPass()
 {
     // directional light pass
     _directionalLightPass = new DirectionalLightingPass(_mainCamera, _geomPass->getPositionOutTexure(),
-                                                                        _geomPass->getAlbedoOutTexture(),
-                                                                        _geomPass->getNormalDepthOutTexture(),
-                                                                        _shadowGroup,
-                                                                        _dirLightGroup);
+                                                        _geomPass->getAlbedoOutTexture(),
+                                                        _geomPass->getNormalDepthOutTexture(),
+                                                        _shadowGroup,
+                                                        _dirLightGroup);
 }
 
 void Core::configPointLightPass()
 {
     // point light pass
     _pointLightPass = new LightingPass(_mainCamera,
-                                               _geomPass->getPositionOutTexure(),
-                                               _geomPass->getAlbedoOutTexture(),
-                                               _geomPass->getNormalDepthOutTexture(),
-                                               _pointLightGroup);
+                                       _geomPass->getPositionOutTexure(),
+                                       _geomPass->getAlbedoOutTexture(),
+                                       _geomPass->getNormalDepthOutTexture(),
+                                       _geomPass->getSharedDepthStencilTexture(),
+                                       _pointLightGroup);
 }
 
 void Core::configSSAOPass()
 {
-    _ssaoPass = new SSAOPass(_mainCamera, _geomPass->getPositionOutTexure(), _geomPass->getNormalDepthOutTexture(), createTexture2DImage("random.png"));
+    _ssaoPass = new SSAOPass(_mainCamera, _geomPass->getPositionOutTexure(), _geomPass->getNormalDepthOutTexture(), createTexture2DImage("random.png"), _geomPass->getSharedDepthStencilTexture());
 }
 
 void Core::configFinalPass()
 {
     _finalPass = new FinalPass(_mainCamera, _geomPass->getAlbedoOutTexture(),
-                                         _directionalLightPass->getLightingOutTexture(),
-                                         _pointLightPass->getLightingOutTexture(),
-                                         _ssaoPass->getSSAOOutTexture());
+                               _directionalLightPass->getLightingOutTexture(),
+                               _pointLightPass->getLightingOutTexture(),
+                               _ssaoPass->getSSAOOutTexture());
 }
 
-void Core::configHDRPass()
-{
-    _hdrPass = new HDRPass(_mainCamera, _finalPass->getFinalPassTexture());
-}
 
 void Core::configShadowGroup()
 {
@@ -339,30 +339,45 @@ void Core::configShadowGroup()
     _sceneRoot->addChild(_shadowGroup->getShadowCamerasRoot());
 }
 
+void Core::configHDRPass()
+{
+    _hdrPass = new HDRPass(_mainCamera, _finalPass->getFinalPassTexture());
+}
+
+void Core::configImportanceSamplingPass()
+{
+    _impPass = new ImportanceSamplingPass(_mainCamera, _shadowGroup, _dirLightGroup);
+}
+
 void Core::setupHUDForPasses()
 {
     osg::ref_ptr<osg::Group> hud(new osg::Group);
     _debugHUD = hud;
     
-//    osg::ref_ptr<osg::Camera> qTexN =
-//    createTextureDisplayQuad(osg::Vec3(0, 0.7, 0),
-//                             _geomPass->getNormalDepthOutTexture(),
-//                             _winWidth, _winHeight, 0.3333, 0.3);
+    //    osg::ref_ptr<osg::Camera> qTexN =
+    //    createTextureDisplayQuad(osg::Vec3(0, 0.7, 0),
+    //                             _geomPass->getNormalDepthOutTexture(),
+    //                             _winWidth, _winHeight, 0.3333, 0.3);
     osg::ref_ptr<osg::Camera> qTexN =
     createTextureDisplayQuad(osg::Vec3(0, 0.7, 0),
                              _shadowGroup->getDirLightShadowTexture(0),
+                             //_shadowGroup->getDirLightFluxTexture(0),
+                             //_impPass->getImportanceSampleTexture(0),
                              //_geomPass->getPositionOutTexure(),
+                             ///_impPass->getFluxMipMapTexture(),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexD =
     createTextureDisplayQuad(osg::Vec3(0.3333, 0.7, 0),
-                             //_ssaoPass->getOutputTexture(0),
-                             _geomPass->getPositionOutTexure(),
+                             _ssaoPass->getOutputTexture(0),
+                             //_geomPass->getPositionOutTexure(),
+                             //_geomPass->getSharedDepthStencilTexture(),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexP =
     createTextureDisplayQuad(osg::Vec3(0.6666, 0.7, 0),
-                             _directionalLightPass->getLightingOutTexture(),
+                             //_directionalLightPass->getLightingOutTexture(),
+                             _pointLightPass->getLightingOutTexture(),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexF =
@@ -385,8 +400,14 @@ void Core::configPasses()
     configSSAOPass();
     configFinalPass();
     configHDRPass();
-
+    
+    // gi
+    configImportanceSamplingPass();
+    
     _sceneRoot->addChild(_geomPass->getRoot());
+    
+    _sceneRoot->addChild(_impPass->getRoot());
+    
     _sceneRoot->addChild(_directionalLightPass->getRoot());
     _sceneRoot->addChild(_pointLightPass->getRoot());
     _sceneRoot->addChild(_ssaoPass->getRoot());
@@ -394,14 +415,15 @@ void Core::configPasses()
     _sceneRoot->addChild(_hdrPass->getRoot());
     
     setupHUDForPasses();
-    
+   
+    _screenPasses.push_back(_impPass);
+    _screenPasses.push_back(_ssaoPass);
     _screenPasses.push_back(_geomPass);
     _screenPasses.push_back(_directionalLightPass);
     _screenPasses.push_back(_pointLightPass);
     _screenPasses.push_back(_finalPass);
     _screenPasses.push_back(_hdrPass);
 }
-
 
 void Core::freeHeap()
 {

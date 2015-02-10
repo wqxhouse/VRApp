@@ -86,20 +86,9 @@ public:
         osg::Matrix translate;
         translate.makeTranslate(getPosition());
         _sphereGeode = sphereGeode;
-        //_rootTransform = new osg::MatrixTransform(translate);
-        //_rootTransform->addChild(sphereGeode);
+//        _sphereGeode = _s_lightSphere;
     }
     
-//    void genGeomTransform(float scaleFactor)
-//    {
-//        osg::ref_ptr<osg::MatrixTransform> mt(new osg::MatrixTransform);
-//        osg::Matrix m;
-//        m.makeScale(osg::Vec3(scaleFactor, scaleFactor, scaleFactor));
-//        m.translate(position);
-//        mt->setMatrix(m);
-//        mt->addChild(getRoot());
-//        _lightGeomTransform = mt;
-//    }
     void genGeomTransform(float scaleFactor)
     {
         osg::ref_ptr<osg::MatrixTransform> mt;
@@ -186,8 +175,8 @@ public:
     float _light_geom_radius;
     float _light_effective_radius;
     float _light_max_effective_radius;
+    
+    static osg::ref_ptr<osg::Geode> _s_lightSphere;
 };
 
 #endif /* defined(__deferred__pointlight__) */
-
-

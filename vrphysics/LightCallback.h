@@ -19,6 +19,22 @@
 #include "LightGroup.h"
 #include "Utils.h"
 
+class LightStencilCallback: public osg::StateSet::Callback
+{
+public:
+    LightStencilCallback(osg::Camera *mainCamera)
+    {
+        _mainCamera = mainCamera;
+    }
+    
+    ~LightStencilCallback() {}
+    
+    virtual void operator()(osg::StateSet *ss, osg::NodeVisitor *nv);
+    
+private:
+    osg::ref_ptr<osg::Camera> _mainCamera;
+};
+
 class LightCallback : public osg::StateSet::Callback
 {
 public:

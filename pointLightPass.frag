@@ -5,6 +5,7 @@
 uniform sampler2DRect u_albedoTex;  // albedo (diffuse without lighting)
 uniform sampler2DRect u_normalAndDepthTex;  // view space normal and linear depth
 uniform sampler2DRect u_positionTex;
+uniform sampler2D u_debug1;
 
 // LIGHTS
 uniform int u_numLights;
@@ -17,83 +18,80 @@ uniform float u_lightIntensity;
 uniform float u_lightRadius;
 
 uniform vec2 u_inverseScreenSize;
-uniform float u_farDistance;
 
 varying vec4 v_vertex;
 varying vec2 v_texCoord;
 varying mat4 v_modelViewMatrix;
 
+varying vec4 v_pos;
+
 struct material {
-  vec4 ambient;
-  vec4 diffuse;
-  vec4 specular;
-  float shininess;
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+    float shininess;
 };
 
 const material material1 = material(
-  vec4(0.1, 0.1, 0.1, 1.0),
-  vec4(1.0, 1.0, 1.0, 1.0),
-  vec4(1.0, 1.0, 1.0, 1.0),
-  127.0
-);
+                                    vec4(0.1, 0.1, 0.1, 1.0),
+                                    vec4(1.0, 1.0, 1.0, 1.0),
+                                    vec4(1.0, 1.0, 1.0, 1.0),
+                                    127.0
+                                    );
 
 // TODO: fix when camera in light sphere, light disappear
 
 void main(void)
 {
-  vec2 texCoord = gl_FragCoord.xy ;
-  vec3 vertex = texture2DRect(u_positionTex, texCoord.st).xyz;
-  
-  vec3 normal = texture2DRect(u_normalAndDepthTex, texCoord.st).xyz;
-
-  vec4 ambient = vec4(0.0, 0.0, 0.0, 1.0);
-  vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
-  vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
-
-  vec3 lightDir = u_lightPosition - vertex;
-  vec3 R = normalize(reflect(lightDir, normal));
-  vec3 V = normalize(vertex);
-
-  float lambert = max(dot(normal, normalize(lightDir)), 0.0);
+    vec2 texCoord = gl_FragCoord.xy ;
+    vec3 vertex = texture2DRect(u_positionTex, texCoord.st).xyz;
+    
+    // debug
+    
+    vec3 normal = texture2DRect(u_normalAndDepthTex, texCoord.st).xyz;
+    
+    vec4 ambient = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
+    
+    vec3 lightDir = u_lightPosition - vertex;
+    vec3 R = normalize(reflect(lightDir, normal));
+    vec3 V = normalize(vertex);
+    
+    float lambert = max(dot(normal, normalize(lightDir)), 0.0);
     
     // I added later
-   float realRadius = abs(length(v_vertex.xyz - u_lightPosition));
-  
-  if (lambert > 0.0) {
-    float distance = length(lightDir);
+//    float realRadius = abs(length(v_vertex.xyz - u_lightPosition));
     
-    if (distance <= u_lightRadius) {
- //     if(distance <= realRadius) {
-  
-      float distancePercent = distance/u_lightRadius;
-      float damping_factor = 1.0 - pow(distancePercent, 3);
-      float attenuation = 1.0/(u_lightAttenuation.x +
-                               u_lightAttenuation.y * distance +
-                               u_lightAttenuation.z * distance * distance);
-      attenuation *= damping_factor;
-      
-      vec4 diffuseContribution = material1.diffuse * u_lightDiffuse * lambert;
-      diffuseContribution *= u_lightIntensity;
-      diffuseContribution *= attenuation;
-      
-      vec4 specularContribution = material1.specular * u_lightSpecular * pow(max(dot(R, V), 0.0), material1.shininess);
-      specularContribution *= u_lightIntensity;
-      specularContribution *= attenuation;
-      
-      diffuse += diffuseContribution;
-      specular += specularContribution;
-        //gl_FragColor = vec4(0.0, 1.0, 0, 1);
-    }
-    else
+    if (lambert > 0.0)
     {
-        //gl_FragColor = vec4(1, 0.0, 0.0, 1);
-    }
-  }
-    else
-    {
-        //gl_FragColor = vec4(1, 1, 1, 1);
+        float distance = length(lightDir);
+        
+//        if(distance <= realRadius) {
+        if (distance <= u_lightRadius)
+        {
+            
+            float distancePercent = distance/u_lightRadius;
+            float damping_factor = 1.0 - pow(distancePercent, 3);
+            float attenuation = 1.0/(u_lightAttenuation.x +
+                                     u_lightAttenuation.y * distance +
+                                     u_lightAttenuation.z * distance * distance);
+            attenuation *= damping_factor;
+            
+            vec4 diffuseContribution = material1.diffuse * u_lightDiffuse * lambert;
+            diffuseContribution *= u_lightIntensity;
+            diffuseContribution *= attenuation;
+            
+            vec4 specularContribution = material1.specular * u_lightSpecular * pow(max(dot(R, V), 0.0), material1.shininess);
+            specularContribution *= u_lightIntensity;
+            specularContribution *= attenuation;
+            
+            diffuse += diffuseContribution;
+            specular += specularContribution;
+        }
     }
     
     vec4 final_color = vec4(ambient + diffuse + specular);
     gl_FragColor = vec4(final_color.rgb, 1.0);
 }
+

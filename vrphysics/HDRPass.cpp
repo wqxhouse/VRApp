@@ -44,7 +44,6 @@ void HDRPass::setupCamera()
     camera->setProjectionMatrix(osg::Matrix::ortho2D(0, 1, 0, 1));
     camera->setViewMatrix(osg::Matrix::identity());
     _rttCamera = camera;
-    
 }
 
 void HDRPass::configRTTCamera()

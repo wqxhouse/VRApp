@@ -26,6 +26,8 @@
 #include "SSAOPass.h"
 #include "FinalPass.h"
 #include "HDRPass.h"
+
+#include "ImportanceSamplingPass.h"
 #include "AssetDB.h"
 #include "KeyboardHandler.h"
 #include "SkyDome.h"
@@ -81,6 +83,7 @@ private:
     void configHDRPass();
     void setupHUDForPasses();
     void configPasses();
+    void configImportanceSamplingPass();
 
     void freeHeap();
     
@@ -95,6 +98,8 @@ private:
     SSAOPass *_ssaoPass;
     FinalPass *_finalPass;
     HDRPass *_hdrPass;
+    
+    ImportanceSamplingPass *_impPass;
     
     osg::ref_ptr<osg::Group> _sceneRoot;
     osg::ref_ptr<osg::Group> _geometryGroup;

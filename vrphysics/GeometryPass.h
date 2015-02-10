@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <osg/Camera>
 #include <osg/StateSet>
+#include <osg/FrameBufferObject>
 #include "ScreenPass.h"
 #include "AssetDB.h"
 
@@ -55,9 +56,16 @@ public:
     // overload
     virtual int addOutTexture(bool isDepth);
     
+    inline osg::ref_ptr<osg::Texture2D> getSharedDepthStencilTexture()
+    {
+        return _sharedDepthStencilTex;
+    }
+    
 protected:
     virtual void configureStateSet();
 private:
+    void configSharedDepthStencilTexture();
+    
     float _nearPlaneDist;
     float _farPlaneDist;
     osg::ref_ptr<osg::Node> _worldObjects;
@@ -71,6 +79,8 @@ private:
    
     int _gbuffer_tex_shader;
     int _gbuffer_notex_shader;
+    
+    osg::ref_ptr<osg::Texture2D> _sharedDepthStencilTex;
 };
 
 #endif /* defined(__vrphysics__GeometryPass__) */

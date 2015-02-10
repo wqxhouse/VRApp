@@ -43,6 +43,16 @@ public:
         return _shadowCameras;
     }
     
+    inline float getRsmWidth()
+    {
+        return _rsmTexWidth;
+    }
+    
+    inline float getRsmHeight()
+    {
+        return _rsmTexHeight;
+    }
+    
 private:
     osg::ref_ptr<osg::TextureRectangle> createShadowTexture(int width, int height);
     osg::ref_ptr<osg::TextureRectangle> createFluxTexture(int width, int height);

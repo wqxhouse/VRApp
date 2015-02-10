@@ -63,3 +63,16 @@ int DirectionalLightGroup::addLight(const osg::Vec3 &pos, const osg::Vec3 &lookA
     
     return light->_id;
 }
+
+
+std::vector<int> DirectionalLightGroup::getAllLightIds()
+{
+    std::vector<int> res;
+    res.resize(_directionalLights.size());
+    for(int i = 0; i < _directionalLights.size(); i++)
+    {
+        res[i] = _directionalLights[i]->_id;
+    }
+    
+    return res;
+}

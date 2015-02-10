@@ -1,5 +1,5 @@
 #version 120
 
-void main(void)
+void main()
 {
 }

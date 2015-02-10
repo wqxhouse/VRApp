@@ -10,7 +10,7 @@
 #include "Utils.h"
 #include "LightCallback.h"
 
-SSAOPass::SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, osg::TextureRectangle *normalTex, osg::Texture2D *randomJitterTex)
+SSAOPass::SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, osg::TextureRectangle *normalTex, osg::Texture2D *randomJitterTex, osg::Texture2D *debug)
 : ScreenPass(mainCamera)
 {
     _ssao_shader_id = addShader("ssao.vert", "ssao.frag");
@@ -29,7 +29,8 @@ SSAOPass::SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, 
     float dummy;
     // TODO: fix nearPlane
     projMatrix.getFrustum(dummy, dummy, dummy, dummy, dummy, _farPlaneDist);
-    
+   
+    _debug = debug;
     configureStateSet();
 }
 
@@ -53,10 +54,13 @@ void SSAOPass::configureStateSet()
     _stateSet->addUniform(new osg::Uniform("u_positionTex", 2));
     _stateSet->addUniform(new osg::Uniform("u_screen_wh", osg::Vec2(_screenWidth, _screenHeight)));
     
+//    _stateSet->addUniform(new osg::Uniform("u_debug", 3));
+//    _stateSet->setTextureAttributeAndModes(3, _debug);
+//    
     _stateSet->setTextureAttribute(0, _randomTexture2D);
     _stateSet->setTextureAttribute(1, getInTexture(_in_normal_tex));
     _stateSet->setTextureAttribute(2, getInTexture(_in_position_tex));
-//    
+//
 //    float w = _mainCamera->getViewport()->width();
 //    float h = _mainCamera->getViewport()->height();
 //    osg::Vec2 texelSize = osg::Vec2(1.0f/w, 1.0f/h);

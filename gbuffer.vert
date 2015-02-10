@@ -15,6 +15,8 @@ uniform mat4 u_projMat;
 
 varying vec4 v_world;
 
+//varying vec4 ras;
+
 // built-in
 uniform mat4 osg_ViewMatrixInverse;
 
@@ -30,15 +32,17 @@ void main (void)
     
     // root of evil gl_ModelViewMatrix ...
     mat4 modelView = u_viewMat * getModelToWorldMatrix();
-  vec4 viewSpaceVertex = modelView * gl_Vertex;
-  v_position = viewSpaceVertex;
+    vec4 viewSpaceVertex = modelView * gl_Vertex;
+    v_position = viewSpaceVertex;
     
-//  v_normal = gl_NormalMatrix * gl_Normal;
+    //  v_normal = gl_NormalMatrix * gl_Normal;
     
     v_normal = vec3(normalize(modelView * vec4(gl_Normal.xyz, 0)));
-  v_depth = (-viewSpaceVertex.z - u_nearDistance) / (u_farDistance - u_nearDistance);
-  
+    v_depth = (-viewSpaceVertex.z - u_nearDistance) / (u_farDistance - u_nearDistance);
+    
     v_color = gl_Color;
     //gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    
     gl_Position = u_projMat * viewSpaceVertex;
+    //ras = gl_Position;
 }

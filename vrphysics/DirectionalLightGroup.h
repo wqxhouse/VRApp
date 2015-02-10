@@ -25,7 +25,11 @@ public:
     DirectionalLight *getDirectionalLight(int _id);
     void addMultipleLights(std::vector<DirectionalLight *> lights);
     
+    std::vector<int> getAllLightIds();
+    
 private:
+    
+    
     int _lightnum;
     osg::ref_ptr<osg::Group> _directionalLightGroup;
     std::vector<DirectionalLight *> _directionalLights;

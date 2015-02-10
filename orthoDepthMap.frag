@@ -3,10 +3,10 @@
 #version 120
 
 varying float v_depth;
-varying vec3 v_position;
-varying vec3 v_normal;
 varying vec4 v_color;
+
 varying vec3 v_worldPosition;
+varying vec3 v_worldNormal;
 
 uniform mat4 u_lightViewProjectionMatrix;
 uniform vec3 u_lightPos;
@@ -21,13 +21,26 @@ float encodeFlux(vec3 flux)
     return squeezedFlux;
 }
 
+vec3 decodeFlux( float h )
+{
+    vec3 r;
+    
+    r.z = fract( h / 64.0f / 64.0f );
+    r.y = fract( h / 64.0f );
+    r.x = fract( h );
+    
+    return r;
+}
+
 void main()
 {
     vec3 lightDir = normalize(u_lightPos - v_worldPosition);
-    vec3 normal = normalize(v_normal);
+    vec3 normal = normalize(v_worldNormal);
     
     vec4 flux = v_color * clamp(dot(normal, lightDir), 0.0, 1.0);
     float encodedFlux = encodeFlux(flux.xyz);
+    
+    vec3 decode = decodeFlux(encodedFlux);
     
     vec3 mainLightDirection = normal;
     

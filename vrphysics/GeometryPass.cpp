@@ -18,7 +18,7 @@ GeometryPass::GeometryPass(osg::Camera *mainCamera, AssetDB *assetDB)
     projMatrix.getFrustum(dummy, dummy, dummy, dummy, _nearPlaneDist, _farPlaneDist);
     
     _worldObjects = _assetDB->getGeomRoot();
- 
+    
     //ScreenPass::setShader("gbuffer.vert", "gbuffer.frag");
     _gbuffer_notex_shader = addShader("gbuffer.vert", "gbuffer.frag");
     _gbuffer_tex_shader = addShader("gbuffertex.vert", "gbuffertex.frag");
@@ -32,13 +32,18 @@ GeometryPass::GeometryPass(osg::Camera *mainCamera, AssetDB *assetDB)
     _rttCamera->attach(osg::Camera::COLOR_BUFFER0, getAlbedoOutTexture());
     _rttCamera->attach(osg::Camera::COLOR_BUFFER1, getNormalDepthOutTexture());
     _rttCamera->attach(osg::Camera::COLOR_BUFFER2, getPositionOutTexure());
-
+   
+    configSharedDepthStencilTexture();
+    _rttCamera->attach(osg::Camera::PACKED_DEPTH_STENCIL_BUFFER, _sharedDepthStencilTex);
+    
     osg::ref_ptr<osg::Group> worldObjectGeomPassNode(new osg::Group);
     worldObjectGeomPassNode->addChild(_worldObjects);
     auto worldObjectGeomPassSS = worldObjectGeomPassNode->getOrCreateStateSet();
     worldObjectGeomPassSS->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
     osg::ref_ptr<osg::Depth> depth(new osg::Depth);
     depth->setWriteMask(true);
+//    depth->setZNear(0.0);
+//    depth->setZFar(1.0);
     worldObjectGeomPassSS->setAttributeAndModes(depth, osg::StateAttribute::ON);
     
     _rttCamera->addChild(worldObjectGeomPassNode);
@@ -51,9 +56,18 @@ GeometryPass::~GeometryPass()
 {
 }
 
+void GeometryPass::configSharedDepthStencilTexture()
+{
+    _sharedDepthStencilTex = new osg::Texture2D;
+    _sharedDepthStencilTex->setTextureSize(_screenWidth, _screenHeight);
+    _sharedDepthStencilTex->setInternalFormat(GL_DEPTH32F_STENCIL8);
+    _sharedDepthStencilTex->setSourceFormat(GL_DEPTH_STENCIL);
+    _sharedDepthStencilTex->setSourceType(GL_FLOAT_32_UNSIGNED_INT_24_8_REV);
+}
+
 void GeometryPass::configureStateSet()
 {
-//    _stateSet->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+    //    _stateSet->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
     _stateSet->setAttributeAndModes(getShader(_gbuffer_notex_shader), osg::StateAttribute::ON );
     _stateSet->addUniform(new osg::Uniform("u_nearDistance", _nearPlaneDist));
     _stateSet->addUniform(new osg::Uniform("u_farDistance", _farPlaneDist));
@@ -86,9 +100,9 @@ void GeometryPass::configureStateSet()
             
             ss->setUpdateCallback(geomPassCallback);
             
-//            auto d = node->asTransform()->getChild(0)->asGeode()->getDrawable(0);
-//            auto g = d->asGeometry();
-//            auto arr = g->getTexCoordArrayList();
+            //            auto d = node->asTransform()->getChild(0)->asGeode()->getDrawable(0);
+            //            auto g = d->asGeometry();
+            //            auto arr = g->getTexCoordArrayList();
             ss->addUniform(new osg::Uniform("u_inv_viewMat", osg::Matrixf(_mainCamera->getInverseViewMatrix())));
             ss->addUniform(new osg::Uniform("u_viewMat", osg::Matrixf(_mainCamera->getViewMatrix())));
             ss->addUniform(new osg::Uniform("u_projMat", osg::Matrixf(_mainCamera->getProjectionMatrix())));
@@ -127,8 +141,8 @@ int GeometryPass::addOutTexture(bool isDepth)
         tex->setInternalFormat(GL_RGBA8);
     }
     
-    tex->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::LINEAR);
-    tex->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::LINEAR);
+    tex->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
+    tex->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
     tex->setWrap(osg::TextureRectangle::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
     tex->setWrap(osg::TextureRectangle::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
     

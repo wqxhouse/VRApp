@@ -15,10 +15,11 @@
 #include "PointLight.h"
 #include "LightGroup.h"
 
+class LightCallback;
 class LightingPass: public ScreenPass
 {
 public:
-    LightingPass(osg::Camera *mainCamera, osg::TextureRectangle *position_tex, osg::TextureRectangle *diffuse_tex, osg::TextureRectangle *normal_tex, LightGroup *lightGroup);
+    LightingPass(osg::Camera *mainCamera, osg::TextureRectangle *position_tex, osg::TextureRectangle *diffuse_tex, osg::TextureRectangle *normal_tex, osg::Texture2D *sharedGeomPassDepthStencilTexture, LightGroup *lightGroup);
     virtual ~LightingPass();
     
     osg::ref_ptr<osg::TextureRectangle> getLightingOutTexture()
@@ -33,6 +34,10 @@ protected:
     virtual void configureStateSet();
     void configRTTCamera();
 private:
+    // void configDepthFillQuad();
+    void configStencilPassStateSet();
+    void configPointLightPassStateSet();
+    
     float _nearPlaneDist;
     float _farPlaneDist;
     
@@ -46,6 +51,11 @@ private:
     osg::ref_ptr<osg::Group> _lightPassGroupNode;
     
     int _light_shader_id;
+    int _depth_fill_shader_id;
+    int _stencil_shader_id;
+    
+    osg::ref_ptr<osg::Texture2D> _sharedGeomPassDepthStencilTex;
+    osg::ref_ptr<osg::Group> _depthFillQuad;
 };
 
 #endif /* defined(__vrphysics__LightingPass__) */

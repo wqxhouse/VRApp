@@ -17,7 +17,7 @@
 class SSAOPass: public ScreenPass
 {
 public:
-    SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, osg::TextureRectangle *normalTex, osg::Texture2D *randomJitterTex);
+    SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, osg::TextureRectangle *normalTex, osg::Texture2D *randomJitterTex, osg::Texture2D *debug);
     virtual ~SSAOPass();
     
     inline osg::TextureRectangle *getSSAOOutTexture()
@@ -70,6 +70,8 @@ private:
     float _farPlaneDist;
     osg::ref_ptr<osg::Group> _screenQuad;
     osg::ref_ptr<osg::Texture2D> _randomTexture2D;
+    
+    osg::ref_ptr<osg::Texture2D> _debug;
 };
 
 class SSAOStateCallback : public osg::StateSet::Callback

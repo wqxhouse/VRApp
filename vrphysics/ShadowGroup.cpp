@@ -29,8 +29,8 @@ ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms)
     // TODO, currently not working, since MRT only support a single resolution
     // Therefore, rsm and shadow maps are using the same resolution,
     // later, they needs to be separated for performance and quality.
-    _rsmTexWidth = 512;
-    _rsmTexHeight = 512;
+    _rsmTexWidth = _depthTexWidth;
+    _rsmTexHeight = _depthTexHeight;
     
     _shadowCameras = new osg::Group;
 }
@@ -121,8 +121,8 @@ void ShadowGroup::addBasicShadowCam(osg::TextureRectangle *outDepthTex, osg::Tex
         cam->attach(osg::Camera::COLOR_BUFFER2, outPosTex);
     }
     
-//    cam->setClearColor(osg::Vec4(1, 1, 1, 1));
-    cam->setClearColor(osg::Vec4(0.5, 0, 1, 1));
+    cam->setClearColor(osg::Vec4(0, 0, 0, 1));
+//    cam->setClearColor(osg::Vec4(0.5, 0, 1, 1));
     cam->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     cam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
     cam->setRenderOrder(osg::Camera::PRE_RENDER);

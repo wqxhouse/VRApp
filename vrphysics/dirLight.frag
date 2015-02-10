@@ -60,7 +60,7 @@ float sampleShadowMap(vec3 viewVertex)
     float sampleDepth = texture2DRect(u_depthMapTex, rectCoords).x;
     
     float linearZ = (-lightViewSpaceVec.z - u_lightNearDistance) / (u_lightFarDistance - u_lightNearDistance);
-   
+    
     // gl_FragColor = vec4(vec3(sampleDepth), 1);
     
     if (sampleDepth + 0.001 < linearZ)
@@ -89,7 +89,7 @@ void main(void)
     float lambert = max(dot(normal, normalize(lightDir)), 0.0);
     
     float linearDepth = normalSample.a;
-   
+    
     // here check linear depth so that the background color won't be counted as a valid normal
     if (lambert > 0.0 && linearDepth != 1.0)
     {

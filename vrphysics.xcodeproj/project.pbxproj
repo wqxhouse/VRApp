@@ -12,12 +12,19 @@
 		381E9AA11A2DE4380062FAFF /* gbuffertex.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38EBEFEC1A2DD88000A91DD9 /* gbuffertex.vert */; };
 		382A98981A5C8C35004AA60F /* SpotLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 382A98961A5C8C35004AA60F /* SpotLight.cpp */; };
 		3832F9571A16C96C00E8E127 /* LightGroupAnimationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3832F9551A16C96C00E8E127 /* LightGroupAnimationCallback.cpp */; };
+		3834DAD91A8438410030CF31 /* poissow.raw in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3834DAD81A8438290030CF31 /* poissow.raw */; };
 		383BB5E41A2817F0004DCC82 /* DirectionalLightCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 383BB5E21A2817F0004DCC82 /* DirectionalLightCallback.cpp */; };
 		383BB5E61A28970B004DCC82 /* castle.3DS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 383BB5E51A289704004DCC82 /* castle.3DS */; };
 		383BB61D1A295EC9004DCC82 /* tablewood.jpg in CopyFiles */ = {isa = PBXBuildFile; fileRef = 383BB61C1A295EB5004DCC82 /* tablewood.jpg */; };
+		384294451A857295005A85B5 /* IndirectLightingPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 384294431A857295005A85B5 /* IndirectLightingPass.cpp */; };
 		384385AF1A169DF800A5EA27 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 384385A91A169DF800A5EA27 /* PointLight.cpp */; };
 		3846AF9D1A15881A004A871F /* finalPass.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3846AF9B1A158008004A871F /* finalPass.vert */; };
 		3846AF9E1A15881A004A871F /* finalPass.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3846AF9C1A15801C004A871F /* finalPass.frag */; };
+		38482D501A82D267009ABDD4 /* importanceSampling.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38482D4E1A82D247009ABDD4 /* importanceSampling.vert */; };
+		38482D511A82D267009ABDD4 /* importanceSampling.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38482D4F1A82D258009ABDD4 /* importanceSampling.frag */; };
+		38482D541A82D51D009ABDD4 /* fluxMipmap.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38482D521A82D389009ABDD4 /* fluxMipmap.vert */; };
+		38482D551A82D51D009ABDD4 /* fluxMipmap.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38482D531A82D393009ABDD4 /* fluxMipmap.frag */; };
+		385DAF6A1A8563DF00476CA3 /* VPLGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 385DAF681A8563DF00476CA3 /* VPLGroup.cpp */; };
 		386B4C1C1A748DA3009FAB89 /* ImportanceSamplingPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 386B4C1A1A748DA3009FAB89 /* ImportanceSamplingPass.cpp */; };
 		3874AB6A1A3702CC00FDB712 /* KeyboardHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3874AB681A3702CC00FDB712 /* KeyboardHandler.cpp */; };
 		3874AB6D1A37040600FDB712 /* SceneEventCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3874AB6B1A37040600FDB712 /* SceneEventCallback.cpp */; };
@@ -27,12 +34,12 @@
 		3881FAC21A0CA4DC000AB452 /* mainScene.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABA1A0CA4AB000AB452 /* mainScene.vert */; };
 		3881FAC31A0CA4DC000AB452 /* pointLightPass.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABB1A0CA4AB000AB452 /* pointLightPass.frag */; };
 		3881FAC41A0CA4DC000AB452 /* pointLightPass.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABC1A0CA4AB000AB452 /* pointLightPass.vert */; };
-		3881FAC51A0CA4DC000AB452 /* pointLightStencil.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABD1A0CA4AB000AB452 /* pointLightStencil.frag */; };
-		3881FAC61A0CA4DC000AB452 /* pointLightStencil.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABE1A0CA4AB000AB452 /* pointLightStencil.vert */; };
 		3881FAC71A0CA4DC000AB452 /* ssao.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FABF1A0CA4AB000AB452 /* ssao.frag */; };
 		3881FAC81A0CA4DC000AB452 /* ssao.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3881FAC01A0CA4AB000AB452 /* ssao.vert */; };
 		3881FAC91A0CA4DC000AB452 /* gbuffer.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38D648B51A0C8B720088AF3C /* gbuffer.vert */; };
 		3881FACA1A0CA4DC000AB452 /* gbuffer.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38D648B41A0C8B720088AF3C /* gbuffer.frag */; };
+		38892CDD1A8A0CCD00E03DA4 /* pointLightStencil.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38892CDB1A8A0CB000E03DA4 /* pointLightStencil.vert */; };
+		38892CDE1A8A0CCD00E03DA4 /* pointLightStencil.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38892CDC1A8A0CBC00E03DA4 /* pointLightStencil.frag */; };
 		388D901B1A135A31006AA441 /* GeometryPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 388D900E1A135A31006AA441 /* GeometryPass.cpp */; };
 		388D901C1A135A31006AA441 /* LightingPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 388D90101A135A31006AA441 /* LightingPass.cpp */; };
 		388D901D1A135A31006AA441 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 388D90121A135A31006AA441 /* main.cpp */; };
@@ -102,6 +109,11 @@
 		38C4BC5F19FE2D49005430B2 /* libosgWidget.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC2C19FE2D49005430B2 /* libosgWidget.dylib */; };
 		38C4BC6219FE3F6D005430B2 /* osgdb_deprecated_osg.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC6019FE3F6D005430B2 /* osgdb_deprecated_osg.so */; };
 		38C4BC6319FE3F6D005430B2 /* osgdb_osg.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C4BC6119FE3F6D005430B2 /* osgdb_osg.so */; };
+		38C84B101A8452C6002462BB /* poissow.dds in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38C84B0F1A8452BD002462BB /* poissow.dds */; };
+		38C84B121A845420002462BB /* poissow.tga in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38C84B111A845419002462BB /* poissow.tga */; };
+		38C84B161A848E28002462BB /* indirectLighting.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38C84B131A848748002462BB /* indirectLighting.vert */; };
+		38C84B171A848E28002462BB /* indirectLighting.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38C84B141A848758002462BB /* indirectLighting.frag */; };
+		38C84B181A848E28002462BB /* lightSphere.obj in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38C84B151A848E1E002462BB /* lightSphere.obj */; };
 		38D4CA181A318D0500DE7A54 /* concrete.jpg in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38D648B61A0C8C890088AF3C /* concrete.jpg */; };
 		38D4CA191A318D0500DE7A54 /* random.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38D648B71A0C8C890088AF3C /* random.png */; };
 		38DFB4681A15791C00F5AA6D /* FinalPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38DFB4661A15791C00F5AA6D /* FinalPass.cpp */; };
@@ -133,6 +145,18 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				38892CDD1A8A0CCD00E03DA4 /* pointLightStencil.vert in CopyFiles */,
+				38892CDE1A8A0CCD00E03DA4 /* pointLightStencil.frag in CopyFiles */,
+				38C84B161A848E28002462BB /* indirectLighting.vert in CopyFiles */,
+				38C84B171A848E28002462BB /* indirectLighting.frag in CopyFiles */,
+				38C84B181A848E28002462BB /* lightSphere.obj in CopyFiles */,
+				38C84B121A845420002462BB /* poissow.tga in CopyFiles */,
+				38C84B101A8452C6002462BB /* poissow.dds in CopyFiles */,
+				3834DAD91A8438410030CF31 /* poissow.raw in CopyFiles */,
+				38482D541A82D51D009ABDD4 /* fluxMipmap.vert in CopyFiles */,
+				38482D551A82D51D009ABDD4 /* fluxMipmap.frag in CopyFiles */,
+				38482D501A82D267009ABDD4 /* importanceSampling.vert in CopyFiles */,
+				38482D511A82D267009ABDD4 /* importanceSampling.frag in CopyFiles */,
 				38B3CA7A1A6CD214000335F0 /* orthoDepthMap.vert in CopyFiles */,
 				38B3CA7B1A6CD214000335F0 /* orthoDepthMap.frag in CopyFiles */,
 				38E0EED21A3B53E0004DD045 /* up.png in CopyFiles */,
@@ -160,8 +184,6 @@
 				3881FAC21A0CA4DC000AB452 /* mainScene.vert in CopyFiles */,
 				3881FAC31A0CA4DC000AB452 /* pointLightPass.frag in CopyFiles */,
 				3881FAC41A0CA4DC000AB452 /* pointLightPass.vert in CopyFiles */,
-				3881FAC51A0CA4DC000AB452 /* pointLightStencil.frag in CopyFiles */,
-				3881FAC61A0CA4DC000AB452 /* pointLightStencil.vert in CopyFiles */,
 				3881FAC71A0CA4DC000AB452 /* ssao.frag in CopyFiles */,
 				3881FAC81A0CA4DC000AB452 /* ssao.vert in CopyFiles */,
 				3881FAC91A0CA4DC000AB452 /* gbuffer.vert in CopyFiles */,
@@ -178,14 +200,24 @@
 		382A98971A5C8C35004AA60F /* SpotLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotLight.h; sourceTree = "<group>"; };
 		3832F9551A16C96C00E8E127 /* LightGroupAnimationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LightGroupAnimationCallback.cpp; sourceTree = "<group>"; };
 		3832F9561A16C96C00E8E127 /* LightGroupAnimationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightGroupAnimationCallback.h; sourceTree = "<group>"; };
+		3834DAD81A8438290030CF31 /* poissow.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = poissow.raw; sourceTree = "<group>"; };
 		383BB5E21A2817F0004DCC82 /* DirectionalLightCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectionalLightCallback.cpp; sourceTree = "<group>"; };
 		383BB5E31A2817F0004DCC82 /* DirectionalLightCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectionalLightCallback.h; sourceTree = "<group>"; };
 		383BB5E51A289704004DCC82 /* castle.3DS */ = {isa = PBXFileReference; lastKnownFileType = file; name = castle.3DS; path = vrphysics/data/castle.3DS; sourceTree = "<group>"; };
 		383BB61C1A295EB5004DCC82 /* tablewood.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tablewood.jpg; sourceTree = "<group>"; };
 		383BB61E1A295F3E004DCC82 /* gbuffertex.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gbuffertex.frag; sourceTree = "<group>"; };
+		384294431A857295005A85B5 /* IndirectLightingPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndirectLightingPass.cpp; sourceTree = "<group>"; };
+		384294441A857295005A85B5 /* IndirectLightingPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndirectLightingPass.h; sourceTree = "<group>"; };
+		384294471A880F84005A85B5 /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Light.cpp; path = "../OpenSceneGraph-3.2.1/src/osg/Light.cpp"; sourceTree = "<group>"; };
 		384385A91A169DF800A5EA27 /* PointLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLight.cpp; sourceTree = "<group>"; };
 		3846AF9B1A158008004A871F /* finalPass.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = finalPass.vert; sourceTree = "<group>"; };
 		3846AF9C1A15801C004A871F /* finalPass.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = finalPass.frag; sourceTree = "<group>"; };
+		38482D4E1A82D247009ABDD4 /* importanceSampling.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = importanceSampling.vert; sourceTree = "<group>"; };
+		38482D4F1A82D258009ABDD4 /* importanceSampling.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = importanceSampling.frag; sourceTree = "<group>"; };
+		38482D521A82D389009ABDD4 /* fluxMipmap.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fluxMipmap.vert; sourceTree = "<group>"; };
+		38482D531A82D393009ABDD4 /* fluxMipmap.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fluxMipmap.frag; sourceTree = "<group>"; };
+		385DAF681A8563DF00476CA3 /* VPLGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VPLGroup.cpp; sourceTree = "<group>"; };
+		385DAF691A8563DF00476CA3 /* VPLGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VPLGroup.h; sourceTree = "<group>"; };
 		386B4C1A1A748DA3009FAB89 /* ImportanceSamplingPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImportanceSamplingPass.cpp; sourceTree = "<group>"; };
 		386B4C1B1A748DA3009FAB89 /* ImportanceSamplingPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportanceSamplingPass.h; sourceTree = "<group>"; };
 		3874AB681A3702CC00FDB712 /* KeyboardHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyboardHandler.cpp; sourceTree = "<group>"; };
@@ -200,13 +232,14 @@
 		3881FABA1A0CA4AB000AB452 /* mainScene.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = mainScene.vert; sourceTree = "<group>"; };
 		3881FABB1A0CA4AB000AB452 /* pointLightPass.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pointLightPass.frag; sourceTree = "<group>"; };
 		3881FABC1A0CA4AB000AB452 /* pointLightPass.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pointLightPass.vert; sourceTree = "<group>"; };
-		3881FABD1A0CA4AB000AB452 /* pointLightStencil.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pointLightStencil.frag; sourceTree = "<group>"; };
-		3881FABE1A0CA4AB000AB452 /* pointLightStencil.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pointLightStencil.vert; sourceTree = "<group>"; };
 		3881FABF1A0CA4AB000AB452 /* ssao.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ssao.frag; sourceTree = "<group>"; };
 		3881FAC01A0CA4AB000AB452 /* ssao.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ssao.vert; sourceTree = "<group>"; };
 		3887A1901A337607005F698E /* ISmile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISmile.h; sourceTree = "<group>"; };
 		3887A1921A35827A005F698E /* fxaa.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fxaa.vert; sourceTree = "<group>"; };
 		3887A1931A358282005F698E /* fxaa.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fxaa.frag; sourceTree = "<group>"; };
+		38892CD91A89790E00E03DA4 /* StateSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StateSet.cpp; path = "../OpenSceneGraph-3.2.1/src/osg/StateSet.cpp"; sourceTree = "<group>"; };
+		38892CDB1A8A0CB000E03DA4 /* pointLightStencil.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pointLightStencil.vert; sourceTree = "<group>"; };
+		38892CDC1A8A0CBC00E03DA4 /* pointLightStencil.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pointLightStencil.frag; sourceTree = "<group>"; };
 		388D900D1A135855006AA441 /* PointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointLight.h; sourceTree = "<group>"; };
 		388D900E1A135A31006AA441 /* GeometryPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeometryPass.cpp; sourceTree = "<group>"; };
 		388D900F1A135A31006AA441 /* GeometryPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeometryPass.h; sourceTree = "<group>"; };
@@ -290,6 +323,11 @@
 		38C4BC2C19FE2D49005430B2 /* libosgWidget.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libosgWidget.dylib; path = "../OpenSceneGraph-3.2.1/releaselib/libosgWidget.dylib"; sourceTree = "<group>"; };
 		38C4BC6019FE3F6D005430B2 /* osgdb_deprecated_osg.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.bundle"; name = osgdb_deprecated_osg.so; path = "../OpenSceneGraph-3.2.1/releaselib/osgPlugins-3.2.1/osgdb_deprecated_osg.so"; sourceTree = "<group>"; };
 		38C4BC6119FE3F6D005430B2 /* osgdb_osg.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.bundle"; name = osgdb_osg.so; path = "../OpenSceneGraph-3.2.1/releaselib/osgPlugins-3.2.1/osgdb_osg.so"; sourceTree = "<group>"; };
+		38C84B0F1A8452BD002462BB /* poissow.dds */ = {isa = PBXFileReference; lastKnownFileType = file; path = poissow.dds; sourceTree = "<group>"; };
+		38C84B111A845419002462BB /* poissow.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = poissow.tga; sourceTree = "<group>"; };
+		38C84B131A848748002462BB /* indirectLighting.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = indirectLighting.vert; sourceTree = "<group>"; };
+		38C84B141A848758002462BB /* indirectLighting.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = indirectLighting.frag; sourceTree = "<group>"; };
+		38C84B151A848E1E002462BB /* lightSphere.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lightSphere.obj; sourceTree = "<group>"; };
 		38D648B41A0C8B720088AF3C /* gbuffer.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gbuffer.frag; sourceTree = "<group>"; };
 		38D648B51A0C8B720088AF3C /* gbuffer.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gbuffer.vert; sourceTree = "<group>"; };
 		38D648B61A0C8C890088AF3C /* concrete.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = concrete.jpg; sourceTree = "<group>"; };
@@ -398,6 +436,26 @@
 			name = SpotLight;
 			sourceTree = "<group>";
 		};
+		384294461A880F4E005A85B5 /* debug */ = {
+			isa = PBXGroup;
+			children = (
+				38892CD91A89790E00E03DA4 /* StateSet.cpp */,
+				384294471A880F84005A85B5 /* Light.cpp */,
+			);
+			name = debug;
+			sourceTree = "<group>";
+		};
+		385DAF671A8563AC00476CA3 /* GI */ = {
+			isa = PBXGroup;
+			children = (
+				385DAF681A8563DF00476CA3 /* VPLGroup.cpp */,
+				385DAF691A8563DF00476CA3 /* VPLGroup.h */,
+				384294431A857295005A85B5 /* IndirectLightingPass.cpp */,
+				384294441A857295005A85B5 /* IndirectLightingPass.h */,
+			);
+			name = GI;
+			sourceTree = "<group>";
+		};
 		38764D5B1A5DF72B00B827E8 /* Shadow */ = {
 			isa = PBXGroup;
 			children = (
@@ -454,6 +512,7 @@
 		38C4BBE719FE2CBE005430B2 = {
 			isa = PBXGroup;
 			children = (
+				384294461A880F4E005A85B5 /* debug */,
 				38D648B31A0C8B4C0088AF3C /* shaders */,
 				38D648B01A0C7C4D0088AF3C /* data */,
 				38CC31ED19FF0E810076EE97 /* libs */,
@@ -473,6 +532,7 @@
 		38C4BBF219FE2CBE005430B2 /* vrphysics */ = {
 			isa = PBXGroup;
 			children = (
+				385DAF671A8563AC00476CA3 /* GI */,
 				38764D5B1A5DF72B00B827E8 /* Shadow */,
 				38E0EECA1A3B518C004DD045 /* SphereSegment.cpp */,
 				38E0EEC91A3B517F004DD045 /* SphereSegment.h */,
@@ -577,6 +637,10 @@
 		38D648B01A0C7C4D0088AF3C /* data */ = {
 			isa = PBXGroup;
 			children = (
+				38C84B151A848E1E002462BB /* lightSphere.obj */,
+				38C84B111A845419002462BB /* poissow.tga */,
+				38C84B0F1A8452BD002462BB /* poissow.dds */,
+				3834DAD81A8438290030CF31 /* poissow.raw */,
 				38E0EECC1A3B52E4004DD045 /* up.png */,
 				38E0EECD1A3B52E4004DD045 /* down.png */,
 				38E0EECE1A3B52E4004DD045 /* north.png */,
@@ -601,8 +665,8 @@
 				3881FABA1A0CA4AB000AB452 /* mainScene.vert */,
 				3881FABB1A0CA4AB000AB452 /* pointLightPass.frag */,
 				3881FABC1A0CA4AB000AB452 /* pointLightPass.vert */,
-				3881FABD1A0CA4AB000AB452 /* pointLightStencil.frag */,
-				3881FABE1A0CA4AB000AB452 /* pointLightStencil.vert */,
+				38892CDB1A8A0CB000E03DA4 /* pointLightStencil.vert */,
+				38892CDC1A8A0CBC00E03DA4 /* pointLightStencil.frag */,
 				38D648B41A0C8B720088AF3C /* gbuffer.frag */,
 				38D648B51A0C8B720088AF3C /* gbuffer.vert */,
 				383BB61E1A295F3E004DCC82 /* gbuffertex.frag */,
@@ -617,6 +681,12 @@
 				38E0EEBC1A3AB4C0004DD045 /* toneMapping.frag */,
 				38B3CA5B1A6AE375000335F0 /* orthoDepthMap.vert */,
 				38B3CA5C1A6AE380000335F0 /* orthoDepthMap.frag */,
+				38482D4E1A82D247009ABDD4 /* importanceSampling.vert */,
+				38482D4F1A82D258009ABDD4 /* importanceSampling.frag */,
+				38482D521A82D389009ABDD4 /* fluxMipmap.vert */,
+				38482D531A82D393009ABDD4 /* fluxMipmap.frag */,
+				38C84B131A848748002462BB /* indirectLighting.vert */,
+				38C84B141A848758002462BB /* indirectLighting.frag */,
 			);
 			name = shaders;
 			sourceTree = "<group>";
@@ -683,7 +753,9 @@
 				380C4ED01A27E71A00301094 /* DirectionalLight.cpp in Sources */,
 				388D90201A135A31006AA441 /* Shared.cpp in Sources */,
 				384385AF1A169DF800A5EA27 /* PointLight.cpp in Sources */,
+				385DAF6A1A8563DF00476CA3 /* VPLGroup.cpp in Sources */,
 				388D901F1A135A31006AA441 /* ScreenPass.cpp in Sources */,
+				384294451A857295005A85B5 /* IndirectLightingPass.cpp in Sources */,
 				386B4C1C1A748DA3009FAB89 /* ImportanceSamplingPass.cpp in Sources */,
 				3874AB6A1A3702CC00FDB712 /* KeyboardHandler.cpp in Sources */,
 				38DFB4681A15791C00F5AA6D /* FinalPass.cpp in Sources */,

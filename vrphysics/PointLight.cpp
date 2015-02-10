@@ -7,6 +7,7 @@
 //
 
 #include "PointLight.h"
+#include <osgDB/ReadFile>
 
 PointLight::PointLight() :
 intensity(1.0f)
@@ -21,6 +22,9 @@ intensity(1.0f)
     _light_max_effective_radius = 8;
     _light_effective_radius = intensity * _light_max_effective_radius;
     _id = _highest_id++;
+    
+    genLightSphereTransform(_light_effective_radius);
 }
 
 int PointLight::_highest_id;
+osg::ref_ptr<osg::Geode> PointLight::_s_lightSphere = osgDB::readNodeFile("lightSphere.obj")->asGroup()->getChild(0)->asGeode();
