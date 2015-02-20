@@ -121,7 +121,7 @@ void LightingPass::configStencilPassStateSet()
     std::vector<PointLight *> &pointLights = _lightGroup->getPointLightsArrayReference();
     for (std::vector<PointLight *>::iterator it = pointLights.begin(); it != pointLights.end(); it++)
     {
-        osg::ref_ptr<osg::MatrixTransform> mt = (*it)->_lightSphereTransform;
+        osg::ref_ptr<osg::MatrixTransform> mt = (*it)->getLightSphereTransformNode();
         stencilGroup->addChild(mt);
     }
     
@@ -187,10 +187,10 @@ void LightingPass::configPointLightPassStateSet()
     std::vector<PointLight *> &pointLights = _lightGroup->getPointLightsArrayReference();
     for (std::vector<PointLight *>::iterator it = pointLights.begin(); it != pointLights.end(); it++)
     {
-        float radius = (*it)->_light_effective_radius;
+        // float radius = (*it)->_light_effective_radius;
         osg::Vec3f lightPosInViewSpace = (*it)->getPosition() * mainCameraModelViewMatrix;
         
-        osg::ref_ptr<osg::MatrixTransform> lightModelTransform = (*it)->_lightSphereTransform;
+        osg::ref_ptr<osg::MatrixTransform> lightModelTransform = (*it)->getLightSphereTransformNode();
         
         // create addition layer so that the state changes won't affect the prev stencil pass
         osg::ref_ptr<osg::Group> lightStateNode(new osg::Group);
@@ -203,9 +203,9 @@ void LightingPass::configPointLightPassStateSet()
         ss->addUniform(new osg::Uniform("u_lightAmbient", (*it)->getAmbient()));
         ss->addUniform(new osg::Uniform("u_lightDiffuse", (*it)->getDiffuse()));
         ss->addUniform(new osg::Uniform("u_lightSpecular", (*it)->getSpecular()));
-        ss->addUniform(new osg::Uniform("u_lightIntensity", (*it)->intensity));
+        ss->addUniform(new osg::Uniform("u_lightIntensity", (*it)->getIntensity()));
         ss->addUniform(new osg::Uniform("u_lightAttenuation", (*it)->getAttenuation()));
-        ss->addUniform(new osg::Uniform("u_lightRadius", radius));
+        // ss->addUniform(new osg::Uniform("u_lightRadius", radius));
         
         ss->addUniform(new osg::Uniform("u_projMatrix", osg::Matrixf(_mainCamera->getProjectionMatrix())));
         ss->addUniform(new osg::Uniform("u_viewMatrix", osg::Matrixf(_mainCamera->getViewMatrix())));

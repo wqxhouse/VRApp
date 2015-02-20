@@ -22,26 +22,23 @@ LightGroup::~LightGroup()
     }
 }
 
-int LightGroup::addLight(const osg::Vec3 &position, const osg::Vec3 &color, const osg::Vec3 &orbitAxis, const osg::Vec3 &attenuation, float effectiveRadius)
+int LightGroup::addLight(const osg::Vec3 &position, const osg::Vec3 &color, const osg::Vec3 &orbitAxis, const osg::Vec3 &attenuation, float intensity)
 {
     PointLight *light = new PointLight();
     light->setPosition(position);
     light->setDiffuse(color.x(), color.y(), color.z());
     light->setSpecular(color.x(), color.y(), color.z());
     light->setAttenuation(attenuation.x(), attenuation.y(), attenuation.z()); // set constant, linear, and exponential attenuation
-    light->intensity = 0.8f;
-    light->genGeomTransform(0.25);
-    _geomTransformLightGroup->addChild(light->_lightGeomTransform);
-//    light->orbitAxis = osg::Vec3(0, 0, 1);
-    light->orbitAxis = orbitAxis;
+    light->setIntensity(intensity);
     
-    light->setMaxEffectiveRadius(effectiveRadius);
+    _geomTransformLightGroup->addChild(light->getGeomTransformNode());
+    light->setAnimOrbitAxis(orbitAxis);
     
     _pointLights.push_back(light);
-    _pointLightsMap.insert(std::make_pair(light->_id, light));
+    _pointLightsMap.insert(std::make_pair(light->getId(), light));
     _lightNum++;
     
-    return light->_id;
+    return light->getId();
 }
 
 void LightGroup::addMultipleLights(std::vector<PointLight *> lights)
@@ -49,16 +46,18 @@ void LightGroup::addMultipleLights(std::vector<PointLight *> lights)
     _lightNum += lights.size();
     for(unsigned long i = 0; i < lights.size(); i++)
     {
-        _geomTransformLightGroup->addChild(lights[i]->_lightGeomTransform);
+        _geomTransformLightGroup->addChild(lights[i]->getGeomTransformNode());
         _pointLights.push_back(lights[i]);
-        _pointLightsMap.insert(std::make_pair(lights[i]->_id, lights[i]));
+        _pointLightsMap.insert(std::make_pair(lights[i]->getId(), lights[i]));
     }
 }
 
-void LightGroup::addRandomLightWithBoundingSphere(const osg::BoundingSphere &boundSphere)
+void LightGroup::addRandomAnimLightWithBoundingSphere(const osg::BoundingSphere &boundSphere)
 {
     // create a random light that is positioned on bounding sphere of scene (skRadius)
     PointLight *l = new PointLight;
+    
+    l->setAnimated(true);
     osg::Vec3f posOnSphere(randomf(-1.0f, 1.0f), randomf(-1.0f, 1.0f), randomf(-1.0f, 1.0f));
     posOnSphere.normalize();
     
@@ -66,7 +65,7 @@ void LightGroup::addRandomLightWithBoundingSphere(const osg::BoundingSphere &bou
     
     osg::Vec3f orbitAxis(randomf(0.0f, 1.0f), randomf(0.0f, 1.0f), randomf(0.0f, 1.0f));
     orbitAxis.normalize();
-    l->orbitAxis = orbitAxis;
+    l->setAnimOrbitAxis(orbitAxis);
    
     if(boundSphere.valid())
     {
@@ -90,22 +89,20 @@ void LightGroup::addRandomLightWithBoundingSphere(const osg::BoundingSphere &bou
     l->setDiffuse(col.x(), col.y(), col.z());
     l->setSpecular(col.x(), col.y(), col.z());
     l->setAttenuation(0.3f, 0.3f, 0.6f); // set constant, linear, and exponential attenuation
-    l->intensity = 0.8f;
-    l->genGeomTransform(0.002);
+    l->setIntensity(0.8f);
     
-    _geomTransformLightGroup->addChild(l->_lightGeomTransform);
+    _geomTransformLightGroup->addChild(l->getLightSphereTransformNode());
     _pointLights.push_back(l);
-    _pointLightsMap.insert(std::make_pair(l->_id, l));
+    _pointLightsMap.insert(std::make_pair(l->getId(), l));
     _lightNum++;
 }
 
-void LightGroup::addRandomLight()
+void LightGroup::addRandomAnimLight()
 {
     osg::BoundingSphere sp;
     sp.radius() = -1.0f; // invalid bsphere
-    addRandomLightWithBoundingSphere(sp);
+    addRandomAnimLightWithBoundingSphere(sp);
 }
-
 
 osg::ref_ptr<osg::Group> LightGroup::getGeomTransformLightGroup()
 {

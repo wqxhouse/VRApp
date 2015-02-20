@@ -18,8 +18,6 @@ uniform vec2 u_screen_wh;
 varying vec3 v_vertex;
 varying vec2 v_texCoord;
 
-uniform sampler2D u_debug;
-
 //vec3 reconstruct_position(float depth, vec2 tex_coord)
 //{
 //  vec4 pos = vec4( (tex_coord.x-0.5)*2, (tex_coord.y-0.5)*2, 1, 1 );

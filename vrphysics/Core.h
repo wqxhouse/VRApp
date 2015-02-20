@@ -26,12 +26,14 @@
 #include "SSAOPass.h"
 #include "FinalPass.h"
 #include "HDRPass.h"
+#include "IndirectLightingPass.h"
 
 #include "ImportanceSamplingPass.h"
 #include "AssetDB.h"
 #include "KeyboardHandler.h"
 #include "SkyDome.h"
 
+class LightTrackBallManipulator;
 class Core
 {
 public:
@@ -84,6 +86,7 @@ private:
     void setupHUDForPasses();
     void configPasses();
     void configImportanceSamplingPass();
+    void configIndirectLightPass();
 
     void freeHeap();
     
@@ -98,6 +101,8 @@ private:
     SSAOPass *_ssaoPass;
     FinalPass *_finalPass;
     HDRPass *_hdrPass;
+    IndirectLightingPass *_indLPass;
+    
     
     ImportanceSamplingPass *_impPass;
     
@@ -114,6 +119,8 @@ private:
     float _winHeight;
     
     osg::ref_ptr<osgViewer::Viewer> _viewer;
+    
+    osg::ref_ptr<LightTrackBallManipulator> _lightTrackBallManipulator;
 };
 
 #endif /* defined(__vrphysics__Core__) */

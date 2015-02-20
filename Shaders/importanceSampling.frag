@@ -12,7 +12,7 @@ uniform int u_splatSize;
 varying vec2 v_texcoord;
 
 // bias to adjust sampling to RSM size
-float globalBias = 0;
+float globalBias = log( 512.0f / 512.0f ) / log( 2.0f );
 
 // this moves 1 sample tap
 vec3 adjustSample( vec3 sampleLocation, vec2 textureOffset, vec2 textureSize, float bias)
@@ -134,4 +134,7 @@ void main()
 //    vec2 texcoord = vec2(v_texcoord.s / u_mipMapSize.x, v_texcoord.t / u_mipMapSize.y);
 //    vec2 texcoord = vec2(gl_FragCoord.x / u_mipMapSize.x, gl_FragCoord.y / u_mipMapSize.y);
 //    gl_FragColor = texture2D(u_mipMapFlux, texcoord);
+//    vec4 vv = texture2D(u_poissowTex, vec2(gl_FragCoord.x / 64.0, gl_FragCoord.y / 64.0) );
+//    gl_FragColor = vv;
+//    gl_FragColor = vec4(0, 1, 1, 1);
 }

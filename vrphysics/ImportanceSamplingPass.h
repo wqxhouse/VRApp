@@ -47,20 +47,43 @@ public:
         return (int)_out_sample_textures.size();
     }
     
+    inline bool isImportanceSampleEnabled()
+    {
+        return _impSampleEnabled;
+    }
+    
+    inline float getSplatsSizeRow()
+    {
+        return _splatsSize;
+    }
+    
+    inline int getRSMWidth()
+    {
+        return _rsmWidth;
+    }
+    
+    inline int getRSMHeight()
+    {
+        return _rsmHeight;
+    }
+    
     std::vector<int> getSampledLightIds();
     
 protected:
     virtual void configureStateSet();
     void configRTTCamera();
     
+private:
+    
     void addImportanceSampleCamera(osg::Texture2D *mipMapIn, osg::Texture2D *outTex);
     void addMipMapCamera(osg::TextureRectangle *fluxTex, osg::Texture2D *mipMapOut);
-
     
-private:
     osg::ref_ptr<osg::Texture2D> createImportanceSampleOutTexture();
     osg::ref_ptr<osg::Texture2D> createMipMapTexture();
-    void loadPoissowTexture();
+    void loadPoissonTexture();
+    void generatePoissonTexture();
+    
+     void configDebugPoints();
     
     int _rsmWidth;
     int _rsmHeight;
@@ -85,6 +108,12 @@ private:
     DirectionalLightGroup *_dirLightGroup;
     
     osg::ref_ptr<osg::Texture2D> _mipMapOut;
+    
+    bool _impSampleEnabled;
+    
+    // debug visualization
+     osg::ref_ptr<osg::Group> _debugPoints;
+    
 };
 
 #endif /* defined(__vrphysics__ImportanceSamplingPass__) */

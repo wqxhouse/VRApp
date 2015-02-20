@@ -25,16 +25,17 @@ public:
     
     PointLight();
     
-    void setGeometryRadius(float radius)
-    {
-        _light_geom_radius = radius;
-    }
     
-    void setMaxEffectiveRadius(float radius)
-    {
-        _light_max_effective_radius = radius;
-        _light_effective_radius = _light_max_effective_radius * intensity;
-    }
+//    void setGeometryRadius(float radius)
+//    {
+//        _light_geom_radius = radius;
+//    }
+    
+//    void setMaxEffectiveRadius(float radius)
+//    {
+//        _light_max_effective_radius = radius;
+//        _light_effective_radius = _light_max_effective_radius * intensity;
+//    }
     
     void setAmbient(float r, float g, float b, float a=1.0f) {
         ambient[0] = r;
@@ -48,6 +49,8 @@ public:
         diffuse[1] = g;
         diffuse[2] = b;
         diffuse[3] = a;
+        
+        genTransform(); // info for light volume size
     }
     
     void setSpecular(float r, float g, float b, float a=1.0f) {
@@ -61,32 +64,104 @@ public:
         attenuation[0] = constant;
         attenuation[1] = linear;
         attenuation[2] = exponential;
-    }
-    
-    void setPosition(const osg::Vec3f &pos) {
-        position = pos;
         
-        //osg::Matrix m = _rootTransform->getMatrix();
-        //m.setTrans(pos);
-        //_rootTransform->setMatrix(m);
+        genTransform(); // info for light volume size
     }
     
-    osg::Vec3f getPosition() {
+    void setPosition(const osg::Vec3f &pos)
+    {
+        position = pos;
+        genTransform(); // info for light volume size
+    }
+    
+    osg::Vec3f getPosition()
+    {
         return position;
     }
     
-    void genGeometry()
+    void setIntensity(float intens)
     {
-        osg::ref_ptr<osg::Sphere> sphere(new osg::Sphere(osg::Vec3(0, 0, 0), 1.0));
-        osg::ref_ptr<osg::ShapeDrawable> shapeDraw(new osg::ShapeDrawable);
-        shapeDraw->setShape(sphere);
-        osg::ref_ptr<osg::Geode> sphereGeode(new osg::Geode);
-        sphereGeode->addDrawable(shapeDraw);
+        float clamped = 0.0f;
+        if(intens > 1.0f) clamped = 1.0f;
+        else if(intens < 0.0f) clamped = 0.0f;
+        else clamped = intens;
         
-        osg::Matrix translate;
-        translate.makeTranslate(getPosition());
-        _sphereGeode = sphereGeode;
-//        _sphereGeode = _s_lightSphere;
+        intensity = clamped;
+        genTransform(); // info for light volume size
+    }
+    
+    osg::ref_ptr<osg::Geode> getRoot()
+    {
+        return _sphereGeode;
+    }
+    
+    osg::Vec4 getAmbient()
+    {
+        return osg::Vec4(ambient[0], ambient[1], ambient[2], ambient[3]);
+    }
+    
+    osg::Vec4 getDiffuse()
+    {
+        return osg::Vec4(diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
+    }
+    
+    osg::Vec4 getSpecular()
+    {
+        return osg::Vec4(specular[0], specular[1], specular[2], specular[3]);
+    }
+    
+    osg::Vec3 getAttenuation()
+    {
+        return osg::Vec3(attenuation[0], attenuation[1], attenuation[2]);
+    }
+    
+    osg::Vec3 getAnimOrbitAxis()
+    {
+        return orbitAxis;
+    }
+    
+    void setAnimOrbitAxis(const osg::Vec3 &orbit)
+    {
+        orbitAxis = orbit;
+    }
+    
+    // needs to do better refactor
+    // currently just an attribute for Animation callback to determine if position should be changed.
+    bool isAnimated()
+    {
+        return _animated;
+    }
+    
+    void setAnimated(bool tf)
+    {
+        _animated = tf;
+    }
+    
+    float getIntensity()
+    {
+        return intensity;
+    }
+    
+    int getId()
+    {
+        return _id;
+    }
+    
+    osg::ref_ptr<osg::MatrixTransform> getGeomTransformNode();
+    osg::ref_ptr<osg::MatrixTransform> getLightSphereTransformNode();
+    
+private:
+    
+    float calcRadiusByAttenuation();
+    void genTransform()
+    {
+        _light_effective_radius = calcRadiusByAttenuation();
+        _light_geom_radius = _light_effective_radius / 10.0f;
+        
+        printf("%.2f\n", _light_effective_radius);
+        
+        genLightSphereTransform(_light_effective_radius);
+        genGeomTransform(_light_geom_radius);
     }
     
     void genGeomTransform(float scaleFactor)
@@ -130,29 +205,18 @@ public:
         mt->setMatrix(m);
     }
     
-    osg::ref_ptr<osg::Geode> getRoot()
+    void genGeometry()
     {
-        return _sphereGeode;
-    }
-    
-    osg::Vec4 getAmbient()
-    {
-        return osg::Vec4(ambient[0], ambient[1], ambient[2], ambient[3]);
-    }
-    
-    osg::Vec4 getDiffuse()
-    {
-        return osg::Vec4(diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
-    }
-    
-    osg::Vec4 getSpecular()
-    {
-        return osg::Vec4(specular[0], specular[1], specular[2], specular[3]);
-    }
-    
-    osg::Vec3 getAttenuation()
-    {
-        return osg::Vec3(attenuation[0], attenuation[1], attenuation[2]);
+        osg::ref_ptr<osg::Sphere> sphere(new osg::Sphere(osg::Vec3(0, 0, 0), 1.0));
+        osg::ref_ptr<osg::ShapeDrawable> shapeDraw(new osg::ShapeDrawable);
+        shapeDraw->setShape(sphere);
+        osg::ref_ptr<osg::Geode> sphereGeode(new osg::Geode);
+        sphereGeode->addDrawable(shapeDraw);
+        
+        osg::Matrix translate;
+        translate.makeTranslate(getPosition());
+        _sphereGeode = sphereGeode;
+        //        _sphereGeode = _s_lightSphere;
     }
     
     float ambient[4];
@@ -161,6 +225,8 @@ public:
     float attenuation[3];
     
     float intensity;
+    
+    bool _animated;
     
     osg::Vec3f orbitAxis;
     osg::Vec3f position;
@@ -174,7 +240,7 @@ public:
     
     float _light_geom_radius;
     float _light_effective_radius;
-    float _light_max_effective_radius;
+    //float _light_max_effective_radius;
     
     static osg::ref_ptr<osg::Geode> _s_lightSphere;
 };

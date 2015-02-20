@@ -18,7 +18,11 @@ ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms)
     _isGIEnabled = true;
     _nearPlane = -10;
     _farPlane = 20;
-    _shadowProjection.makeOrtho(-20, 20, -20, 20, _nearPlane, _farPlane);
+    _shadowProjection.makeOrtho(-5, 5, -5, 5, _nearPlane, _farPlane);
+    // gi test settings
+//    _nearPlane = 14;
+//    _farPlane = 55;
+//    _shadowProjection.makePerspective(40, 1.0f, _nearPlane, _farPlane);
     
     _depthMapShader = new osg::Program();
     _depthMapShader->addShader(osgDB::readShaderFile("orthoDepthMap.vert"));
@@ -48,14 +52,16 @@ osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createShadowTexture(int width, 
 //    tex->setSourceType(GL_FLOAT);
 //    tex->setSourceFormat(GL_RGBA);
 //    tex->setInternalFormat(GL_RGBA);
-    tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
-    tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+    tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
+    tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::NEAREST);
     
     return tex;
 }
 
 
-osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createFluxTexture(int width, int height)
+
+
+osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createLightDirFluxTexture(int width, int height)
 {
     osg::ref_ptr<osg::TextureRectangle> tex = new osg::TextureRectangle;
     tex->setTextureSize(width, height);
@@ -63,8 +69,10 @@ osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createFluxTexture(int width, in
     tex->setSourceType(GL_FLOAT);
     tex->setSourceFormat(GL_RGBA);
     tex->setInternalFormat(GL_RGBA32F_ARB);
-    tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
-    tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+    
+    // ! must use nearest, or flux will be interpolated, making flux sphere irregular
+    tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
+    tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::NEAREST);
     
     return tex;
 }
@@ -77,8 +85,8 @@ osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createLightPositionTexture(int 
     tex->setSourceType(GL_FLOAT);
     tex->setSourceFormat(GL_RGBA);
     tex->setInternalFormat(GL_RGBA32F_ARB);
-    tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
-    tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+    tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
+    tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::NEAREST);
     
     return tex;
 }
@@ -165,11 +173,10 @@ osg::ref_ptr<osg::TextureRectangle> ShadowGroup::getDirLightShadowTexture(int li
     }
 }
 
-
-osg::ref_ptr<osg::TextureRectangle> ShadowGroup::getDirLightFluxTexture(int light_id)
+osg::ref_ptr<osg::TextureRectangle> ShadowGroup::getDirLightDirFluxTexture(int light_id)
 {
-    std::map<int, osg::ref_ptr<osg::TextureRectangle> >::iterator it = _dir_fluxMaps.find(light_id);
-    if(it != _dir_fluxMaps.end())
+    std::map<int, osg::ref_ptr<osg::TextureRectangle> >::iterator it = _dir_lightDir_fluxMaps.find(light_id);
+    if(it != _dir_lightDir_fluxMaps.end())
     {
         return it->second;
     }
@@ -179,10 +186,10 @@ osg::ref_ptr<osg::TextureRectangle> ShadowGroup::getDirLightFluxTexture(int ligh
     }
 }
 
-osg::ref_ptr<osg::TextureRectangle> ShadowGroup::getDirLightPositionTexture(int light_id)
+osg::ref_ptr<osg::TextureRectangle> ShadowGroup::getDirLightViewWorldPosTexture(int light_id)
 {
-    std::map<int, osg::ref_ptr<osg::TextureRectangle> >::iterator it = _dir_lightPosMaps.find(light_id);
-    if(it != _dir_lightPosMaps.end())
+    std::map<int, osg::ref_ptr<osg::TextureRectangle> >::iterator it = _dir_worldPos_Maps.find(light_id);
+    if(it != _dir_worldPos_Maps.end())
     {
         return it->second;
     }
@@ -224,10 +231,10 @@ void ShadowGroup::addDirectionalLight(DirectionalLight *dirLight, enum ShadowMod
         _dir_depthMaps.insert(std::make_pair(light_id, depthTex));
         if(_isGIEnabled)
         {
-            osg::ref_ptr<osg::TextureRectangle> fluxTex = createFluxTexture(_depthTexWidth, _depthTexWidth);// TODO: optimization
-            _dir_fluxMaps.insert(std::make_pair(light_id, fluxTex));
+            osg::ref_ptr<osg::TextureRectangle> fluxTex = createLightDirFluxTexture(_depthTexWidth, _depthTexWidth);// TODO: optimization
+            _dir_lightDir_fluxMaps.insert(std::make_pair(light_id, fluxTex));
             osg::ref_ptr<osg::TextureRectangle> posTex = createLightPositionTexture(_depthTexWidth, _depthTexWidth);
-            _dir_lightPosMaps.insert(std::make_pair(light_id, posTex));
+            _dir_worldPos_Maps.insert(std::make_pair(light_id, posTex));
             
             addBasicShadowCam(depthTex, fluxTex, posTex, shadowView, shadowMVP, dirLight);
         }

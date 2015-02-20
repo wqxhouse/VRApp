@@ -14,7 +14,7 @@ VPLGroup::VPLGroup()
 : _numVPLs(0)
 {
     _fluxFactor = 1;
-    _numVPLs = 1024;
+    _numVPLs = 256;
     _lowerThreshold = 0.15;
     
     osg::ref_ptr<osg::Node> loadedSphere = osgDB::readNodeFile("lightSphere.obj");
@@ -29,7 +29,7 @@ VPLGroup::VPLGroup()
     osg::ref_ptr<osg::StateSet> ss = _lightSphere->getOrCreateStateSet();
     
     // disable depth test for blending
-    ss->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
+     ss->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
     
     // enable blending
     ss->setMode(GL_BLEND, osg::StateAttribute::ON);

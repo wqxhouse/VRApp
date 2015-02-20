@@ -178,12 +178,8 @@ void AssetDB::processCurrentNode(osg::Node *node)
             pt->setDiffuse(diffuse.x(), diffuse.y(), diffuse.z());
             pt->setSpecular(specular.x(), specular.y(), specular.z());
             pt->setAttenuation(light->getConstantAttenuation(), light->getLinearAttenuation(), light->getQuadraticAttenuation());
-            pt->intensity = 1.0f;
-            pt->genGeomTransform(0.25);
-            pt->orbitAxis = osg::Vec3(0, 0, 1);
-            // TODO: additional cue implemented later
+            pt->setIntensity(1.0f);
             
-            pt->setMaxEffectiveRadius(4.0f);
             if(_pointLights.find(objRealName) != _pointLights.end())
             {
                 _pointLights.insert(std::make_pair(objRealName, pt));

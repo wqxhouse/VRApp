@@ -8,6 +8,7 @@
 
 #include "Core.h"
 #include <osgGA/TrackballManipulator>
+#include "LightTrackBallManipulator.h"
 #include "Utils.h"
 
 void optGeoms()
@@ -49,12 +50,53 @@ void optGeoms()
     //_sceneRoot->addChild(_geometryGroup);
 }
 
+osg::ref_ptr<osg::Group> constructPlane()
+{
+    osg::ref_ptr<osg::Group> group(new osg::Group);
+    osg::ref_ptr<osg::Geode> ground(new osg::Geode);
+    osg::ref_ptr<osg::Geometry> geom(new osg::Geometry);
+    geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
+    osg::ref_ptr<osg::Vec3Array> vertices(new osg::Vec3Array);
+    vertices->push_back(osg::Vec3(1, 1, 0));
+    vertices->push_back(osg::Vec3(-1, 1, 0));
+    vertices->push_back(osg::Vec3(-1, -1, 0));
+    vertices->push_back(osg::Vec3(1, -1, 0));
+    geom->setVertexArray(vertices);
+    osg::ref_ptr<osg::Vec3Array> normals(new osg::Vec3Array);
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    
+    geom->setNormalArray(normals);
+    geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
+    
+    ground->addDrawable(geom);
+    
+    osg::ref_ptr<osg::MatrixTransform> plane1(new osg::MatrixTransform);
+    osg::Matrix m1;
+    m1.makeRotate(90, osg::Vec3(1, 0, 0));
+    plane1->addChild(ground);
+    
+    osg::Matrix translate;
+    translate.makeTranslate(osg::Vec3(-1, 0, 0));
+    translate = m1 * translate;
+    plane1->setMatrix(translate);
+    
+    group->addChild(ground);
+    group->addChild(plane1);
+    
+    return group;
+}
+
 Core::Core()
 {
     _winWidth = 800;
     _winHeight = 600;
     
     _viewer = new osgViewer::Viewer;
+//    _lightTrackBallManipulator = new LightTrackBallManipulator;
+//    _viewer->setCameraManipulator(_lightTrackBallManipulator);
     
     _mainCamera = _viewer->getCamera();
     _mainCamera->setViewport(new osg::Viewport(0, 0, _winWidth, _winHeight));
@@ -62,18 +104,30 @@ Core::Core()
     
     _assetDB = new AssetDB;
     _geometryGroup = _assetDB->getGeomRoot();
-    _assetDB->addGeometryWithFile("Testing/uuu.dae");
+//    _assetDB->addGeometryWithFile("Testing/testLight.dae");
+    _assetDB->addGeometryWithFile("Testing/gi_test.dae");
+//    _assetDB->addGeometryWithFile("Testing/cornell-box/engine/c.dae");
+//    _assetDB->addGeometryWithFile("Testing/testGround.dae");
     
+//    _geometryGroup->addChild(constructPlane());
     
     
     configShadowGroup();
     
     // coupling here, addDirectionalLights & addPointLights needs to be called after configShadowGroup
     _dirLightGroup = addDirectionalLights();
+    
+    // set light track ball to control light if dirLight is presented
+    if(_lightTrackBallManipulator != NULL && _dirLightGroup->getAllLightIds().size() > 0)
+    {
+        // assign mainDir light to trackball
+        _lightTrackBallManipulator->setMainDirLight(_dirLightGroup->getDirectionalLight(0));
+    }
+    
     _pointLightGroup = addPointLights();
     configPasses();
     
-    _keyboardHandler = new KeyboardHandler(_sceneRoot, _debugHUD);
+    _keyboardHandler = new KeyboardHandler(_sceneRoot, _debugHUD, _pointLightGroup);
     _viewer->setSceneData(_sceneRoot);
     _viewer->setUpViewInWindow(0, 0, _winWidth, _winHeight);
     _viewer->addEventHandler(_keyboardHandler);
@@ -259,10 +313,10 @@ DirectionalLightGroup *Core::addDirectionalLights()
     _shadowGroup->addMultipleDirectionalLights(_assetDB->getDirectionalLights(), ShadowGroup::BASIC);
     
     // custom lights
-    int _id = dirLightGroup->addLight(osg::Vec3(5, -5, 5), osg::Vec3(0, 0, 0), osg::Vec3(0.6, 0.6, 0.8));
-    DirectionalLight *light = dirLightGroup->getDirectionalLight(_id);
-    _shadowGroup->addDirectionalLight(light, ShadowGroup::BASIC);
-    
+//    int _id = dirLightGroup->addLight(osg::Vec3(10, -10, 10), osg::Vec3(0, 0, 0), osg::Vec3(1.0, 1.0, 1.0));
+//    DirectionalLight *light = dirLightGroup->getDirectionalLight(_id);
+//    _shadowGroup->addDirectionalLight(light, ShadowGroup::BASIC);
+
     return dirLightGroup;
 }
 
@@ -283,7 +337,7 @@ LightGroup *Core::addPointLights()
     //    lightGroup->addLight(osg::Vec3(-0.26, 2.08, 4.89), osg::Vec3(0.24, 1, 0.222), osg::Vec3(0, 0, 0), osg::Vec3(0.6, 0.2, 0.1), 8.0);
     
     // optionally display light geometry
-    _geometryGroup->addChild(lightGroup->getGeomTransformLightGroup()); // point light geoms
+    //_geometryGroup->addChild(lightGroup->getGeomTransformLightGroup()); // point light geoms
     
     // add point lights from db
     lightGroup->addMultipleLights(_assetDB->getPointLights());
@@ -329,7 +383,8 @@ void Core::configFinalPass()
     _finalPass = new FinalPass(_mainCamera, _geomPass->getAlbedoOutTexture(),
                                _directionalLightPass->getLightingOutTexture(),
                                _pointLightPass->getLightingOutTexture(),
-                               _ssaoPass->getSSAOOutTexture());
+                               _ssaoPass->getSSAOOutTexture(),
+                               _indLPass->getIndirectLightingTex());
 }
 
 
@@ -349,6 +404,18 @@ void Core::configImportanceSamplingPass()
     _impPass = new ImportanceSamplingPass(_mainCamera, _shadowGroup, _dirLightGroup);
 }
 
+void Core::configIndirectLightPass()
+{
+    // TODO: support multiple lights
+    _indLPass = new IndirectLightingPass(_mainCamera, _impPass,
+                                         _shadowGroup->getDirLightDirFluxTexture(0),
+                                         _shadowGroup->getDirLightViewWorldPosTexture(0),
+                                         _geomPass->getPositionOutTexure(),
+                                         _geomPass->getNormalDepthOutTexture(),
+                                         _geomPass->getSharedDepthStencilTexture(),
+                                         _dirLightGroup->getDirectionalLight(0));
+}
+
 void Core::setupHUDForPasses()
 {
     osg::ref_ptr<osg::Group> hud(new osg::Group);
@@ -360,24 +427,33 @@ void Core::setupHUDForPasses()
     //                             _winWidth, _winHeight, 0.3333, 0.3);
     osg::ref_ptr<osg::Camera> qTexN =
     createTextureDisplayQuad(osg::Vec3(0, 0.7, 0),
-                             _shadowGroup->getDirLightShadowTexture(0),
+                             //_shadowGroup->getDirLightShadowTexture(0),
                              //_shadowGroup->getDirLightFluxTexture(0),
                              //_impPass->getImportanceSampleTexture(0),
                              //_geomPass->getPositionOutTexure(),
                              ///_impPass->getFluxMipMapTexture(),
+                             _indLPass->getIndirectLightingTex(),
+                             //_geomPass->getNormalDepthOutTexture(),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexD =
     createTextureDisplayQuad(osg::Vec3(0.3333, 0.7, 0),
-                             _ssaoPass->getOutputTexture(0),
+                             //_shadowGroup->getDirLightViewWorldPosTexture(0),
+                             _shadowGroup->getDirLightDirFluxTexture(0),
+                             //_ssaoPass->getOutputTexture(0),
                              //_geomPass->getPositionOutTexure(),
                              //_geomPass->getSharedDepthStencilTexture(),
+                             //_impPass->getPossiowTexture(),
+                             //_impPass->getImportanceSampleTexture(0),
+                             //_shadowGroup->getDirLightPosFluxTexture(0),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexP =
     createTextureDisplayQuad(osg::Vec3(0.6666, 0.7, 0),
                              //_directionalLightPass->getLightingOutTexture(),
-                             _pointLightPass->getLightingOutTexture(),
+                             //_geomPass->getNormalDepthOutTexture(),
+                             _shadowGroup->getDirLightDirFluxTexture(0),
+                             //_ssaoPass->getSSAOOutTexture(),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexF =
@@ -398,15 +474,18 @@ void Core::configPasses()
     configDirectionalLightPass();
     configPointLightPass();
     configSSAOPass();
-    configFinalPass();
-    configHDRPass();
     
     // gi
     configImportanceSamplingPass();
+    configIndirectLightPass();
     
+    configFinalPass();
+    configHDRPass();
+//    
     _sceneRoot->addChild(_geomPass->getRoot());
     
     _sceneRoot->addChild(_impPass->getRoot());
+    _sceneRoot->addChild(_indLPass->getRoot());
     
     _sceneRoot->addChild(_directionalLightPass->getRoot());
     _sceneRoot->addChild(_pointLightPass->getRoot());

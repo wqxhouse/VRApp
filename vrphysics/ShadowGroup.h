@@ -34,8 +34,8 @@ public:
     
     osg::ref_ptr<osg::TextureRectangle> getDirLightShadowTexture(int light_id);
     
-    osg::ref_ptr<osg::TextureRectangle> getDirLightFluxTexture(int light_id);
-    osg::ref_ptr<osg::TextureRectangle> getDirLightPositionTexture(int light_id);
+    osg::ref_ptr<osg::TextureRectangle> getDirLightDirFluxTexture(int light_id);
+    osg::ref_ptr<osg::TextureRectangle> getDirLightViewWorldPosTexture(int light_id);
     osg::ref_ptr<osg::Texture2D> getDirMipmapFluxTexture(int light_id);
     
     inline osg::ref_ptr<osg::Group> getShadowCamerasRoot()
@@ -55,7 +55,7 @@ public:
     
 private:
     osg::ref_ptr<osg::TextureRectangle> createShadowTexture(int width, int height);
-    osg::ref_ptr<osg::TextureRectangle> createFluxTexture(int width, int height);
+    osg::ref_ptr<osg::TextureRectangle> createLightDirFluxTexture(int width, int height);
     osg::ref_ptr<osg::Texture2D> createFluxMipmapTexture(int width, int height);
     osg::ref_ptr<osg::TextureRectangle> createLightPositionTexture(int width, int height);
     void addBasicShadowCam(osg::TextureRectangle *outDepthTex, osg::TextureRectangle *outFluxTex, osg::TextureRectangle *outPosTex, const osg::Matrixf &shadowMV, const osg::Matrixf &shadowMVP, DirectionalLight *dirLight);
@@ -79,9 +79,9 @@ private:
     float _farPlane;
     
     // global illumination
-    std::map<int, osg::ref_ptr<osg::TextureRectangle> > _dir_fluxMaps;
+    std::map<int, osg::ref_ptr<osg::TextureRectangle> > _dir_lightDir_fluxMaps;
     std::map<int, osg::ref_ptr<osg::Texture2D> > _dir_mipmapFluxMaps;
-    std::map<int, osg::ref_ptr<osg::TextureRectangle> > _dir_lightPosMaps;
+    std::map<int, osg::ref_ptr<osg::TextureRectangle> > _dir_worldPos_Maps;
     float _rsmTexWidth;
     float _rsmTexHeight;
     

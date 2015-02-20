@@ -5,7 +5,6 @@
 uniform sampler2DRect u_albedoTex;  // albedo (diffuse without lighting)
 uniform sampler2DRect u_normalAndDepthTex;  // view space normal and linear depth
 uniform sampler2DRect u_positionTex;
-uniform sampler2D u_debug1;
 
 // LIGHTS
 uniform int u_numLights;
@@ -45,9 +44,6 @@ void main(void)
 {
     vec2 texCoord = gl_FragCoord.xy ;
     vec3 vertex = texture2DRect(u_positionTex, texCoord.st).xyz;
-    
-    // debug
-    
     vec3 normal = texture2DRect(u_normalAndDepthTex, texCoord.st).xyz;
     
     vec4 ambient = vec4(0.0, 0.0, 0.0, 1.0);
@@ -60,31 +56,27 @@ void main(void)
     
     float lambert = max(dot(normal, normalize(lightDir)), 0.0);
     
-    // I added later
-//    float realRadius = abs(length(v_vertex.xyz - u_lightPosition));
-    
     if (lambert > 0.0)
     {
         float distance = length(lightDir);
-        
-//        if(distance <= realRadius) {
-        if (distance <= u_lightRadius)
+        // distance checking isn't necessary since stencil test handles that
+        //if (distance <= u_lightRadius)
         {
-            
-            float distancePercent = distance/u_lightRadius;
-            float damping_factor = 1.0 - pow(distancePercent, 3);
-            float attenuation = 1.0/(u_lightAttenuation.x +
-                                     u_lightAttenuation.y * distance +
-                                     u_lightAttenuation.z * distance * distance);
-            attenuation *= damping_factor;
+            //float distancePercent = distance/u_lightRadius;
+            //float damping_factor = 1.0 - pow(distancePercent, 3);
+            float attenuation = u_lightAttenuation.x +
+                                u_lightAttenuation.y * distance +
+                                u_lightAttenuation.z * distance * distance;
+            //attenuation *= damping_factor;
+            attenuation = max(1.0, attenuation);
             
             vec4 diffuseContribution = material1.diffuse * u_lightDiffuse * lambert;
             diffuseContribution *= u_lightIntensity;
-            diffuseContribution *= attenuation;
+            diffuseContribution /= attenuation;
             
             vec4 specularContribution = material1.specular * u_lightSpecular * pow(max(dot(R, V), 0.0), material1.shininess);
             specularContribution *= u_lightIntensity;
-            specularContribution *= attenuation;
+            specularContribution /= attenuation;
             
             diffuse += diffuseContribution;
             specular += specularContribution;

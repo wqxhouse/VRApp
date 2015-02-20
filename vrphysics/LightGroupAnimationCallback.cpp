@@ -28,17 +28,18 @@ void LightGroupAnimationCallback::operator()(osg::Node* node, osg::NodeVisitor* 
     for(std::vector<PointLight *>::iterator it = ptArr.begin(); it != ptArr.end(); it++)
     {
         PointLight *pt = *it;
+        if(!pt->isAnimated())
+        {
+            continue;
+        }
         
         float percent = count / (float) ptArr.size();
         osg::Vec3 original = pt->getPosition();
         osg::Matrix mat;
-        mat.makeRotate(percent * osg::DegreesToRadians(0.2f) + osg::DegreesToRadians(0.1f), pt->orbitAxis);
+        mat.makeRotate(percent * osg::DegreesToRadians(0.2f) + osg::DegreesToRadians(0.1f), pt->getAnimOrbitAxis());
         pt->setPosition(original * mat);
         
-        pt->genGeomTransform(0.3);
-        pt->genLightSphereTransform(pt->_light_effective_radius);
-        
-        pt->intensity = 0.5f + 0.25f * (1.0f + cosf(time + percent* osg::PI));
+        pt->setIntensity(0.5f + 0.25f * (1.0f + cosf(time + percent* osg::PI)));
         ++count;
     }
 }

@@ -8,7 +8,7 @@
 
 #include "FinalPass.h"
 
-FinalPass::FinalPass(osg::Camera *mainCamera, osg::TextureRectangle *albedoTexture, osg::TextureRectangle *dirLightTexture, osg::TextureRectangle *lightTexture, osg::TextureRectangle *ssaoTexture)
+FinalPass::FinalPass(osg::Camera *mainCamera, osg::TextureRectangle *albedoTexture, osg::TextureRectangle *dirLightTexture, osg::TextureRectangle *lightTexture, osg::TextureRectangle *ssaoTexture, osg::TextureRectangle *indirectLightTexture)
 : ScreenPass(mainCamera)
 {
     //ScreenPass::setShader("finalPass.vert", "finalPass.frag");
@@ -17,6 +17,7 @@ FinalPass::FinalPass(osg::Camera *mainCamera, osg::TextureRectangle *albedoTextu
     _dirLight_tex_id = addInTexture(dirLightTexture);
     _light_tex_id = addInTexture(lightTexture);
     _ssao_tex_id = addInTexture(ssaoTexture);
+    _indLight_tex_id = addInTexture(indirectLightTexture);
     
 //    ScreenPass::setupCamera();
     setupCamera();
@@ -35,10 +36,12 @@ void FinalPass::configureStateSet()
     _stateSet->setTextureAttribute(1, getInTexture(_dirLight_tex_id), osg::StateAttribute::ON);
     _stateSet->setTextureAttribute(2, getInTexture(_light_tex_id), osg::StateAttribute::ON);
     _stateSet->setTextureAttribute(3, getInTexture(_ssao_tex_id), osg::StateAttribute::ON);
+    _stateSet->setTextureAttribute(4, getInTexture(_indLight_tex_id), osg::StateAttribute::ON);
     _stateSet->addUniform(new osg::Uniform("u_albedoTex", 0));
     _stateSet->addUniform(new osg::Uniform("u_dirLightPassTex", 1));
     _stateSet->addUniform(new osg::Uniform("u_pointLightPassTex", 2));
     _stateSet->addUniform(new osg::Uniform("u_ssaoPassTex", 3));
+    _stateSet->addUniform(new osg::Uniform("u_indLightPassTex", 4));
     _stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 }
 
@@ -54,7 +57,6 @@ void FinalPass::setupCamera()
     camera->setProjectionMatrix(osg::Matrix::ortho2D(0, 1, 0, 1));
     camera->setViewMatrix(osg::Matrix::identity());
     _rttCamera = camera;
-    
 }
 
 void FinalPass::configRTTCamera()
