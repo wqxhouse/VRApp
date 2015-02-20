@@ -19,7 +19,7 @@ int main()
     Core core;
     core.setGeometryHandler(handleGeometries);
     core.setDirectionalLightHandler(handleDirLights);
-    core.setWindowSize(1280, 720);
+    core.setWindowSize(800, 600);
     
     core.run();
 }

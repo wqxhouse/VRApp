@@ -7,6 +7,7 @@
 //
 
 #include "ImportanceSamplingPass.h"
+#include <osgDB/FileUtils>
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 #include <osg/ShapeDrawable>
@@ -178,7 +179,13 @@ void ImportanceSamplingPass::loadPoissonTexture()
     _poissowTex->setFilter(osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
    
     std::vector<osg::Vec3> texcoord;
-    std::ifstream infile("poisson.txt");
+    std::string path = osgDB::findDataFile("poisson.txt");
+    std::ifstream infile(path.c_str());
+    if(infile.fail())
+    {
+        fprintf(stderr, "poisson sample file fails to open\n");
+        exit(0);
+    }
     float x, y;
     int count = 0;
     while(infile >> x >> y)
