@@ -14,7 +14,6 @@
 #include <osgViewer/viewer>
 #include <osg/Camera>
 #include <osg/PolygonMode>
-#include <osgOcean/OceanScene>
 #include <osg/TextureCubeMap>
 
 #include "GeometryPass.h"
@@ -31,7 +30,6 @@
 #include "ImportanceSamplingPass.h"
 #include "AssetDB.h"
 #include "KeyboardHandler.h"
-#include "SkyDome.h"
 
 class LightTrackBallManipulator;
 class Core
@@ -40,10 +38,29 @@ public:
     Core();
     ~Core();
     
-    void setWindow(float width, float height);
+    inline void setWindowSize(int width, int height)
+    {
+        _winWidth = width;
+        _winHeight = height;
+    }
+    
+    inline void setDirectionalLightHandler(void (*handleDirectionalLights)(DirectionalLightGroup *const))
+    {
+        _handleDirLights = handleDirectionalLights;
+    }
+    
+    inline void setPointLightHandler(void (*handlePointLights)(LightGroup *const))
+    {
+        _handlePointLights = handlePointLights;
+    }
+    
+    inline void setGeometryHandler(void (*handleGeometries)(const osg::ref_ptr<osg::Group>, Assets *const))
+    {
+        _handleGeometries = handleGeometries;
+    }
     
     void run();
-
+    
 private:
     
     osg::ref_ptr<osg::TextureCubeMap> loadCubeMapTextures();
@@ -51,14 +68,14 @@ private:
                                  double right,
                                  double bottom,
                                  double top);
-
-
+    
+    
     osg::Geode *createScreenQuad(float width,
                                  float height,
                                  float scaleX,
                                  float scaleY,
                                  osg::Vec3 corner, bool isRect);
-
+    
     osg::ref_ptr<osg::Camera> createTextureDisplayQuad(
                                                        const osg::Vec3 &pos,
                                                        osg::StateAttribute *tex,
@@ -66,16 +83,14 @@ private:
                                                        float scaleY,
                                                        float width,
                                                        float height, bool isRect);
-
+    
     osg::ref_ptr<osg::TextureRectangle> createTextureImage(const char *imageName);
     osg::ref_ptr<osg::Texture2D> createTexture2DImage(const char *imageName);
     osg::ref_ptr<osg::Geode> createTexturedQuad(int _TextureWidth, int _TextureHeight);
-
-    DirectionalLightGroup *addDirectionalLights();
-    LightGroup *addPointLights();
-   
-    void configShadowGroup();
     
+    //    DirectionalLightGroup *addDirectionalLights();
+    //    LightGroup *addPointLights();
+    //
     void configGeomPass();
     void configRSMPass();
     void configDirectionalLightPass();
@@ -87,13 +102,20 @@ private:
     void configPasses();
     void configImportanceSamplingPass();
     void configIndirectLightPass();
-
+    
+    void configGeometries();
+    void configLights();
+    
     void freeHeap();
     
 private:
     DirectionalLightGroup *_dirLightGroup;
     LightGroup *_pointLightGroup;
     ShadowGroup *_shadowGroup;
+    
+    void (*_handleDirLights)(DirectionalLightGroup *const);
+    void (*_handlePointLights)(LightGroup *const);
+    void (*_handleGeometries)(const osg::ref_ptr<osg::Group>, Assets *const);
     
     GeometryPass *_geomPass;
     DirectionalLightingPass *_directionalLightPass;
@@ -102,25 +124,30 @@ private:
     FinalPass *_finalPass;
     HDRPass *_hdrPass;
     IndirectLightingPass *_indLPass;
-    
-    
     ImportanceSamplingPass *_impPass;
     
     osg::ref_ptr<osg::Group> _sceneRoot;
     osg::ref_ptr<osg::Group> _geometryGroup;
+    osg::ref_ptr<osg::Group> _customGeometryGroup;
+    osg::ref_ptr<osg::Group> _loadedGeometryGroup;
+    osg::ref_ptr<osg::Group> _lightVisualizeGeometryGroup;
+    
     osg::ref_ptr<osg::Camera> _mainCamera;
     osg::ref_ptr<osg::Group> _debugHUD;
     osg::ref_ptr<KeyboardHandler> _keyboardHandler;
     
     AssetDB *_assetDB;
+    Assets *_assets;
+    
     std::vector<ScreenPass *> _screenPasses;
     
-    float _winWidth;
-    float _winHeight;
+    int _winWidth;
+    int _winHeight;
     
     osg::ref_ptr<osgViewer::Viewer> _viewer;
     
     osg::ref_ptr<LightTrackBallManipulator> _lightTrackBallManipulator;
+    
 };
 
 #endif /* defined(__vrphysics__Core__) */

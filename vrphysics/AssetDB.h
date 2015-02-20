@@ -17,6 +17,7 @@
 #include "PointLight.h"
 #include "DirectionalLight.h"
 
+
 class AssetDB
 {
 public:
@@ -39,7 +40,7 @@ private:
     std::vector<std::string> split(const std::string &s, char delim);
     
     osg::Node *findNodeWithName(const char *name, osg::Node *node);
-    osg::Texture2D *extractTexture2DFromNode(osg::Transform *mt);
+    osg::ref_ptr<osg::Texture2D> extractTexture2DFromNode(osg::Transform *mt);
     osg::LightSource *extractLight(osg::Transform *mt);
     
     std::map<std::string, std::pair<osg::Node *, Material *> > _geomNodeAndMaterials;
@@ -48,6 +49,21 @@ private:
     std::map<std::string, DirectionalLight *> _directionalLights;
     
     osg::ref_ptr<osg::Group> _geomRoot;
+};
+
+// adapter for AssetDB to expose necessary functions to outside
+class Assets
+{
+public:
+    void addGeometryWithFile(const std::string &fileURL);
+    
+    friend class Core;
+private:
+    Assets(AssetDB *);
+    ~Assets() {};
+    
+    AssetDB *_assetDB;
+    
 };
 
 #endif /* defined(__vrphysics__GeometryGroup__) */

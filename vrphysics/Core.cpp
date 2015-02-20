@@ -90,47 +90,33 @@ osg::ref_ptr<osg::Group> constructPlane()
 }
 
 Core::Core()
+:_handleGeometries(NULL), _handlePointLights(NULL), _handleDirLights(NULL)
 {
     _winWidth = 800;
     _winHeight = 600;
     
     _viewer = new osgViewer::Viewer;
-//    _lightTrackBallManipulator = new LightTrackBallManipulator;
-//    _viewer->setCameraManipulator(_lightTrackBallManipulator);
-    
     _mainCamera = _viewer->getCamera();
-    _mainCamera->setViewport(new osg::Viewport(0, 0, _winWidth, _winHeight));
+
     _sceneRoot = new osg::Group;
     
     _assetDB = new AssetDB;
-    _geometryGroup = _assetDB->getGeomRoot();
-//    _assetDB->addGeometryWithFile("Testing/testLight.dae");
-    _assetDB->addGeometryWithFile("Testing/gi_test.dae");
-//    _assetDB->addGeometryWithFile("Testing/cornell-box/engine/c.dae");
-//    _assetDB->addGeometryWithFile("Testing/testGround.dae");
+    _assets = new Assets(_assetDB); // adapter for public api
+   
+    _geometryGroup = new osg::Group;
+    _loadedGeometryGroup = _assetDB->getGeomRoot();
+    _customGeometryGroup = new osg::Group;
+    _lightVisualizeGeometryGroup = new osg::Group;
     
-//    _geometryGroup->addChild(constructPlane());
+    _geometryGroup->addChild(_loadedGeometryGroup);
+    _geometryGroup->addChild(_customGeometryGroup);
+    _geometryGroup->addChild(_lightVisualizeGeometryGroup);
     
+    _shadowGroup = new ShadowGroup(_mainCamera, _geometryGroup);
+    _sceneRoot->addChild(_shadowGroup->getShadowCamerasRoot());
     
-    configShadowGroup();
-    
-    // coupling here, addDirectionalLights & addPointLights needs to be called after configShadowGroup
-    _dirLightGroup = addDirectionalLights();
-    
-    // set light track ball to control light if dirLight is presented
-    if(_lightTrackBallManipulator != NULL && _dirLightGroup->getAllLightIds().size() > 0)
-    {
-        // assign mainDir light to trackball
-        _lightTrackBallManipulator->setMainDirLight(_dirLightGroup->getDirectionalLight(0));
-    }
-    
-    _pointLightGroup = addPointLights();
-    configPasses();
-    
-    _keyboardHandler = new KeyboardHandler(_sceneRoot, _debugHUD, _pointLightGroup);
-    _viewer->setSceneData(_sceneRoot);
-    _viewer->setUpViewInWindow(0, 0, _winWidth, _winHeight);
-    _viewer->addEventHandler(_keyboardHandler);
+    _dirLightGroup = new DirectionalLightGroup(_shadowGroup);
+    _pointLightGroup = new LightGroup;
 }
 
 Core::~Core()
@@ -140,13 +126,44 @@ Core::~Core()
 
 void Core::run()
 {
+    _mainCamera->setViewport(new osg::Viewport(0, 0, _winWidth, _winHeight));
+    
+    // order coupling
+    configGeometries();
+    configLights();
+    configPasses();
+    
+    _keyboardHandler = new KeyboardHandler(_sceneRoot, _debugHUD, _pointLightGroup);
+    _viewer->setSceneData(_sceneRoot);
+    _viewer->setUpViewInWindow(0, 0, _winWidth, _winHeight);
+    _viewer->addEventHandler(_keyboardHandler);
+    
     _viewer->run();
 }
 
-void Core::setWindow(float width, float height)
+void Core::configGeometries()
 {
-    _winWidth = width;
-    _winHeight = height;
+    if(_handleGeometries != NULL)
+    {
+        (*_handleGeometries)(_customGeometryGroup, _assets);
+    }
+}
+
+void Core::configLights()
+{
+    _dirLightGroup->addMultipleLights(_assetDB->getDirectionalLights());
+    _shadowGroup->addMultipleDirectionalLights(_assetDB->getDirectionalLights(), ShadowGroup::BASIC);
+    _pointLightGroup->addMultipleLights(_assetDB->getPointLights());
+   
+    if (_handleDirLights != NULL)
+    {
+        (*_handleDirLights)(_dirLightGroup);
+    }
+    
+    if(_handlePointLights != NULL)
+    {
+        (*_handlePointLights)(_pointLightGroup);
+    }
 }
 
 osg::Camera *Core::createHUDCamera(double left,
@@ -301,51 +318,6 @@ osg::ref_ptr<osg::Geode> Core::createTexturedQuad(int _TextureWidth, int _Textur
     return quad_geode;
 }
 
-DirectionalLightGroup *Core::addDirectionalLights()
-{
-    // Directional Lights
-    DirectionalLightGroup *dirLightGroup = new DirectionalLightGroup;
-    // here we can optionally choose to display the geom of the directional light
-    
-    // add lights from db
-    // TODO: determine whether enable shadow
-    dirLightGroup->addMultipleLights(_assetDB->getDirectionalLights());
-    _shadowGroup->addMultipleDirectionalLights(_assetDB->getDirectionalLights(), ShadowGroup::BASIC);
-    
-    // custom lights
-//    int _id = dirLightGroup->addLight(osg::Vec3(10, -10, 10), osg::Vec3(0, 0, 0), osg::Vec3(1.0, 1.0, 1.0));
-//    DirectionalLight *light = dirLightGroup->getDirectionalLight(_id);
-//    _shadowGroup->addDirectionalLight(light, ShadowGroup::BASIC);
-
-    return dirLightGroup;
-}
-
-LightGroup *Core::addPointLights()
-{
-    // Point lights
-    LightGroup *lightGroup = new LightGroup;
-    osg::BoundingSphere sp;
-    sp.center() = osg::Vec3(0, 2, -3);
-    sp.radius() = 5;
-    //    for(int i = 0; i < 20; i++)
-    //    {
-    //        lightGroup->addRandomLightWithBoundingSphere(sp);
-    //    }
-    //
-    //    lightGroup->addLight(osg::Vec3(-1.09, -3.71, 2.97), osg::Vec3(0.213, 1, 0.305), osg::Vec3(0, 0, 0), osg::Vec3(0.6, 0.4, 0.4), 8.0);
-    //    lightGroup->addLight(osg::Vec3(2.54, -2.26, -1.47), osg::Vec3(0.98, 0.54, 1), osg::Vec3(0, 0, 0), osg::Vec3(0.6, 0.4, 0.4), 8.0);
-    //    lightGroup->addLight(osg::Vec3(-0.26, 2.08, 4.89), osg::Vec3(0.24, 1, 0.222), osg::Vec3(0, 0, 0), osg::Vec3(0.6, 0.2, 0.1), 8.0);
-    
-    // optionally display light geometry
-    //_geometryGroup->addChild(lightGroup->getGeomTransformLightGroup()); // point light geoms
-    
-    // add point lights from db
-    lightGroup->addMultipleLights(_assetDB->getPointLights());
-    
-    // add custom point lights
-    
-    return lightGroup;
-}
 
 void Core::configGeomPass()
 {
@@ -385,13 +357,6 @@ void Core::configFinalPass()
                                _pointLightPass->getLightingOutTexture(),
                                _ssaoPass->getSSAOOutTexture(),
                                _indLPass->getIndirectLightingTex());
-}
-
-
-void Core::configShadowGroup()
-{
-    _shadowGroup = new ShadowGroup(_mainCamera, _geometryGroup);
-    _sceneRoot->addChild(_shadowGroup->getShadowCamerasRoot());
 }
 
 void Core::configHDRPass()
@@ -481,7 +446,7 @@ void Core::configPasses()
     
     configFinalPass();
     configHDRPass();
-//    
+    
     _sceneRoot->addChild(_geomPass->getRoot());
     
     _sceneRoot->addChild(_impPass->getRoot());
@@ -494,7 +459,7 @@ void Core::configPasses()
     _sceneRoot->addChild(_hdrPass->getRoot());
     
     setupHUDForPasses();
-   
+    
     _screenPasses.push_back(_impPass);
     _screenPasses.push_back(_ssaoPass);
     _screenPasses.push_back(_geomPass);

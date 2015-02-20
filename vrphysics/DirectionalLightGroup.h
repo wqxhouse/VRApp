@@ -14,13 +14,14 @@
 #include <osg/Group>
 #include "DirectionalLight.h"
 
+class ShadowGroup;
 class DirectionalLightGroup
 {
 public:
-    DirectionalLightGroup();
+    DirectionalLightGroup(ShadowGroup *shadowGroup);
     ~DirectionalLightGroup();
     
-    int addLight(const osg::Vec3 &pos, const osg::Vec3 &lookAt, const osg::Vec3 &color);
+    int addLight(const osg::Vec3 &pos, const osg::Vec3 &lookAt, const osg::Vec3 &color, bool castShadow);
     std::vector<DirectionalLight *> &getDirectionalLightsReference();
     DirectionalLight *getDirectionalLight(int _id);
     void addMultipleLights(std::vector<DirectionalLight *> lights);
@@ -29,11 +30,12 @@ public:
     
 private:
     
-    
     int _lightnum;
     osg::ref_ptr<osg::Group> _directionalLightGroup;
     std::vector<DirectionalLight *> _directionalLights;
     std::map<int, DirectionalLight *> _directionalLightsMap;
+    
+    ShadowGroup *_shadowGroup;
 };
 
 #endif /* defined(__vrphysics__DirectionalLightGroup__) */

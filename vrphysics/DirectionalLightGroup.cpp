@@ -7,9 +7,10 @@
 //
 
 #include "DirectionalLightGroup.h"
+#include "ShadowGroup.h"
 
-DirectionalLightGroup::DirectionalLightGroup()
-: _lightnum(0)
+DirectionalLightGroup::DirectionalLightGroup(ShadowGroup *shadowGroup)
+: _lightnum(0), _shadowGroup(shadowGroup)
 {
     _directionalLightGroup = new osg::Group;
 }
@@ -45,7 +46,7 @@ DirectionalLight *DirectionalLightGroup::getDirectionalLight(int _id)
     return ((it = _directionalLightsMap.find(_id)) != _directionalLightsMap.end()) ? it->second : NULL;
 }
 
-int DirectionalLightGroup::addLight(const osg::Vec3 &pos, const osg::Vec3 &lookAt, const osg::Vec3 &color)
+int DirectionalLightGroup::addLight(const osg::Vec3 &pos, const osg::Vec3 &lookAt, const osg::Vec3 &color, bool castShadow)
 {
     DirectionalLight *light = new DirectionalLight();
     light->setPosition(pos);
@@ -60,6 +61,11 @@ int DirectionalLightGroup::addLight(const osg::Vec3 &pos, const osg::Vec3 &lookA
     _directionalLights.push_back(light);
     _directionalLightsMap.insert(std::make_pair(light->_id, light));
     _lightnum++;
+    
+    if (castShadow)
+    {
+        _shadowGroup->addDirectionalLight(light, ShadowGroup::BASIC);
+    }
     
     return light->_id;
 }

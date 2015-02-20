@@ -75,7 +75,7 @@ std::vector<std::string> AssetDB::split(const std::string &s, char delim)
     return elems;
 }
 
-osg::Texture2D *AssetDB::extractTexture2DFromNode(osg::Transform *mt)
+osg::ref_ptr<osg::Texture2D> AssetDB::extractTexture2DFromNode(osg::Transform *mt)
 {
     osg::Geometry *geom = (osg::Geometry *)mt->getChild(0)->asGeode()->getDrawable(0)->asGeometry();
     osg::StateSet *ss = geom->getOrCreateStateSet();
@@ -313,3 +313,13 @@ osg::ref_ptr<osg::Group> AssetDB::getGeomRoot()
     return _geomRoot;
 }
 
+// Assets adapter
+Assets::Assets(AssetDB *assetDB)
+: _assetDB(assetDB)
+{
+}
+
+void Assets::addGeometryWithFile(const std::string &fileURL)
+{
+    _assetDB->addGeometryWithFile(fileURL);
+}
