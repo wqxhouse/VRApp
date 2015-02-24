@@ -25,7 +25,7 @@ public:
         BASIC
     };
     
-    ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms);
+    ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms, const osg::BoundingBox &sceneAABB);
     ~ShadowGroup() {};
     
     void addDirectionalLight(DirectionalLight *dirLight, enum ShadowMode mode);
@@ -86,6 +86,8 @@ private:
     float _rsmTexHeight;
     
     bool _isGIEnabled;
+    
+    const osg::BoundingBox &_sceneAABB;
 };
 
 #endif /* defined(__vrphysics__ShadowGroup__) */

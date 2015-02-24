@@ -63,7 +63,7 @@ float sampleShadowMap(vec3 viewVertex)
     
     // gl_FragColor = vec4(vec3(sampleDepth), 1);
     
-    if (sampleDepth + 0.001 < linearZ)
+    if (sampleDepth + 0.005 < linearZ)
     {
         return 0.5;
     }

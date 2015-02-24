@@ -12,8 +12,8 @@
 
 #include "ShadowCallback.h"
 
-ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms)
-: _mainCamera(mainCamera), _geoms(geoms)
+ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms, const osg::BoundingBox &sceneAABB)
+: _mainCamera(mainCamera), _geoms(geoms), _sceneAABB(sceneAABB)
 {
     _isGIEnabled = true;
     _nearPlane = -10;
@@ -141,18 +141,22 @@ void ShadowGroup::addBasicShadowCam(osg::TextureRectangle *outDepthTex, osg::Tex
     // 2) TODO: figure out why u_nearDistance cannot be passed to the shader
     // symptom: u_nearDistance seems to be "overriden" by the uniform of the same name defined in the geometry pass
     // Thus, for this reason, change u_nearDistance to u_nearDistance_s
-    ss->addUniform(new osg::Uniform("u_nearDistance_s", _nearPlane));
-    ss->addUniform(new osg::Uniform("u_farDistance_s", _farPlane));
+
     ss->addUniform(new osg::Uniform("u_lightViewMatrix", shadowMV));
-    ss->addUniform(new osg::Uniform("u_lightViewProjectionMatrix", shadowMVP));
+//    ss->addUniform(new osg::Uniform("u_lightViewProjectionMatrix", shadowMVP));
+//    ss->addUniform(new osg::Uniform("u_lightProjectionMatrix", osg::Matrixf(_shadowProjection)));
   
     ss->addUniform(new osg::Uniform("u_lightViewInverseMatrix", osg::Matrixf::inverse(shadowMV)));
-    ss->addUniform(new osg::Uniform("u_lightProjectionMatrix", osg::Matrixf(_shadowProjection)));
+    
+    // to be modified in the callback
+    ss->addUniform(new osg::Uniform("u_nearDistance_s", 0.0f));
+//    ss->addUniform(new osg::Uniform("u_farDistance_s", _farPlane));
+    ss->addUniform(new osg::Uniform("u_zLength", 0.0f));
     
     // if gi enabled TODO: add switches
     ss->addUniform(new osg::Uniform("u_lightPos", dirLight->getPosition()));
     
-    osg::ref_ptr<ShadowCallback> shadowCallback(new ShadowCallback(_mainCamera, _shadowProjection));
+    osg::ref_ptr<ShadowCallback> shadowCallback(new ShadowCallback(cam, _shadowProjection, _sceneAABB));
     shadowCallback->setDirectionalLight(dirLight);
     ss->setUpdateCallback(shadowCallback);
     

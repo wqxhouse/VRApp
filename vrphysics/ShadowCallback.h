@@ -18,8 +18,10 @@
 class ShadowCallback : public osg::StateSet::Callback
 {
 public:
-    ShadowCallback(osg::Camera *mainCamera, osg::Matrix shadowProjection)
-        : _mainCamera(mainCamera), _shadowProjection(shadowProjection), _dirLight(NULL), _pointLight(NULL) { };
+    ShadowCallback(osg::Camera *lightCamera, osg::Matrix shadowProjection, const osg::BoundingBox &sceneAABB)
+        : _lightCamera(lightCamera), _shadowProjection(shadowProjection),
+    _dirLight(NULL), _pointLight(NULL), _sceneAABB(sceneAABB) { };
+    
     ~ShadowCallback() {};
    
     void setPointLight(PointLight *pl);
@@ -28,13 +30,17 @@ public:
     void operator()(osg::StateSet *ss, osg::NodeVisitor* nv);
     
 private:
-    std::pair<float, float> getNearFarPlane();
+    std::pair<float, float> getNearFar();
 
-    osg::ref_ptr<osg::Camera> _mainCamera;
+    osg::ref_ptr<osg::Camera> _lightCamera;
     osg::Matrix _shadowProjection;
     
     DirectionalLight *_dirLight;
     PointLight *_pointLight;
+    
+    const osg::BoundingBox &_sceneAABB;
+    
+    osg::Matrix calcProjectionMatrix(const osg::Matrix &viewInverse);
 };
 
 #endif /* defined(__vrphysics__ShadowCallback__) */

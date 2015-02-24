@@ -3,12 +3,14 @@
 #version 120
 
 uniform mat4 u_lightViewMatrix;
-uniform mat4 u_lightViewProjectionMatrix;
-uniform float u_farDistance_s;
+// uniform mat4 u_lightViewProjectionMatrix;
+// uniform float u_farDistance_s;
 uniform float u_nearDistance_s;
+uniform float u_zLength;
 
-uniform mat4 u_lightProjectionMatrix;
+// uniform mat4 u_lightProjectionMatrix;
 uniform mat4 u_lightViewInverseMatrix;
+
 
 varying float v_depth;
 varying vec4 v_color;
@@ -31,7 +33,9 @@ void main()
     mat4 modelMatrix = getModelToWorldMatrix();
     
     vec3 lightViewPosition = vec3(gl_ModelViewMatrix * gl_Vertex);
-    v_depth = (-lightViewPosition.z - u_nearDistance_s) / (u_farDistance_s - u_nearDistance_s);
+//    vec3 lightViewPosition = vec3(u_lightViewMatrix * modelMatrix * gl_Vertex);
+//    v_depth = (-lightViewPosition.z - u_nearDistance_s) / (u_farDistance_s - u_nearDistance_s);
+    v_depth = (-lightViewPosition.z - u_nearDistance_s) / u_zLength;
     // v_normal = vec3(normalize(gl_ModelViewMatrix * vec4(gl_Normal.xyz, 0)));
     
     v_worldNormal = vec3(modelMatrix * vec4(gl_Normal.xyz, 0));

@@ -16315,6 +16315,14 @@
 			name = APIs;
 			sourceTree = "<group>";
 		};
+		38AE692E1A9C2EA800E554E2 /* Scene */ = {
+			isa = PBXGroup;
+			children = (
+				388D90121A135A31006AA441 /* main.cpp */,
+			);
+			name = Scene;
+			sourceTree = "<group>";
+		};
 		38C0B8E81A27ED120060E169 /* PointLight */ = {
 			isa = PBXGroup;
 			children = (
@@ -16371,6 +16379,7 @@
 		38C4BBF219FE2CBE005430B2 /* vrphysics */ = {
 			isa = PBXGroup;
 			children = (
+				38AE692E1A9C2EA800E554E2 /* Scene */,
 				385DAF671A8563AC00476CA3 /* GI */,
 				38764D5B1A5DF72B00B827E8 /* Shadow */,
 				38E0EECA1A3B518C004DD045 /* SphereSegment.cpp */,
@@ -16381,7 +16390,6 @@
 				38C0B8E81A27ED120060E169 /* PointLight */,
 				388D900E1A135A31006AA441 /* GeometryPass.cpp */,
 				388D900F1A135A31006AA441 /* GeometryPass.h */,
-				388D90121A135A31006AA441 /* main.cpp */,
 				388D90151A135A31006AA441 /* ScreenPass.cpp */,
 				388D90161A135A31006AA441 /* ScreenPass.h */,
 				388D90171A135A31006AA441 /* Shared.cpp */,
@@ -16439,34 +16447,34 @@
 		38D648B31A0C8B4C0088AF3C /* shaders */ = {
 			isa = PBXGroup;
 			children = (
-				385B17771A9042A500CD42B6 /* importanceSampling.vert */,
+				385B17831A9042A500CD42B6 /* dirLight.frag */,
+				385B17891A9042A500CD42B6 /* dirLight.vert */,
+				385B178A1A9042A500CD42B6 /* finalPass.frag */,
+				385B17901A9042A500CD42B6 /* finalPass.vert */,
+				385B17861A9042A500CD42B6 /* fluxMipmap.frag */,
+				385B17871A9042A500CD42B6 /* fluxMipmap.vert */,
+				385B178E1A9042A500CD42B6 /* fxaa.frag */,
+				385B178D1A9042A500CD42B6 /* fxaa.vert */,
+				385B17821A9042A500CD42B6 /* gbuffer.frag */,
+				385B17811A9042A500CD42B6 /* gbuffer.vert */,
+				385B17841A9042A500CD42B6 /* gbuffertex.frag */,
+				385B17881A9042A500CD42B6 /* gbuffertex.vert */,
 				385B17781A9042A500CD42B6 /* importanceSampling.frag */,
+				385B17771A9042A500CD42B6 /* importanceSampling.vert */,
 				385B17791A9042A500CD42B6 /* indirectLighting.frag */,
 				385B177A1A9042A500CD42B6 /* indirectLighting.vert */,
-				385B17851A9042A500CD42B6 /* orthoDepthMap.vert */,
+				385B17911A9042A500CD42B6 /* mainScene.frag */,
+				385B17921A9042A500CD42B6 /* mainScene.vert */,
 				385B177C1A9042A500CD42B6 /* orthoDepthMap.frag */,
+				385B17851A9042A500CD42B6 /* orthoDepthMap.vert */,
 				385B177B1A9042A500CD42B6 /* pointLightPass.frag */,
 				385B177E1A9042A500CD42B6 /* pointLightPass.vert */,
 				385B177F1A9042A500CD42B6 /* pointLightStencil.frag */,
 				385B17801A9042A500CD42B6 /* pointLightStencil.vert */,
-				385B17811A9042A500CD42B6 /* gbuffer.vert */,
-				385B17821A9042A500CD42B6 /* gbuffer.frag */,
-				385B17831A9042A500CD42B6 /* dirLight.frag */,
-				385B17841A9042A500CD42B6 /* gbuffertex.frag */,
-				385B17861A9042A500CD42B6 /* fluxMipmap.frag */,
-				385B17871A9042A500CD42B6 /* fluxMipmap.vert */,
-				385B17881A9042A500CD42B6 /* gbuffertex.vert */,
-				385B17891A9042A500CD42B6 /* dirLight.vert */,
+				385B177D1A9042A500CD42B6 /* ssao.frag */,
+				385B178F1A9042A500CD42B6 /* ssao.vert */,
 				385B178B1A9042A500CD42B6 /* toneMapping.frag */,
 				385B178C1A9042A500CD42B6 /* toneMapping.vert */,
-				385B178D1A9042A500CD42B6 /* fxaa.vert */,
-				385B178E1A9042A500CD42B6 /* fxaa.frag */,
-				385B178F1A9042A500CD42B6 /* ssao.vert */,
-				385B177D1A9042A500CD42B6 /* ssao.frag */,
-				385B178A1A9042A500CD42B6 /* finalPass.frag */,
-				385B17901A9042A500CD42B6 /* finalPass.vert */,
-				385B17911A9042A500CD42B6 /* mainScene.frag */,
-				385B17921A9042A500CD42B6 /* mainScene.vert */,
 			);
 			name = shaders;
 			sourceTree = "<group>";

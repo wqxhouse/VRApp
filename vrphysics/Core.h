@@ -31,6 +31,8 @@
 #include "AssetDB.h"
 #include "KeyboardHandler.h"
 
+#include <osg/ComputeBoundsVisitor>
+
 class LightTrackBallManipulator;
 class Core
 {
@@ -147,6 +149,8 @@ private:
     osg::ref_ptr<osgViewer::Viewer> _viewer;
     
     osg::ref_ptr<LightTrackBallManipulator> _lightTrackBallManipulator;
+    osg::ComputeBoundsVisitor _computeBound;
+    osg::BoundingBox _sceneAABB;
     
 };
 

@@ -8,7 +8,7 @@ varying vec4 v_color;
 varying vec3 v_worldPosition;
 varying vec3 v_worldNormal;
 
-uniform mat4 u_lightViewProjectionMatrix;
+// uniform mat4 u_lightViewProjectionMatrix;
 uniform vec3 u_lightPos;
 
 float encodeFlux(vec3 flux)

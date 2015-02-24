@@ -112,7 +112,7 @@ Core::Core()
     _geometryGroup->addChild(_customGeometryGroup);
     _geometryGroup->addChild(_lightVisualizeGeometryGroup);
     
-    _shadowGroup = new ShadowGroup(_mainCamera, _geometryGroup);
+    _shadowGroup = new ShadowGroup(_mainCamera, _geometryGroup, _sceneAABB);
     _sceneRoot->addChild(_shadowGroup->getShadowCamerasRoot());
     
     _dirLightGroup = new DirectionalLightGroup(_shadowGroup);
@@ -147,6 +147,9 @@ void Core::configGeometries()
     {
         (*_handleGeometries)(_customGeometryGroup, _assets);
     }
+    
+    _geometryGroup->accept(_computeBound);
+    _sceneAABB = _computeBound.getBoundingBox();
 }
 
 void Core::configLights()
@@ -404,7 +407,8 @@ void Core::setupHUDForPasses()
     osg::ref_ptr<osg::Camera> qTexD =
     createTextureDisplayQuad(osg::Vec3(0.3333, 0.7, 0),
                              //_shadowGroup->getDirLightViewWorldPosTexture(0),
-                             _shadowGroup->getDirLightDirFluxTexture(0),
+                             //_shadowGroup->getDirLightDirFluxTexture(0),
+                             _shadowGroup->getDirLightShadowTexture(0),
                              //_ssaoPass->getOutputTexture(0),
                              //_geomPass->getPositionOutTexure(),
                              //_geomPass->getSharedDepthStencilTexture(),
