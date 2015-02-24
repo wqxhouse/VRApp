@@ -381,7 +381,8 @@ void Core::configIndirectLightPass()
                                          _geomPass->getPositionOutTexure(),
                                          _geomPass->getNormalDepthOutTexture(),
                                          _geomPass->getSharedDepthStencilTexture(),
-                                         _dirLightGroup->getDirectionalLight(0));
+                                         _dirLightGroup->getDirectionalLight(0),
+                                         _geomPass->getSharedDepthStencilTexture());
 }
 
 void Core::setupHUDForPasses()

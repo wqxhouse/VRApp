@@ -100,7 +100,7 @@ void main()
 //    vec4 vert = gl_Vertex + offset;
 //    gl_Position = gl_ModelViewProjectionMatrix * vert;
 //
-    // brightness of the pixel light source
+    // brightness of the pixel light source (RGB luminance)
     float I0 = dot( vec3( 0.3, 0.59, 0.11 ), v_lightFlux.xyz );
     
     // glossiness of the pixel light
@@ -122,8 +122,8 @@ void main()
     vec3 bitangent = cross( lightDir, tangent );
     tangent   = cross( lightDir, bitangent );
     
-    // estimate pixel light size (and scale according our global scene scale)
-    //    float size = sqrt( I0 / Ilow ) * 0.4f * WSSIZE;
+    // estimate pixel light size
+    //float size = sqrt( I0 / Ilow ) * 0.4f;
     float size = sqrt( I0 / Ilow ) * 0.4f;
     
     // scale tangent space by ellipsoid approximation
@@ -149,15 +149,15 @@ void main()
     // compute screen space position for deferred shading
     vec4 pos2D = clipPosition;
     
-    // smooth fade out
-    // screen space size of the splat
+//    // smooth fade out
+//    // screen space size of the splat
 //    v_lightFlux.w = size + max( w_n, h_n );
 //    v_lightFlux.w /= length( v_lightPos.xyz - u_camPos );
 //    
 //    // and the screen space position of its center
 //    v_center2D = u_matVP * vec4( v_lightPos.xyz + size * c_n * lightDir.xyz, 1.0f );
 //    //v_center2D.xy = v_center2D.xy * vec2( 0.5f, -0.5f ) + 0.5f * v_center2D.w;
-//    v_center2D.xy = (v_center2D.xy / v_center2D.w);
+//    v_center2D.xy = (v_center2D.xy / v_center2D.w) * 0.5 + 0.5;
     
     gl_Position = clipPosition;
 

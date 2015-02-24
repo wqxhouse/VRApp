@@ -5694,6 +5694,7 @@
 		38A423CA1A15D44C0079AD58 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		38AB05411A15D2B3005FAEC3 /* LightCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LightCallback.cpp; sourceTree = "<group>"; };
 		38AB05421A15D2B3005FAEC3 /* LightCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightCallback.h; sourceTree = "<group>"; };
+		38AE69331A9C5F9F00E554E2 /* indirectLightStencil.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = indirectLightStencil.vert; path = Shaders/indirectLightStencil.vert; sourceTree = "<group>"; };
 		38B3CA5D1A6AF26B000335F0 /* Core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Core.cpp; sourceTree = "<group>"; };
 		38B3CA5E1A6AF26B000335F0 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
 		38B3CA601A6B2351000335F0 /* LightHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LightHandler.cpp; sourceTree = "<group>"; };
@@ -16463,6 +16464,7 @@
 				385B17771A9042A500CD42B6 /* importanceSampling.vert */,
 				385B17791A9042A500CD42B6 /* indirectLighting.frag */,
 				385B177A1A9042A500CD42B6 /* indirectLighting.vert */,
+				38AE69331A9C5F9F00E554E2 /* indirectLightStencil.vert */,
 				385B17911A9042A500CD42B6 /* mainScene.frag */,
 				385B17921A9042A500CD42B6 /* mainScene.vert */,
 				385B177C1A9042A500CD42B6 /* orthoDepthMap.frag */,

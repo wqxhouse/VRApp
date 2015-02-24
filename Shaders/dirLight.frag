@@ -41,7 +41,6 @@ const material material1 = material(
                                     127.0
                                     );
 
-const vec4 ambientGlobal = vec4(0.05, 0.05, 0.05, 1.0);
 
 float sampleShadowMap(vec3 viewVertex)
 {
@@ -65,7 +64,7 @@ float sampleShadowMap(vec3 viewVertex)
     
     if (sampleDepth + 0.005 < linearZ)
     {
-        return 0.5;
+        return 0.0;
     }
     else
     {
@@ -81,7 +80,7 @@ void main(void)
     vec4 normalSample = texture2DRect(u_normalAndDepthTex, texCoord.st);
     vec3 normal = normalSample.xyz;
     
-    vec4 ambient = vec4(0.0, 0.0, 0.0, 1.0);
+//    vec4 ambient = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
     
@@ -105,6 +104,6 @@ void main(void)
     }
     
     float depth = sampleShadowMap(vertex);
-    vec4 final_color = ambient + depth * (diffuse + specular);
+    vec4 final_color = depth * (diffuse + specular);
     gl_FragColor = vec4(final_color.rgb, 1.0);
 }

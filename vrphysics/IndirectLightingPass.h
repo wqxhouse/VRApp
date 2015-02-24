@@ -32,7 +32,7 @@ class ImportanceSamplingPass;
 class IndirectLightingPass : public ScreenPass
 {
 public:
-    IndirectLightingPass(osg::Camera *mainCamera, ImportanceSamplingPass *impPass, osg::TextureRectangle *lightDirTex, osg::TextureRectangle *worldPosTex, osg::TextureRectangle *viewPositionTex, osg::TextureRectangle *viewNormalTex, osg::Texture2D *depthBufferTex, DirectionalLight *mainLight);
+    IndirectLightingPass(osg::Camera *mainCamera, ImportanceSamplingPass *impPass, osg::TextureRectangle *lightDirTex, osg::TextureRectangle *worldPosTex, osg::TextureRectangle *viewPositionTex, osg::TextureRectangle *viewNormalTex, osg::Texture2D *depthBufferTex, DirectionalLight *mainLight, osg::Texture2D *sharedDepthBuffer);
     virtual ~IndirectLightingPass();
     
     inline void setImportanceSamplingEnabled(bool tf)
@@ -56,6 +56,9 @@ public:
     
 protected:
     virtual void configureStateSet();
+    
+    // override
+    virtual void setupCamera();
     
 private:
     void loadRegularSampleTexture();
@@ -93,6 +96,8 @@ private:
     
     osg::ref_ptr<osg::Texture2D> _depthBufferTex;
     DirectionalLight *_mainLight;
+    
+    osg::ref_ptr<osg::Texture2D> _sharedDepthBufferTex;
     
 };
 

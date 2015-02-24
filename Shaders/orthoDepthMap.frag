@@ -71,16 +71,16 @@ void main()
     // vec3 decode = decodeFlux(encodedFlux);
     
     vec3 mainLightDirection = normal;
-    
+
+    gl_FragData[0] = vec4(vec3(v_depth), 1);
+    gl_FragData[1] = vec4(mainLightDirection, encodedFlux);
+   
+    // resolve singularity, move worldPos by a small amount of normal dir
     if ( dot( mainLightDirection, lightDir ) < 0.0f )
     {
         normal *= -1.0f;
     }
     
-    gl_FragData[0] = vec4(vec3(v_depth), 1);
-    gl_FragData[1] = vec4(mainLightDirection, encodedFlux);
-   
-    // resolve singularity, move worldPos by a small amount of normal dir
-    gl_FragData[2] = vec4(v_worldPosition - normal * 0.2f, 1.0);
-    // gl_FragData[2] = vec4(v_worldPosition, 1.0); // TODO: what is 0.2f?
+     gl_FragData[2] = vec4(v_worldPosition - normal * 0.2 , 1.0);
+    //  gl_FragData[2] = vec4(v_worldPosition, 1.0); // TODO: what is 0.2f?
 }

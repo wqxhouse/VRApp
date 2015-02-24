@@ -25,37 +25,7 @@ uniform vec3 u_mainLightWorldPos;
 
 varying vec3 fluxDebug;
 
-const float distBias = 0.01f; // avoid singularity
-
-void try()
-{
-    vec2 rectCoord = gl_FragCoord.xy;
-    vec3 viewSpacePosition = texture2DRect(u_viewPositionTex, rectCoord).xyz;
-    vec3 viewSpaceNormal = texture2DRect(u_viewNormalTex, rectCoord).xyz;
-    vec3 worldSpacePosition = vec3(u_viewInverseMatrix * vec4(viewSpacePosition, 1)); //
-    vec3 worldSpaceNormal   = normalize(vec3(u_viewInverseMatrix * vec4(viewSpaceNormal, 0)));
-    
-    vec3 toVPL = v_lightPos.xyz - worldSpacePosition;
-    float distToVPLSqr = max( dot( toVPL, toVPL ), 0.2 );
-    
-    toVPL = normalize( toVPL );
-    
-    float len_Lj = distance(u_mainLightWorldPos, v_lightPos.xyz);
-    float len_Lj_sqr = len_Lj * len_Lj;
-    
-    vec3 norm_i = worldSpaceNormal;
-    vec3 norm_j = normalize(v_lightDir.xyz);
-    
-    float NiDotT = max( 0.0, dot(norm_i, toVPL) );
-    float NjDotT = max( 0.0, dot(norm_j, -toVPL) );
-    
-    float numer = len_Lj_sqr * NjDotT * NjDotT;
-    float denom = 1.5 * 4096 * distToVPLSqr + len_Lj_sqr;
-    
-    vec3 finalColor = ((20 * numer) / denom) * v_lightFlux.xyz;
-    gl_FragColor = vec4(finalColor, 1);
-    
-}
+const float distBias = 0.1f; // avoid singularity
 
 void debug()
 {
@@ -74,6 +44,7 @@ void debug()
     //    }
     //     gl_FragColor = vec4(color.xy, 0, 1);
 }
+
 
 void impl1()
 {
@@ -102,9 +73,8 @@ void impl1()
     // normalize R
     R *= inversesqrt( l2 );
     
-    // distance attenuation (there's a global scene scaling factor "...WS_SIZE...")
-    //    lR = ( 1.0f / ( distBias + l2 * INV_WS_SIZE2_PI * 2 ) );
-    lR = ( 1.0f / ( distBias + l2 ) );
+    // distance attenuation,
+    lR = ( 1.0f / ( distBias + l2 * 0.05 * 6.28) );
     
     cosThetaI = clamp( dot( v_lightDir.xyz, -R ), 0.0, 1.0);			// outgoing cosine
     
@@ -122,18 +92,32 @@ void impl1()
     // putting everything together
     Fij = cosThetaI * cosThetaJ * lR;
     
-    //     fade out
-//    vec2 t1 = v_center2D.xy * 0.5 + 0.5;;
+//    //     fade out
+//    vec2 t1 = v_center2D.xy;
 //        vec2 t2 = gl_FragCoord.xy * u_render_wh_inv;
 //        float fadeOutFactor = clamp( 2 - 6.667 * length( t1 - t2 ) / v_lightFlux.w, 0.0, 1.0 );
 //    
 //        Fij *= fadeOutFactor;
-    
+//    
     result = v_lightFlux * Fij;								// transfer energy!
     gl_FragColor = result;
 }
 
+
+void visualizeVPLPos()
+{
+    gl_FragColor = vec4(0.2, 0.2, 0.2, 0.2);
+}
+
+void visualizeVPLFlux()
+{
+    gl_FragColor = v_lightFlux;
+//    gl_FragColor = vec4(fluxDebug, 1);
+}
+
 void main()
 {
-    impl1();
+     impl1();
+    // visualizeVPLPos();
+    // visualizeVPLFlux();
 }

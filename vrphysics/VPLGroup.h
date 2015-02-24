@@ -49,12 +49,20 @@ public:
     {
         return _lightSphere;
     }
+    
+    void configStencilPass();
+    void configRenderPass();
 
 private:
 	void applyInstanceNumberChange();
     
 private:
     osg::ref_ptr<osg::Geode> _lightSphere;
+    
+    osg::ref_ptr<osg::Group> _vplLightGroupNode;
+    osg::ref_ptr<osg::Group> _stencilPass;
+    osg::ref_ptr<osg::Group> _renderPass;
+    
     int _numVPLs;
     float _fluxFactor;
     float _lowerThreshold;

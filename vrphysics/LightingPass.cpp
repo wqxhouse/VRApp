@@ -227,7 +227,7 @@ void LightingPass::configureStateSet()
     // enable stencil test for correct light volume bounding
     _lightPassGroupNode->getOrCreateStateSet()->setMode(GL_STENCIL_TEST, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 
-    //configStencilPassStateSet();
+    configStencilPassStateSet();
     configPointLightPassStateSet();
 }
 
