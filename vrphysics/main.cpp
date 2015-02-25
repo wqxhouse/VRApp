@@ -12,12 +12,16 @@ void handleGeometries(const osg::ref_ptr<osg::Group> geoms, Assets *const asset)
 //    asset->addGeometryWithFile("Testing/uuu.dae");
 //    asset->addGeometryWithFile("Testing/cornell-box/engine/c.dae");
     asset->addGeometryWithFile("Testing/testShadow.dae");
+//    asset->addGeometryWithFile("Testing/testTorus.dae");
     
 }
 
 void handleDirLights(DirectionalLightGroup *const dirLightGroup)
 {
 //    dirLightGroup->addLight(osg::Vec3(5, 5, 5), osg::Vec3(0, 0, 0), osg::Vec3(1, 1, 1), true);
+    dirLightGroup->getDirectionalLightsReference()[0]->setAnimated(true);
+    dirLightGroup->getDirectionalLightsReference()[0]->orbitAxis = osg::Vec3(0, 0, 1);
+    
 }
 
 int main()

@@ -26,6 +26,11 @@ public:
     DirectionalLight *getDirectionalLight(int _id);
     void addMultipleLights(std::vector<DirectionalLight *> lights);
     
+    inline osg::ref_ptr<osg::Group> getGeomTransformLightGroup()
+    {
+        return _directionalLightGroup;
+    }
+    
     std::vector<int> getAllLightIds();
     
 private:

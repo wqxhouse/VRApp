@@ -8,11 +8,13 @@
 
 #include "DirectionalLightGroup.h"
 #include "ShadowGroup.h"
+#include "LightGroupAnimationCallback.h"
 
 DirectionalLightGroup::DirectionalLightGroup(ShadowGroup *shadowGroup)
 : _lightnum(0), _shadowGroup(shadowGroup)
 {
     _directionalLightGroup = new osg::Group;
+    _directionalLightGroup->setUpdateCallback(new LightGroupAnimationCallback(this));
 }
 
 DirectionalLightGroup::~DirectionalLightGroup()

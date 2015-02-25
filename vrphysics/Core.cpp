@@ -158,6 +158,10 @@ void Core::configLights()
     _shadowGroup->addMultipleDirectionalLights(_assetDB->getDirectionalLights(), ShadowGroup::BASIC);
     _pointLightGroup->addMultipleLights(_assetDB->getPointLights());
    
+    // TODO: currently without this being attached to geometrygroup, animation won't work; refactor later
+    _lightVisualizeGeometryGroup->addChild(_dirLightGroup->getGeomTransformLightGroup());
+    _lightVisualizeGeometryGroup->addChild(_pointLightGroup->getGeomTransformLightGroup());
+   
     if (_handleDirLights != NULL)
     {
         (*_handleDirLights)(_dirLightGroup);

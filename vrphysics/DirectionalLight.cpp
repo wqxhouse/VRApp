@@ -8,7 +8,7 @@
 
 #include "DirectionalLight.h"
 DirectionalLight::DirectionalLight() :
-intensity(1.0f)
+intensity(1.0f), _isAnimated(false)
 {
     memset(ambient, 0, sizeof(ambient));
     memset(diffuse, 0, sizeof(diffuse));

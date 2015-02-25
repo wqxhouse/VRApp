@@ -10,7 +10,7 @@
 #include <osgDB/ReadFile>
 
 PointLight::PointLight() :
-intensity(1.0f)
+intensity(1.0f), _animated(false)
 {
     genGeometry();
     

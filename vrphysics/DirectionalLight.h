@@ -51,6 +51,7 @@ public:
     
     void setPosition(const osg::Vec3f &pos) {
         position = pos;
+        genGeomTransform(0.25);
     }
     
     osg::Vec3f getPosition() {
@@ -152,6 +153,21 @@ public:
         return osg::Vec4(specular[0], specular[1], specular[2], specular[3]);
     }
     
+    inline void setAnimated(bool tf)
+    {
+        _isAnimated = tf;
+    }
+    
+    inline bool isAnimated()
+    {
+        return _isAnimated;
+    }
+    
+    osg::Vec3 getAnimOrbitAxis()
+    {
+        return orbitAxis;
+    }
+    
     float ambient[4];
     float diffuse[4];
     float specular[4];
@@ -176,6 +192,8 @@ public:
     static int _highest_id;
     
     float _light_geom_radius;
+    
+    bool _isAnimated;
 };
 
 #endif /* defined(__vrphysics__DirectionalLight__) */
