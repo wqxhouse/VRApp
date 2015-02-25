@@ -41,6 +41,23 @@ const material material1 = material(
                                     127.0
                                     );
 
+const float SHADOW_EPSILON = 0.0005f;
+float chebyshevUpperBound(vec2 moments, float myLinearZ)
+{
+    float variance = moments.y - (moments.x * moments.x);
+    variance = max(variance, 0.00002);
+    
+    float d = myLinearZ - moments.x;
+    float p_max = variance / (variance + d*d);
+    return p_max;
+    
+//    float E_x2 = moments.y;
+//    float Ex_2 = moments.x * moments.x;
+//    float variance = min(max(E_x2 - Ex_2, 0.0) + SHADOW_EPSILON, 1.0);
+//    float m_d = (moments.x - myLinearZ);
+//    float p = variance / (variance + m_d * m_d); //Chebychev's inequality
+//    return p;
+}
 
 float sampleShadowMap(vec3 viewVertex)
 {
@@ -56,20 +73,28 @@ float sampleShadowMap(vec3 viewVertex)
     
     rectCoords.x = uvCoords.x * u_depthMapSize.x;
     rectCoords.y = uvCoords.y * u_depthMapSize.y;
-    float sampleDepth = texture2DRect(u_depthMapTex, rectCoords).x;
-    
+    //float sampleDepth = texture2DRect(u_depthMapTex, rectCoords).x;
+    vec2 moments = texture2DRect(u_depthMapTex, rectCoords).xy;
     float linearZ = (-lightViewSpaceVec.z - u_lightNearDistance) / (u_lightFarDistance - u_lightNearDistance);
+    float sampleDepth = moments.x;
     
-    // gl_FragColor = vec4(vec3(sampleDepth), 1);
-    
-    if (sampleDepth + 0.005 < linearZ)
-    {
-        return 0.0;
-    }
-    else
+    if(linearZ <= sampleDepth )
     {
         return 1.0;
     }
+    else
+    {
+        return chebyshevUpperBound(moments, linearZ) + 0.2f;
+    }
+    
+//    if (sampleDepth + 0.005 < linearZ)
+//    {
+//        return 0.0;
+//    }
+//    else
+//    {
+//        return 1.0;
+//    }
 }
 
 void main(void)

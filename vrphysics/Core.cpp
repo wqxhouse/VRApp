@@ -113,7 +113,7 @@ Core::Core()
     _geometryGroup->addChild(_lightVisualizeGeometryGroup);
     
     _shadowGroup = new ShadowGroup(_mainCamera, _geometryGroup, _sceneAABB);
-    _sceneRoot->addChild(_shadowGroup->getShadowCamerasRoot());
+    _sceneRoot->addChild(_shadowGroup->getShadowGroupRoot());
     
     _dirLightGroup = new DirectionalLightGroup(_shadowGroup);
     _pointLightGroup = new LightGroup;

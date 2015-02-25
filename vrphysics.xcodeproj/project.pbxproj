@@ -150,6 +150,11 @@
 		387B1A2B1A97AE4A00A83148 /* libosgUtilrd.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 387B1A091A97AE4A00A83148 /* libosgUtilrd.3.2.1.dylib */; };
 		387B1A2C1A97AE4A00A83148 /* libosgrd.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 387B1A0A1A97AE4A00A83148 /* libosgrd.3.2.1.dylib */; };
 		387B1A2D1A97AE4A00A83148 /* libOpenThreadsrd.3.2.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 387B1A0B1A97AE4A00A83148 /* libOpenThreadsrd.3.2.1.dylib */; };
+		38AE698C1A9D364200E554E2 /* indirectLightStencil.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38AE69331A9C5F9F00E554E2 /* indirectLightStencil.vert */; };
+		38AE698D1A9D364200E554E2 /* gBlur.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38AE69351A9D30CE00E554E2 /* gBlur.vert */; };
+		38AE698E1A9D364200E554E2 /* gBlurX.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38AE698A1A9D313400E554E2 /* gBlurX.frag */; };
+		38AE698F1A9D364200E554E2 /* gBlurY.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38AE698B1A9D314400E554E2 /* gBlurY.frag */; };
+		38AE69921A9D370C00E554E2 /* BlurPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38AE69901A9D370C00E554E2 /* BlurPass.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -729,6 +734,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				38AE698C1A9D364200E554E2 /* indirectLightStencil.vert in CopyFiles */,
+				38AE698D1A9D364200E554E2 /* gBlur.vert in CopyFiles */,
+				38AE698E1A9D364200E554E2 /* gBlurX.frag in CopyFiles */,
+				38AE698F1A9D364200E554E2 /* gBlurY.frag in CopyFiles */,
 				385B17C01A9043F300CD42B6 /* poisson.txt in CopyFiles */,
 				385B17C11A9043F300CD42B6 /* lightSphere.obj in CopyFiles */,
 				385B17C21A9043F300CD42B6 /* poissow.tga in CopyFiles */,
@@ -5695,6 +5704,11 @@
 		38AB05411A15D2B3005FAEC3 /* LightCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LightCallback.cpp; sourceTree = "<group>"; };
 		38AB05421A15D2B3005FAEC3 /* LightCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightCallback.h; sourceTree = "<group>"; };
 		38AE69331A9C5F9F00E554E2 /* indirectLightStencil.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = indirectLightStencil.vert; path = Shaders/indirectLightStencil.vert; sourceTree = "<group>"; };
+		38AE69351A9D30CE00E554E2 /* gBlur.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = gBlur.vert; path = Shaders/gBlur.vert; sourceTree = "<group>"; };
+		38AE698A1A9D313400E554E2 /* gBlurX.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = gBlurX.frag; path = Shaders/gBlurX.frag; sourceTree = "<group>"; };
+		38AE698B1A9D314400E554E2 /* gBlurY.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = gBlurY.frag; path = Shaders/gBlurY.frag; sourceTree = "<group>"; };
+		38AE69901A9D370C00E554E2 /* BlurPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlurPass.cpp; sourceTree = "<group>"; };
+		38AE69911A9D370C00E554E2 /* BlurPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlurPass.h; sourceTree = "<group>"; };
 		38B3CA5D1A6AF26B000335F0 /* Core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Core.cpp; sourceTree = "<group>"; };
 		38B3CA5E1A6AF26B000335F0 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
 		38B3CA601A6B2351000335F0 /* LightHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LightHandler.cpp; sourceTree = "<group>"; };
@@ -16417,6 +16431,8 @@
 				38B3CA611A6B2351000335F0 /* LightHandler.h */,
 				385411C31A93648F002812EE /* LightTrackBallManipulator.cpp */,
 				385411C41A93648F002812EE /* LightTrackBallManipulator.h */,
+				38AE69901A9D370C00E554E2 /* BlurPass.cpp */,
+				38AE69911A9D370C00E554E2 /* BlurPass.h */,
 			);
 			path = vrphysics;
 			sourceTree = "<group>";
@@ -16477,6 +16493,9 @@
 				385B178F1A9042A500CD42B6 /* ssao.vert */,
 				385B178B1A9042A500CD42B6 /* toneMapping.frag */,
 				385B178C1A9042A500CD42B6 /* toneMapping.vert */,
+				38AE69351A9D30CE00E554E2 /* gBlur.vert */,
+				38AE698A1A9D313400E554E2 /* gBlurX.frag */,
+				38AE698B1A9D314400E554E2 /* gBlurY.frag */,
 			);
 			name = shaders;
 			sourceTree = "<group>";
@@ -17167,6 +17186,7 @@
 				387B19991A976F5000A83148 /* Material.h in Sources */,
 				387B199A1A976F5000A83148 /* KeyboardHandler.cpp in Sources */,
 				387B199B1A976F5000A83148 /* KeyboardHandler.h in Sources */,
+				38AE69921A9D370C00E554E2 /* BlurPass.cpp in Sources */,
 				387B199C1A976F5000A83148 /* SceneEventCallback.cpp in Sources */,
 				387B199D1A976F5000A83148 /* SceneEventCallback.h in Sources */,
 				387B199E1A976F5000A83148 /* HDRPass.cpp in Sources */,

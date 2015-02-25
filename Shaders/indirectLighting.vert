@@ -124,7 +124,7 @@ void main()
     
     // estimate pixel light size
     //float size = sqrt( I0 / Ilow ) * 0.4f;
-    float size = sqrt( I0 / Ilow ) * 0.4f;
+    float size = sqrt( I0 / Ilow ) * 0.4f * 2.0;
     
     // scale tangent space by ellipsoid approximation
     lightDir  *= w_n;
@@ -156,8 +156,6 @@ void main()
 //    
 //    // and the screen space position of its center
 //    v_center2D = u_matVP * vec4( v_lightPos.xyz + size * c_n * lightDir.xyz, 1.0f );
-//    //v_center2D.xy = v_center2D.xy * vec2( 0.5f, -0.5f ) + 0.5f * v_center2D.w;
-//    v_center2D.xy = (v_center2D.xy / v_center2D.w) * 0.5 + 0.5;
     
     gl_Position = clipPosition;
 

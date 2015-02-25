@@ -61,18 +61,23 @@ vec3 float2color(float value) {
 
 void main()
 {
+    // shadow part
+    float moment1 = v_depth;
+    float momentSq = v_depth * v_depth;
+    
+    float dx = dFdx(v_depth);
+    float dy = dFdy(v_depth);
+    momentSq += 0.25 * (dx*dx + dy*dy);
+    
+    gl_FragData[0] = vec4(moment1, momentSq, 0, 1);
+    
+    // RSM extension
     vec3 lightDir = normalize(u_lightPos - v_worldPosition);
     vec3 normal = normalize(v_worldNormal);
-    
     vec4 flux = v_color * clamp(dot(normal, lightDir), 0.0, 1.0);
-     float encodedFlux = encodeFlux(flux.xyz);
-    //float encodedFlux = color2float(flux.xyz);
-    
-    // vec3 decode = decodeFlux(encodedFlux);
+    float encodedFlux = encodeFlux(flux.xyz);
     
     vec3 mainLightDirection = normal;
-
-    gl_FragData[0] = vec4(vec3(v_depth), 1);
     gl_FragData[1] = vec4(mainLightDirection, encodedFlux);
    
     // resolve singularity, move worldPos by a small amount of normal dir
@@ -82,5 +87,4 @@ void main()
     }
     
      gl_FragData[2] = vec4(v_worldPosition - normal * 0.2 , 1.0);
-    //  gl_FragData[2] = vec4(v_worldPosition, 1.0); // TODO: what is 0.2f?
 }

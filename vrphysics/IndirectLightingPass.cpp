@@ -242,7 +242,7 @@ osg::Vec3 IndirectLightingCallback::getCameraPosition()
     osg::Vec3 dummy;
     mat.getLookAt(eye, dummy, dummy);
     
-    printf("%f, %f, %f\n", eye.x(), eye.y(), eye.z());
+    // printf("%f, %f, %f\n", eye.x(), eye.y(), eye.z());
     
     return eye;
 }

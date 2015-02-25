@@ -9,6 +9,7 @@
 #include "ShadowGroup.h"
 #include <osgDB/ReadFile>
 #include <osg/TextureRectangle>
+#include <osg/CullFace>
 
 #include "ShadowCallback.h"
 
@@ -16,20 +17,26 @@ ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms, const osg::
 : _mainCamera(mainCamera), _geoms(geoms), _sceneAABB(sceneAABB)
 {
     _isGIEnabled = true;
+    
+    // dummy
     _nearPlane = -10;
     _farPlane = 20;
     _shadowProjection.makeOrtho(-5, 5, -5, 5, _nearPlane, _farPlane);
-    // gi test settings
-//    _nearPlane = 14;
-//    _farPlane = 55;
-//    _shadowProjection.makePerspective(40, 1.0f, _nearPlane, _farPlane);
     
     _depthMapShader = new osg::Program();
     _depthMapShader->addShader(osgDB::readShaderFile("orthoDepthMap.vert"));
     _depthMapShader->addShader(osgDB::readShaderFile("orthoDepthMap.frag"));
     _depthTexWidth = 512;
     _depthTexHeight = 512;
+    
+    _blurShaderX = new osg::Program();
+    _blurShaderX->addShader(osgDB::readShaderFile("gBlur.vert"));
+    _blurShaderX->addShader(osgDB::readShaderFile("gBlurX.frag"));
    
+    _blurShaderY = new osg::Program();
+    _blurShaderY->addShader(osgDB::readShaderFile("gBlur.vert"));
+    _blurShaderY->addShader(osgDB::readShaderFile("gBlurY.frag"));
+    
     // TODO, currently not working, since MRT only support a single resolution
     // Therefore, rsm and shadow maps are using the same resolution,
     // later, they needs to be separated for performance and quality.
@@ -37,6 +44,11 @@ ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms, const osg::
     _rsmTexHeight = _depthTexHeight;
     
     _shadowCameras = new osg::Group;
+    _blurCameras = new osg::Group;
+    _shadowRootGroup = new osg::Group;
+    
+    _shadowRootGroup->addChild(_shadowCameras);
+    _shadowRootGroup->addChild(_blurCameras);
 }
 
 osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createShadowTexture(int width, int height)
@@ -57,9 +69,6 @@ osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createShadowTexture(int width, 
     
     return tex;
 }
-
-
-
 
 osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createLightDirFluxTexture(int width, int height)
 {
@@ -111,6 +120,56 @@ void ShadowGroup::setDepthMapResolution(float width, float height)
     _depthTexHeight = height;
 }
 
+void ShadowGroup::addBlurCamera(osg::TextureRectangle *outDepthTex)
+{
+    osg::ref_ptr<osg::Camera> blurCamera(new osg::Camera);
+    blurCamera->setClearColor(osg::Vec4());
+    blurCamera->setClearMask(GL_DEPTH_BUFFER_BIT); // we cannot clear color buffer
+    
+    blurCamera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+    blurCamera->setRenderOrder(osg::Camera::PRE_RENDER);
+   
+    blurCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+    blurCamera->setProjectionMatrix(osg::Matrix::ortho2D(0, 1, 0, 1));
+    blurCamera->setViewMatrix(osg::Matrix::identity());
+    blurCamera->setViewport(0, 0, _depthTexWidth, _depthTexHeight);
+    blurCamera->attach(osg::Camera::COLOR_BUFFER0, outDepthTex);
+    
+    blurCamera->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+    
+    osg::ref_ptr<osg::Group> yDir = createQuad();
+    osg::ref_ptr<osg::Group> xDir = createQuad();
+    
+    // create two screen Quad for two blurring direction
+    configBlurQuadStateSet(yDir, 'y', outDepthTex);
+    configBlurQuadStateSet(xDir, 'x', outDepthTex);
+    blurCamera->addChild(yDir);
+    blurCamera->addChild(xDir);
+    
+    _blurCameras->addChild(blurCamera);
+}
+
+
+void ShadowGroup::configBlurQuadStateSet(osg::Group *g, char dir, osg::TextureRectangle *outDepthTex)
+{
+    osg::ref_ptr<osg::StateSet> ss = g->getOrCreateStateSet();
+    if(dir == 'y')
+    {
+        ss->setAttributeAndModes(_blurShaderY, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+    }
+    else if(dir == 'x')
+    {
+        ss->setAttributeAndModes(_blurShaderX, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+    }
+    else
+    {
+        fprintf(stderr, "Shadow Group, blur dir err\n");
+        exit(0);
+    }
+    ss->addUniform(new osg::Uniform("u_texture", 0));
+    ss->setTextureAttribute(0, outDepthTex);
+}
+
 void ShadowGroup::addBasicShadowCam(osg::TextureRectangle *outDepthTex, osg::TextureRectangle *outFluxTex, osg::TextureRectangle *outPosTex, const osg::Matrixf &shadowMV, const osg::Matrixf &shadowMVP, DirectionalLight *dirLight)
 {
     osg::ref_ptr<osg::Camera> cam(new osg::Camera);
@@ -155,6 +214,11 @@ void ShadowGroup::addBasicShadowCam(osg::TextureRectangle *outDepthTex, osg::Tex
     
     // if gi enabled TODO: add switches
     ss->addUniform(new osg::Uniform("u_lightPos", dirLight->getPosition()));
+    
+    ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+    osg::ref_ptr<osg::CullFace> cullFace(new osg::CullFace);
+    cullFace->setMode(osg::CullFace::BACK);
+    ss->setAttribute(cullFace);
     
     osg::ref_ptr<ShadowCallback> shadowCallback(new ShadowCallback(cam, _shadowProjection, _sceneAABB));
     shadowCallback->setDirectionalLight(dirLight);
@@ -241,13 +305,14 @@ void ShadowGroup::addDirectionalLight(DirectionalLight *dirLight, enum ShadowMod
             _dir_worldPos_Maps.insert(std::make_pair(light_id, posTex));
             
             addBasicShadowCam(depthTex, fluxTex, posTex, shadowView, shadowMVP, dirLight);
+            addBlurCamera(depthTex);
         }
         else
         {
             addBasicShadowCam(depthTex, NULL, NULL, shadowView, shadowMVP, dirLight);
+            addBlurCamera(depthTex);
         }
     }
-    
 }
 
 void ShadowGroup::addMultipleDirectionalLights(std::vector<DirectionalLight *> lights, enum ShadowMode mode)
@@ -257,4 +322,27 @@ void ShadowGroup::addMultipleDirectionalLights(std::vector<DirectionalLight *> l
         DirectionalLight *light = lights[i];
         addDirectionalLight(light, mode);
     }
+}
+
+osg::ref_ptr<osg::Group> ShadowGroup::createQuad()
+{
+    osg::ref_ptr<osg::Group> top_group = new osg::Group;
+    osg::ref_ptr<osg::Geode> quad_geode = new osg::Geode;
+    
+    osg::ref_ptr<osg::Vec3Array> quad_coords = new osg::Vec3Array; // vertex coords
+    // counter-clockwise
+    quad_coords->push_back(osg::Vec3d(0, 0, -1));
+    quad_coords->push_back(osg::Vec3d(1, 0, -1));
+    quad_coords->push_back(osg::Vec3d(1, 1, -1));
+    quad_coords->push_back(osg::Vec3d(0, 1, -1));
+    
+    osg::ref_ptr<osg::Geometry> quad_geom = new osg::Geometry;
+    osg::ref_ptr<osg::DrawArrays> quad_da = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
+    
+    quad_geom->setVertexArray(quad_coords.get());
+    quad_geom->addPrimitiveSet(quad_da.get());
+    
+    quad_geode->addDrawable(quad_geom);
+    top_group->addChild(quad_geode);
+    return top_group;
 }

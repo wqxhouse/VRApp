@@ -74,7 +74,7 @@ void impl1()
     R *= inversesqrt( l2 );
     
     // distance attenuation,
-    lR = ( 1.0f / ( distBias + l2 * 0.05 * 6.28) );
+    lR = ( 1.0f / ( distBias + l2 * 0.01 * 6.28) );
     
     cosThetaI = clamp( dot( v_lightDir.xyz, -R ), 0.0, 1.0);			// outgoing cosine
     
@@ -93,12 +93,12 @@ void impl1()
     Fij = cosThetaI * cosThetaJ * lR;
     
 //    //     fade out
-//    vec2 t1 = v_center2D.xy;
+//    vec2 t1 = ( v_center2D.xy / v_center2D.w ) * 0.5 + 0.5;
 //        vec2 t2 = gl_FragCoord.xy * u_render_wh_inv;
 //        float fadeOutFactor = clamp( 2 - 6.667 * length( t1 - t2 ) / v_lightFlux.w, 0.0, 1.0 );
 //    
 //        Fij *= fadeOutFactor;
-//    
+//
     result = v_lightFlux * Fij;								// transfer energy!
     gl_FragColor = result;
 }
@@ -117,7 +117,7 @@ void visualizeVPLFlux()
 
 void main()
 {
-     impl1();
+    impl1();
     // visualizeVPLPos();
     // visualizeVPLFlux();
 }

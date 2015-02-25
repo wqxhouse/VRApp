@@ -10,7 +10,8 @@ void handleGeometries(const osg::ref_ptr<osg::Group> geoms, Assets *const asset)
 //   asset->addGeometryWithFile("Testing/gi_test.dae");
 //    asset->addGeometryWithFile("Testing/test2gi.dae");
 //    asset->addGeometryWithFile("Testing/uuu.dae");
-    asset->addGeometryWithFile("Testing/cornell-box/engine/c.dae");
+//    asset->addGeometryWithFile("Testing/cornell-box/engine/c.dae");
+    asset->addGeometryWithFile("Testing/testShadow.dae");
     
 }
 
