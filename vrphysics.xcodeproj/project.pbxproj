@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3852EC2D1AA9502E0016BCA1 /* CustomFirstPersonManipulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3852EC2B1AA9502E0016BCA1 /* CustomFirstPersonManipulator.cpp */; };
 		385B17A41A9043E800CD42B6 /* importanceSampling.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 385B17771A9042A500CD42B6 /* importanceSampling.vert */; };
 		385B17A51A9043E800CD42B6 /* importanceSampling.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 385B17781A9042A500CD42B6 /* importanceSampling.frag */; };
 		385B17A61A9043E800CD42B6 /* indirectLighting.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 385B17791A9042A500CD42B6 /* indirectLighting.frag */; };
@@ -52,6 +53,12 @@
 		385B17CE1A9043F300CD42B6 /* up.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 385B17A01A9042B400CD42B6 /* up.png */; };
 		385B17CF1A9043F300CD42B6 /* poissow.raw in CopyFiles */ = {isa = PBXBuildFile; fileRef = 385B17A11A9042B400CD42B6 /* poissow.raw */; };
 		385B17D01A9043F300CD42B6 /* castle.3DS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 385B17A21A9042B400CD42B6 /* castle.3DS */; };
+		385B86C71AAD07B3007E4536 /* rsm.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 385B86C51AAD0797007E4536 /* rsm.vert */; };
+		385B86C81AAD07B3007E4536 /* rsm.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 385B86C61AAD07A6007E4536 /* rsm.frag */; };
+		385B86CC1AAD642F007E4536 /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 385B86CA1AAD642F007E4536 /* Skybox.cpp */; };
+		385B86CF1AAD8285007E4536 /* skybox.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 385B86CD1AAD8266007E4536 /* skybox.vert */; };
+		385B86D01AAD8285007E4536 /* skybox.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 385B86CE1AAD8274007E4536 /* skybox.frag */; };
+		3869AF801AA69DBB00D42F9F /* FrustumData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3869AF7E1AA69DBB00D42F9F /* FrustumData.cpp */; };
 		387B19641A976F5000A83148 /* VPLGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 385DAF681A8563DF00476CA3 /* VPLGroup.cpp */; };
 		387B19651A976F5000A83148 /* VPLGroup.h in Sources */ = {isa = PBXBuildFile; fileRef = 385DAF691A8563DF00476CA3 /* VPLGroup.h */; };
 		387B19661A976F5000A83148 /* IndirectLightingPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 384294431A857295005A85B5 /* IndirectLightingPass.cpp */; };
@@ -155,6 +162,8 @@
 		38AE698E1A9D364200E554E2 /* gBlurX.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38AE698A1A9D313400E554E2 /* gBlurX.frag */; };
 		38AE698F1A9D364200E554E2 /* gBlurY.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38AE698B1A9D314400E554E2 /* gBlurY.frag */; };
 		38AE69921A9D370C00E554E2 /* BlurPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38AE69901A9D370C00E554E2 /* BlurPass.cpp */; };
+		38D375241AA9F335006692D5 /* gBlurSSAOX.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38D374CE1AA9F314006692D5 /* gBlurSSAOX.frag */; };
+		38D375251AA9F335006692D5 /* gBlurSSAOY.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38D375231AA9F31E006692D5 /* gBlurSSAOY.frag */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -734,6 +743,12 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				385B86CF1AAD8285007E4536 /* skybox.vert in CopyFiles */,
+				385B86D01AAD8285007E4536 /* skybox.frag in CopyFiles */,
+				385B86C71AAD07B3007E4536 /* rsm.vert in CopyFiles */,
+				385B86C81AAD07B3007E4536 /* rsm.frag in CopyFiles */,
+				38D375241AA9F335006692D5 /* gBlurSSAOX.frag in CopyFiles */,
+				38D375251AA9F335006692D5 /* gBlurSSAOY.frag in CopyFiles */,
 				38AE698C1A9D364200E554E2 /* indirectLightStencil.vert in CopyFiles */,
 				38AE698D1A9D364200E554E2 /* gBlur.vert in CopyFiles */,
 				38AE698E1A9D364200E554E2 /* gBlurX.frag in CopyFiles */,
@@ -800,6 +815,8 @@
 		384294431A857295005A85B5 /* IndirectLightingPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndirectLightingPass.cpp; sourceTree = "<group>"; };
 		384294441A857295005A85B5 /* IndirectLightingPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndirectLightingPass.h; sourceTree = "<group>"; };
 		384385A91A169DF800A5EA27 /* PointLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLight.cpp; sourceTree = "<group>"; };
+		3852EC2B1AA9502E0016BCA1 /* CustomFirstPersonManipulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomFirstPersonManipulator.cpp; sourceTree = "<group>"; };
+		3852EC2C1AA9502E0016BCA1 /* CustomFirstPersonManipulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomFirstPersonManipulator.h; sourceTree = "<group>"; };
 		385411C31A93648F002812EE /* LightTrackBallManipulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LightTrackBallManipulator.cpp; sourceTree = "<group>"; };
 		385411C41A93648F002812EE /* LightTrackBallManipulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightTrackBallManipulator.h; sourceTree = "<group>"; };
 		385B17771A9042A500CD42B6 /* importanceSampling.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = importanceSampling.vert; path = Shaders/importanceSampling.vert; sourceTree = "<group>"; };
@@ -847,8 +864,16 @@
 		385B17A11A9042B400CD42B6 /* poissow.raw */ = {isa = PBXFileReference; lastKnownFileType = file; name = poissow.raw; path = Resources/poissow.raw; sourceTree = "<group>"; };
 		385B17A21A9042B400CD42B6 /* castle.3DS */ = {isa = PBXFileReference; lastKnownFileType = file; name = castle.3DS; path = Resources/castle.3DS; sourceTree = "<group>"; };
 		385B17A31A9043C300CD42B6 /* poisson.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = poisson.txt; path = Resources/poisson.txt; sourceTree = "<group>"; };
+		385B86C51AAD0797007E4536 /* rsm.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = rsm.vert; path = Shaders/rsm.vert; sourceTree = "<group>"; };
+		385B86C61AAD07A6007E4536 /* rsm.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = rsm.frag; path = Shaders/rsm.frag; sourceTree = "<group>"; };
+		385B86CA1AAD642F007E4536 /* Skybox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Skybox.cpp; sourceTree = "<group>"; };
+		385B86CB1AAD642F007E4536 /* Skybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Skybox.h; sourceTree = "<group>"; };
+		385B86CD1AAD8266007E4536 /* skybox.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = skybox.vert; path = Shaders/skybox.vert; sourceTree = "<group>"; };
+		385B86CE1AAD8274007E4536 /* skybox.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = skybox.frag; sourceTree = "<group>"; };
 		385DAF681A8563DF00476CA3 /* VPLGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VPLGroup.cpp; sourceTree = "<group>"; };
 		385DAF691A8563DF00476CA3 /* VPLGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VPLGroup.h; sourceTree = "<group>"; };
+		3869AF7E1AA69DBB00D42F9F /* FrustumData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrustumData.cpp; sourceTree = "<group>"; };
+		3869AF7F1AA69DBB00D42F9F /* FrustumData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrustumData.h; sourceTree = "<group>"; };
 		386B4C1A1A748DA3009FAB89 /* ImportanceSamplingPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImportanceSamplingPass.cpp; sourceTree = "<group>"; };
 		386B4C1B1A748DA3009FAB89 /* ImportanceSamplingPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportanceSamplingPass.h; sourceTree = "<group>"; };
 		3874AB681A3702CC00FDB712 /* KeyboardHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyboardHandler.cpp; sourceTree = "<group>"; };
@@ -5720,6 +5745,8 @@
 		38C0B8E51A27ECDD0060E169 /* DirectionalLightingPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectionalLightingPass.cpp; sourceTree = "<group>"; };
 		38C0B8E61A27ECDD0060E169 /* DirectionalLightingPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectionalLightingPass.h; sourceTree = "<group>"; };
 		38C4BBF019FE2CBE005430B2 /* vrphysics */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vrphysics; sourceTree = BUILT_PRODUCTS_DIR; };
+		38D374CE1AA9F314006692D5 /* gBlurSSAOX.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gBlurSSAOX.frag; sourceTree = "<group>"; };
+		38D375231AA9F31E006692D5 /* gBlurSSAOY.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = gBlurSSAOY.frag; sourceTree = "<group>"; };
 		38DB2D271A8DE30E0048A061 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		38DFB4661A15791C00F5AA6D /* FinalPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FinalPass.cpp; sourceTree = "<group>"; };
 		38DFB4671A15791C00F5AA6D /* FinalPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinalPass.h; sourceTree = "<group>"; };
@@ -5815,6 +5842,15 @@
 				387B073C1A9764B500A83148 /* osgWrappers */,
 			);
 			name = debug;
+			sourceTree = "<group>";
+		};
+		385B86C91AAD6270007E4536 /* PBR */ = {
+			isa = PBXGroup;
+			children = (
+				385B86CA1AAD642F007E4536 /* Skybox.cpp */,
+				385B86CB1AAD642F007E4536 /* Skybox.h */,
+			);
+			name = PBR;
 			sourceTree = "<group>";
 		};
 		385DAF671A8563AC00476CA3 /* GI */ = {
@@ -16394,6 +16430,7 @@
 		38C4BBF219FE2CBE005430B2 /* vrphysics */ = {
 			isa = PBXGroup;
 			children = (
+				385B86C91AAD6270007E4536 /* PBR */,
 				38AE692E1A9C2EA800E554E2 /* Scene */,
 				385DAF671A8563AC00476CA3 /* GI */,
 				38764D5B1A5DF72B00B827E8 /* Shadow */,
@@ -16433,6 +16470,10 @@
 				385411C41A93648F002812EE /* LightTrackBallManipulator.h */,
 				38AE69901A9D370C00E554E2 /* BlurPass.cpp */,
 				38AE69911A9D370C00E554E2 /* BlurPass.h */,
+				3869AF7E1AA69DBB00D42F9F /* FrustumData.cpp */,
+				3869AF7F1AA69DBB00D42F9F /* FrustumData.h */,
+				3852EC2B1AA9502E0016BCA1 /* CustomFirstPersonManipulator.cpp */,
+				3852EC2C1AA9502E0016BCA1 /* CustomFirstPersonManipulator.h */,
 			);
 			path = vrphysics;
 			sourceTree = "<group>";
@@ -16496,6 +16537,12 @@
 				38AE69351A9D30CE00E554E2 /* gBlur.vert */,
 				38AE698A1A9D313400E554E2 /* gBlurX.frag */,
 				38AE698B1A9D314400E554E2 /* gBlurY.frag */,
+				38D374CE1AA9F314006692D5 /* gBlurSSAOX.frag */,
+				38D375231AA9F31E006692D5 /* gBlurSSAOY.frag */,
+				385B86C51AAD0797007E4536 /* rsm.vert */,
+				385B86C61AAD07A6007E4536 /* rsm.frag */,
+				385B86CD1AAD8266007E4536 /* skybox.vert */,
+				385B86CE1AAD8274007E4536 /* skybox.frag */,
 			);
 			name = shaders;
 			sourceTree = "<group>";
@@ -17139,6 +17186,7 @@
 				387B19681A976F5000A83148 /* ShadowGroup.cpp in Sources */,
 				387B19691A976F5000A83148 /* ShadowGroup.h in Sources */,
 				387B196A1A976F5000A83148 /* ShadowCallback.cpp in Sources */,
+				385B86CC1AAD642F007E4536 /* Skybox.cpp in Sources */,
 				387B196B1A976F5000A83148 /* ShadowCallback.h in Sources */,
 				387B196C1A976F5000A83148 /* ImportanceSamplingPass.cpp in Sources */,
 				387B196D1A976F5000A83148 /* ImportanceSamplingPass.h in Sources */,
@@ -17158,6 +17206,7 @@
 				387B197D1A976F5000A83148 /* DirectionalLightCallback.cpp in Sources */,
 				387B197E1A976F5000A83148 /* DirectionalLightCallback.h in Sources */,
 				387B197F1A976F5000A83148 /* LightingPass.cpp in Sources */,
+				3869AF801AA69DBB00D42F9F /* FrustumData.cpp in Sources */,
 				387B19801A976F5000A83148 /* LightingPass.h in Sources */,
 				387B19811A976F5000A83148 /* LightGroup.cpp in Sources */,
 				387B19821A976F5000A83148 /* LightGroup.h in Sources */,
@@ -17195,6 +17244,7 @@
 				387B19A11A976F5000A83148 /* Core.h in Sources */,
 				387B19A21A976F5000A83148 /* LightHandler.cpp in Sources */,
 				387B19A31A976F5000A83148 /* LightHandler.h in Sources */,
+				3852EC2D1AA9502E0016BCA1 /* CustomFirstPersonManipulator.cpp in Sources */,
 				387B19A41A976F5000A83148 /* LightTrackBallManipulator.cpp in Sources */,
 				387B19A51A976F5000A83148 /* LightTrackBallManipulator.h in Sources */,
 			);

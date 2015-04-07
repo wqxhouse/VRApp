@@ -17,6 +17,8 @@
 #include <osg/MatrixTransform>
 #include <osg/Geometry>
 
+#include "FrustumData.h"
+
 class DirectionalLight
 {
 public:
@@ -187,6 +189,8 @@ public:
     osg::Matrixf _lightMVP;
     float _lightNearDistance;
     float _lightFarDistance;
+    
+    LightFrustraConsts _lightFrustraConsts;
     
     int _id;
     static int _highest_id;

@@ -1,0 +1,1561 @@
+Binary files ./.DS_Store and ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/.DS_Store differ
+diff -ur ./AssetDB.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/AssetDB.cpp
+--- ./AssetDB.cpp	2015-02-20 03:11:50.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/AssetDB.cpp	2015-02-22 21:08:41.000000000 -0800
+@@ -22,9 +22,10 @@
+ 
+ AssetDB::~AssetDB()
+ {
+-    for(auto it = _geomNodeAndMaterials.begin(); it != _geomNodeAndMaterials.end(); it++)
++    for(std::map<std::string, std::pair<osg::Node *, Material *> >::iterator it = _geomNodeAndMaterials.begin();
++        it != _geomNodeAndMaterials.end(); it++)
+     {
+-        auto pair = it->second;
++        std::pair<osg::Node *, Material *> pair = it->second;
+         Material *mat = pair.second;
+         delete mat;
+     }
+@@ -255,10 +256,11 @@
+ {
+     std::vector<DirectionalLight *> dirLights(_directionalLights.size(), NULL);
+     int i = 0;
+-    for(auto it = _directionalLights.begin(); it != _directionalLights.end(); it++)
++    for(std::map<std::string, DirectionalLight *>::iterator it = _directionalLights.begin();
++        it != _directionalLights.end(); it++)
+     {
+-        auto lights = it->second;
+-        dirLights[i++] = lights;
++        DirectionalLight *light = it->second;
++        dirLights[i++] = light;
+     }
+     return dirLights;
+ }
+@@ -267,10 +269,11 @@
+ {
+     std::vector<PointLight *> pointLights(_pointLights.size(), NULL);
+     int i = 0;
+-    for(auto it = _pointLights.begin(); it != _pointLights.end(); it++)
++    for(std::map<std::string, PointLight *>::iterator it = _pointLights.begin();
++        it != _pointLights.end(); it++)
+     {
+-        auto lights = it->second;
+-        pointLights[i++] = lights;
++        PointLight *light = it->second;
++        pointLights[i++] = light;
+     }
+     return pointLights;
+ }
+@@ -279,9 +282,10 @@
+ {
+     std::vector<std::pair<osg::Node *, Material *> > arr(_geomNodeAndMaterials.size());
+     int i = 0;
+-    for(auto it = _geomNodeAndMaterials.begin(); it != _geomNodeAndMaterials.end(); it++)
++    for(std::map<std::string, std::pair<osg::Node *, Material *> >::iterator it = _geomNodeAndMaterials.begin();
++        it != _geomNodeAndMaterials.end(); it++)
+     {
+-        auto pair = it->second;
++        std::pair<osg::Node *, Material *> pair = it->second;
+         arr[i++] = pair;
+     }
+     return arr;
+@@ -290,19 +294,22 @@
+ void AssetDB::printAllNames()
+ {
+     printf("Geometries: \n");
+-    for(auto it = _geomNodeAndMaterials.begin(); it != _geomNodeAndMaterials.end(); it++)
++    for(std::map<std::string, std::pair<osg::Node *, Material *> >::iterator it = _geomNodeAndMaterials.begin();
++        it != _geomNodeAndMaterials.end(); it++)
+     {
+         printf("%s\n", it->first.c_str());
+     }
+     
+     printf("PointLights: \n");
+-    for(auto it = _pointLights.begin(); it != _pointLights.end(); it++)
++    for(std::map<std::string, PointLight *>::iterator it = _pointLights.begin();
++        it != _pointLights.end(); it++)
+     {
+         printf("%s\n", it->first.c_str());
+     }
+     
+     printf("DirectionalLights: \n");
+-    for(auto it = _directionalLights.begin(); it != _directionalLights.end(); it++)
++    for(std::map<std::string, DirectionalLight *>::iterator it = _directionalLights.begin();
++        it != _directionalLights.end(); it++)
+     {
+         printf("%s\n", it->first.c_str());
+     }
+@@ -323,3 +330,4 @@
+ {
+     _assetDB->addGeometryWithFile(fileURL);
+ }
++
+Only in ./: BlurPass.cpp
+Only in ./: BlurPass.h
+diff -ur ./Core.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/Core.cpp
+--- ./Core.cpp	2015-02-24 21:02:25.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/Core.cpp	2015-02-22 21:15:45.000000000 -0800
+@@ -11,6 +11,9 @@
+ #include "LightTrackBallManipulator.h"
+ #include "Utils.h"
+ 
++#include <osg/BlendFunc>
++#include <osg/BlendEquation>
++
+ void optGeoms()
+ {
+     //    osg::ref_ptr<osg::Geode> aa(new osg::Geode);
+@@ -90,19 +93,20 @@
+ }
+ 
+ Core::Core()
+-:_handleGeometries(NULL), _handlePointLights(NULL), _handleDirLights(NULL)
++:_handleDirLights(NULL), _handlePointLights(NULL), _handleGeometries(NULL),
++ _hasCustomViewer(false), _hasCustomCamera(false), _debugHUDEnabled(true), _debugHUD(NULL), _externalHUDs(NULL)
+ {
+     _winWidth = 800;
+     _winHeight = 600;
+     
+     _viewer = new osgViewer::Viewer;
+     _mainCamera = _viewer->getCamera();
+-
++    
+     _sceneRoot = new osg::Group;
+     
+     _assetDB = new AssetDB;
+     _assets = new Assets(_assetDB); // adapter for public api
+-   
++    
+     _geometryGroup = new osg::Group;
+     _loadedGeometryGroup = _assetDB->getGeomRoot();
+     _customGeometryGroup = new osg::Group;
+@@ -112,8 +116,8 @@
+     _geometryGroup->addChild(_customGeometryGroup);
+     _geometryGroup->addChild(_lightVisualizeGeometryGroup);
+     
+-    _shadowGroup = new ShadowGroup(_mainCamera, _geometryGroup, _sceneAABB);
+-    _sceneRoot->addChild(_shadowGroup->getShadowGroupRoot());
++    _shadowGroup = new ShadowGroup(_mainCamera, _geometryGroup);
++    _sceneRoot->addChild(_shadowGroup->getShadowCamerasRoot());
+     
+     _dirLightGroup = new DirectionalLightGroup(_shadowGroup);
+     _pointLightGroup = new LightGroup;
+@@ -124,21 +128,59 @@
+     freeHeap();
+ }
+ 
+-void Core::run()
++
++void Core::setCustomViewer(osgViewer::Viewer *viewer)
+ {
+-    _mainCamera->setViewport(new osg::Viewport(0, 0, _winWidth, _winHeight));
++    if(viewer == NULL)
++    {
++        _hasCustomViewer = false;
++        return;
++    }
++    
++    _viewer = viewer;
++    _hasCustomViewer = true;
+     
++    // search for camera
++    if(_viewer->getCamera() != NULL && _viewer->getCamera()->getViewport() != NULL)
++    {
++        _mainCamera = _viewer->getCamera();
++    }
++    else // try slave
++    {
++        if(_viewer->getNumSlaves() != 0)
++        {
++            _mainCamera = _viewer->getSlave(0)._camera;
++            if(_mainCamera->getViewport() == NULL)
++            {
++                fprintf(stderr, "Custom viewer mainCamera search failed... \n");
++                exit(0);
++            }
++        }
++        else
++        {
++            fprintf(stderr, "Custom viewer mainCamera search failed... \n");
++            exit(0);
++        }
++    }
++}
++
++void Core::run()
++{
+     // order coupling
+     configGeometries();
+     configLights();
+     configPasses();
+     
+-    _keyboardHandler = new KeyboardHandler(_sceneRoot, _debugHUD, _pointLightGroup);
+-    _viewer->setSceneData(_sceneRoot);
+-    _viewer->setUpViewInWindow(0, 0, _winWidth, _winHeight);
+-    _viewer->addEventHandler(_keyboardHandler);
+-    
+-    _viewer->run();
++    if(!_hasCustomCamera)
++    {
++        _keyboardHandler = new KeyboardHandler(_sceneRoot, _debugHUD, _pointLightGroup);
++        _mainCamera->setViewport(new osg::Viewport(0, 0, _winWidth, _winHeight));
++        _viewer->setSceneData(_sceneRoot);
++        _viewer->setUpViewInWindow(0, 0, _winWidth, _winHeight);
++        _viewer->addEventHandler(_keyboardHandler);
++        
++        _viewer->run();
++    }
+ }
+ 
+ void Core::configGeometries()
+@@ -147,9 +189,6 @@
+     {
+         (*_handleGeometries)(_customGeometryGroup, _assets);
+     }
+-    
+-    _geometryGroup->accept(_computeBound);
+-    _sceneAABB = _computeBound.getBoundingBox();
+ }
+ 
+ void Core::configLights()
+@@ -157,11 +196,7 @@
+     _dirLightGroup->addMultipleLights(_assetDB->getDirectionalLights());
+     _shadowGroup->addMultipleDirectionalLights(_assetDB->getDirectionalLights(), ShadowGroup::BASIC);
+     _pointLightGroup->addMultipleLights(_assetDB->getPointLights());
+-   
+-    // TODO: currently without this being attached to geometrygroup, animation won't work; refactor later
+-    _lightVisualizeGeometryGroup->addChild(_dirLightGroup->getGeomTransformLightGroup());
+-    _lightVisualizeGeometryGroup->addChild(_pointLightGroup->getGeomTransformLightGroup());
+-   
++    
+     if (_handleDirLights != NULL)
+     {
+         (*_handleDirLights)(_dirLightGroup);
+@@ -317,7 +352,7 @@
+     quad_geom->setTexCoordArray(0, quad_tcoords.get());
+     quad_geom->addPrimitiveSet(quad_da.get());
+     
+-    auto _StateSet = quad_geom->getOrCreateStateSet();
++    osg::ref_ptr<osg::StateSet> _StateSet = quad_geom->getOrCreateStateSet();
+     _StateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+     
+     quad_geode->addDrawable(quad_geom.get());
+@@ -385,12 +420,16 @@
+                                          _geomPass->getPositionOutTexure(),
+                                          _geomPass->getNormalDepthOutTexture(),
+                                          _geomPass->getSharedDepthStencilTexture(),
+-                                         _dirLightGroup->getDirectionalLight(0),
+-                                         _geomPass->getSharedDepthStencilTexture());
++                                         _dirLightGroup->getDirectionalLight(0));
+ }
+ 
+ void Core::setupHUDForPasses()
+ {
++    if(_debugHUD.get() != NULL)
++    {
++        return;
++    }
++    
+     osg::ref_ptr<osg::Group> hud(new osg::Group);
+     _debugHUD = hud;
+     
+@@ -412,8 +451,7 @@
+     osg::ref_ptr<osg::Camera> qTexD =
+     createTextureDisplayQuad(osg::Vec3(0.3333, 0.7, 0),
+                              //_shadowGroup->getDirLightViewWorldPosTexture(0),
+-                             //_shadowGroup->getDirLightDirFluxTexture(0),
+-                             _shadowGroup->getDirLightShadowTexture(0),
++                             _shadowGroup->getDirLightDirFluxTexture(0),
+                              //_ssaoPass->getOutputTexture(0),
+                              //_geomPass->getPositionOutTexure(),
+                              //_geomPass->getSharedDepthStencilTexture(),
+@@ -426,15 +464,19 @@
+     createTextureDisplayQuad(osg::Vec3(0.6666, 0.7, 0),
+                              //_directionalLightPass->getLightingOutTexture(),
+                              //_geomPass->getNormalDepthOutTexture(),
+-                             _shadowGroup->getDirLightDirFluxTexture(0),
+-                             //_ssaoPass->getSSAOOutTexture(),
++                             //_shadowGroup->getDirLightDirFluxTexture(0),
++                             _ssaoPass->getSSAOOutTexture(),
+                              _winWidth, _winHeight, 0.3333, 0.3, true);
+     
+     osg::ref_ptr<osg::Camera> qTexF =
+     createTextureDisplayQuad(osg::Vec3(0.0, 0.0, 0),
+                              _finalPass->getFinalPassTexture(),
+                              _winWidth, _winHeight, 1, 1, true);
+-    _sceneRoot->addChild(qTexF);
++    
++    
++    _externalHUDBlending->addChild(qTexF);
++    
++    
+     //hud->addChild(qTexF);
+     hud->addChild(qTexN);
+     hud->addChild(qTexD);
+@@ -478,6 +520,36 @@
+     _screenPasses.push_back(_hdrPass);
+ }
+ 
++void Core::addExternalHUD(osg::ref_ptr<osg::Node> hud)
++{
++    if(_externalHUDs == NULL && _externalHUDBlending == NULL)
++    {
++        // config hud & final pass blending group
++        _externalHUDBlending = new osg::Group;
++        osg::ref_ptr<osg::StateSet> ss = _externalHUDBlending->getOrCreateStateSet();
++        
++        osg::ref_ptr<osg::BlendFunc> blendFunc(new osg::BlendFunc);
++        osg::ref_ptr<osg::BlendEquation> blendEquation(new osg::BlendEquation);
++        blendFunc->setFunction(GL_ONE, GL_ONE);
++        blendEquation->setEquation(osg::BlendEquation::FUNC_ADD);
++        
++        // disable depth test for blending
++        ss->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
++        
++        // enable blending
++        ss->setMode(GL_BLEND, osg::StateAttribute::ON);
++        ss->setAttributeAndModes(blendFunc, osg::StateAttribute::ON);
++        ss->setAttributeAndModes(blendEquation, osg::StateAttribute::ON);
++        
++        _externalHUDs = new osg::Group;
++        _sceneRoot->addChild(_externalHUDBlending);
++    }
++    else
++    {
++        _externalHUDs->addChild(hud);
++    }
++}
++
+ void Core::freeHeap()
+ {
+     for(int i = 0; i < (int)_screenPasses.size(); i++)
+@@ -488,4 +560,8 @@
+     delete _dirLightGroup;
+     delete _pointLightGroup;
+     delete _shadowGroup;
++    if(_hasCustomViewer)
++    {
++        _viewer = NULL;
++    }
+ }
+\ No newline at end of file
+diff -ur ./Core.h ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/Core.h
+--- ./Core.h	2015-02-23 20:03:11.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/Core.h	2015-02-22 22:47:57.000000000 -0800
+@@ -11,7 +11,7 @@
+ 
+ #include <stdio.h>
+ #include <osgDB/ReadFile>
+-#include <osgViewer/viewer>
++#include <osgViewer/Viewer>
+ #include <osg/Camera>
+ #include <osg/PolygonMode>
+ #include <osg/TextureCubeMap>
+@@ -31,8 +31,6 @@
+ #include "AssetDB.h"
+ #include "KeyboardHandler.h"
+ 
+-#include <osg/ComputeBoundsVisitor>
+-
+ class LightTrackBallManipulator;
+ class Core
+ {
+@@ -61,6 +59,48 @@
+         _handleGeometries = handleGeometries;
+     }
+     
++    void setCustomViewer(osgViewer::Viewer *viewer);
++    
++    inline void setCustomMainCamera(osg::ref_ptr<osg::Camera> mainCamera)
++    {
++        _hasCustomCamera = true;
++        _mainCamera = mainCamera;
++    }
++    
++    inline osg::ref_ptr<osg::Group> getSceneRoot()
++    {
++        return _sceneRoot;
++    }
++    
++    inline osg::ref_ptr<osg::Group> getDebugHUD()
++    {
++        return _debugHUD;
++    }
++    
++    inline void enableDebugHUD()
++    {
++        if(!_debugHUDEnabled)
++        {
++            _sceneRoot->addChild(_debugHUD);
++            _debugHUDEnabled = true;
++        }
++    }
++    
++    inline void disableDebugHUD()
++    {
++        if(_debugHUDEnabled)
++        {
++            _sceneRoot->removeChild(_debugHUD);
++            _debugHUDEnabled = false;
++        }
++    }
++    
++    inline void toggleDebugHUD()
++    {
++        _debugHUDEnabled ? disableDebugHUD() : enableDebugHUD();
++    }
++   
++    void addExternalHUD(osg::ref_ptr<osg::Node> hud);
+     void run();
+     
+ private:
+@@ -90,9 +130,6 @@
+     osg::ref_ptr<osg::Texture2D> createTexture2DImage(const char *imageName);
+     osg::ref_ptr<osg::Geode> createTexturedQuad(int _TextureWidth, int _TextureHeight);
+     
+-    //    DirectionalLightGroup *addDirectionalLights();
+-    //    LightGroup *addPointLights();
+-    //
+     void configGeomPass();
+     void configRSMPass();
+     void configDirectionalLightPass();
+@@ -136,6 +173,9 @@
+     
+     osg::ref_ptr<osg::Camera> _mainCamera;
+     osg::ref_ptr<osg::Group> _debugHUD;
++    osg::ref_ptr<osg::Group> _externalHUDs;
++    osg::ref_ptr<osg::Group> _externalHUDBlending; // blend with final pass
++    
+     osg::ref_ptr<KeyboardHandler> _keyboardHandler;
+     
+     AssetDB *_assetDB;
+@@ -149,9 +189,11 @@
+     osg::ref_ptr<osgViewer::Viewer> _viewer;
+     
+     osg::ref_ptr<LightTrackBallManipulator> _lightTrackBallManipulator;
+-    osg::ComputeBoundsVisitor _computeBound;
+-    osg::BoundingBox _sceneAABB;
+     
++    bool _hasCustomViewer;
++    bool _hasCustomCamera;
++    
++    bool _debugHUDEnabled;
+ };
+ 
+ #endif /* defined(__vrphysics__Core__) */
+diff -ur ./DirectionalLight.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLight.cpp
+--- ./DirectionalLight.cpp	2015-02-24 20:46:30.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLight.cpp	2014-11-27 16:10:39.000000000 -0800
+@@ -8,7 +8,7 @@
+ 
+ #include "DirectionalLight.h"
+ DirectionalLight::DirectionalLight() :
+-intensity(1.0f), _isAnimated(false)
++intensity(1.0f)
+ {
+     memset(ambient, 0, sizeof(ambient));
+     memset(diffuse, 0, sizeof(diffuse));
+diff -ur ./DirectionalLight.h ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLight.h
+--- ./DirectionalLight.h	2015-02-24 21:43:09.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLight.h	2015-02-22 21:09:05.000000000 -0800
+@@ -51,7 +51,6 @@
+     
+     void setPosition(const osg::Vec3f &pos) {
+         position = pos;
+-        genGeomTransform(0.25);
+     }
+     
+     osg::Vec3f getPosition() {
+@@ -107,7 +106,7 @@
+         quad_geom->addPrimitiveSet(quad_da.get());
+         quad_geom->setColorArray(quad_colors.get(), osg::Array::BIND_OVERALL);
+         
+-        auto stateSet = quad_geom->getOrCreateStateSet();
++        osg::ref_ptr<osg::StateSet> stateSet = quad_geom->getOrCreateStateSet();
+         stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+         quad_geode->addDrawable(quad_geom);
+         _renderQuad = quad_geode;
+@@ -153,21 +152,6 @@
+         return osg::Vec4(specular[0], specular[1], specular[2], specular[3]);
+     }
+     
+-    inline void setAnimated(bool tf)
+-    {
+-        _isAnimated = tf;
+-    }
+-    
+-    inline bool isAnimated()
+-    {
+-        return _isAnimated;
+-    }
+-    
+-    osg::Vec3 getAnimOrbitAxis()
+-    {
+-        return orbitAxis;
+-    }
+-    
+     float ambient[4];
+     float diffuse[4];
+     float specular[4];
+@@ -192,8 +176,6 @@
+     static int _highest_id;
+     
+     float _light_geom_radius;
+-    
+-    bool _isAnimated;
+ };
+ 
+ #endif /* defined(__vrphysics__DirectionalLight__) */
+diff -ur ./DirectionalLightGroup.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLightGroup.cpp
+--- ./DirectionalLightGroup.cpp	2015-02-24 20:42:20.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLightGroup.cpp	2015-02-20 02:48:13.000000000 -0800
+@@ -8,13 +8,11 @@
+ 
+ #include "DirectionalLightGroup.h"
+ #include "ShadowGroup.h"
+-#include "LightGroupAnimationCallback.h"
+ 
+ DirectionalLightGroup::DirectionalLightGroup(ShadowGroup *shadowGroup)
+ : _lightnum(0), _shadowGroup(shadowGroup)
+ {
+     _directionalLightGroup = new osg::Group;
+-    _directionalLightGroup->setUpdateCallback(new LightGroupAnimationCallback(this));
+ }
+ 
+ DirectionalLightGroup::~DirectionalLightGroup()
+diff -ur ./DirectionalLightGroup.h ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLightGroup.h
+--- ./DirectionalLightGroup.h	2015-02-24 20:56:41.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLightGroup.h	2015-02-20 02:46:14.000000000 -0800
+@@ -26,11 +26,6 @@
+     DirectionalLight *getDirectionalLight(int _id);
+     void addMultipleLights(std::vector<DirectionalLight *> lights);
+     
+-    inline osg::ref_ptr<osg::Group> getGeomTransformLightGroup()
+-    {
+-        return _directionalLightGroup;
+-    }
+-    
+     std::vector<int> getAllLightIds();
+     
+ private:
+diff -ur ./DirectionalLightingPass.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLightingPass.cpp
+--- ./DirectionalLightingPass.cpp	2015-01-23 20:15:33.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLightingPass.cpp	2015-02-22 21:10:05.000000000 -0800
+@@ -62,7 +62,7 @@
+     osg::ref_ptr<osg::Group> lightPassGroup(new osg::Group);
+     _lightPassGroupNode = lightPassGroup;
+     
+-    auto directionalLights = _lightGroup->getDirectionalLightsReference();
++    std::vector<DirectionalLight *> & directionalLights = _lightGroup->getDirectionalLightsReference();
+     osg::Matrix mainCameraModelViewMatrix = _mainCamera->getViewMatrix();
+     
+     osg::ref_ptr<osg::BlendFunc> blendFunc(new osg::BlendFunc);
+@@ -77,10 +77,10 @@
+         osg::Vec3f lightDir = lightPosInViewSpace - lookAtInViewSpace;
+         
+         (*it)->genRenderQuad(_mainCamera->getViewport()->width(), _mainCamera->getViewport()->height());
+-        auto renderQuad = (*it)->_renderQuad;
++        osg::ref_ptr<osg::Geode> renderQuad = (*it)->_renderQuad;
+         lightPassGroup->addChild(renderQuad);
+         
+-        auto ss = renderQuad->getOrCreateStateSet();
++        osg::ref_ptr<osg::StateSet> ss = renderQuad->getOrCreateStateSet();
+         ss->setUpdateCallback(new DirectionalLightCallback(_mainCamera, (*it)));
+         ss->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
+         
+diff -ur ./DirectionalLightingPass.h ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLightingPass.h
+--- ./DirectionalLightingPass.h	2015-01-22 14:29:21.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/DirectionalLightingPass.h	2015-02-20 01:47:15.000000000 -0800
+@@ -15,9 +15,10 @@
+ #include <osg/Group>
+ 
+ #include "ScreenPass.h"
+-#include "DirectionalLightGroup.h"
+ #include "ShadowGroup.h"
+ 
++#include "DirectionalLightGroup.h"
++
+ class DirectionalLightingPass : public ScreenPass
+ {
+ public:
+diff -ur ./GeometryPass.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/GeometryPass.cpp
+--- ./GeometryPass.cpp	2015-02-23 19:57:58.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/GeometryPass.cpp	2015-02-22 21:11:13.000000000 -0800
+@@ -38,7 +38,7 @@
+     
+     osg::ref_ptr<osg::Group> worldObjectGeomPassNode(new osg::Group);
+     worldObjectGeomPassNode->addChild(_worldObjects);
+-    auto worldObjectGeomPassSS = worldObjectGeomPassNode->getOrCreateStateSet();
++    osg::ref_ptr<osg::StateSet> worldObjectGeomPassSS = worldObjectGeomPassNode->getOrCreateStateSet();
+     worldObjectGeomPassSS->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+     osg::ref_ptr<osg::Depth> depth(new osg::Depth);
+     depth->setWriteMask(true);
+@@ -80,10 +80,10 @@
+     
+     // attach shader to objects other than light geom
+     // TODO: consider the shading of the flying light object, currently overriden by _stateSet
+-    auto nodeMaterialPairs = _assetDB->getGeometryNodesAndMaterials();
++    std::vector<std::pair<osg::Node *, Material *> > nodeMaterialPairs = _assetDB->getGeometryNodesAndMaterials();
+     for(unsigned long i = 0; i < nodeMaterialPairs.size(); i++)
+     {
+-        auto p = nodeMaterialPairs[i];
++        std::pair<osg::Node *, Material *> &p = nodeMaterialPairs[i];
+         osg::Node *node = p.first;
+         Material *mat = p.second;
+         if(mat->hasTexture())
+Only in ./: ISmile.h
+diff -ur ./ImportanceSamplingPass.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ImportanceSamplingPass.cpp
+--- ./ImportanceSamplingPass.cpp	2015-02-24 16:08:11.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ImportanceSamplingPass.cpp	2015-02-22 21:11:35.000000000 -0800
+@@ -7,9 +7,9 @@
+ //
+ 
+ #include "ImportanceSamplingPass.h"
+-#include <osgDB/FileUtils>
+ #include <osgDB/ReadFile>
+ #include <osgDB/WriteFile>
++#include <osgDB/FileUtils>
+ #include <osg/ShapeDrawable>
+ #include <osg/Point>
+ 
+@@ -333,7 +333,7 @@
+     quad_geom->setVertexArray(pointCoords.get());
+     quad_geom->addPrimitiveSet(quad_da.get());
+     
+-    auto _StateSet = quad_geom->getOrCreateStateSet();
++    osg::ref_ptr<osg::StateSet> _StateSet = quad_geom->getOrCreateStateSet();
+     _StateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+     _StateSet->setAttribute( new osg::Point( 1.0f ), osg::StateAttribute::ON);
+     
+diff -ur ./IndirectLightingPass.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/IndirectLightingPass.cpp
+--- ./IndirectLightingPass.cpp	2015-02-24 14:14:21.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/IndirectLightingPass.cpp	2015-02-20 10:33:52.000000000 -0800
+@@ -13,7 +13,7 @@
+ 
+ #include "DirectionalLight.h"
+ 
+-IndirectLightingPass::IndirectLightingPass(osg::Camera *mainCamera, ImportanceSamplingPass *impPass, osg::TextureRectangle *lightDirTex, osg::TextureRectangle *worldPosTex, osg::TextureRectangle *viewPositionTex, osg::TextureRectangle *viewNormalTex, osg::Texture2D *depthBufferTex, DirectionalLight *mainLight, osg::Texture2D *sharedDepthBuffer)
++IndirectLightingPass::IndirectLightingPass(osg::Camera *mainCamera, ImportanceSamplingPass *impPass, osg::TextureRectangle *lightDirTex, osg::TextureRectangle *worldPosTex, osg::TextureRectangle *viewPositionTex, osg::TextureRectangle *viewNormalTex, osg::Texture2D *depthBufferTex, DirectionalLight *mainLight)
+ : ScreenPass(mainCamera), _importanceSamplingEnabled(true), _impPass(impPass)
+ {
+     // load sample tex
+@@ -27,8 +27,7 @@
+ //    }
+    
+     _mainLight = mainLight;
+-   
+-    _sharedDepthBufferTex = sharedDepthBuffer;
++    
+     _impSampleTex = impPass->getImportanceSampleTexture(0);
+     _depthBufferTex = depthBufferTex;
+     _splats = impPass->getSplatsSizeRow();
+@@ -54,33 +53,18 @@
+     _vplGroup = new VPLGroup;
+     _vplGroup->setNumVpls(_splatSampleNum * _splatSampleNum);
+     
+-    setupCamera();
+-    
+-    configureStateSet();
+-}
+-
+-void IndirectLightingPass::setupCamera()
+-{
+     _rttCamera->addChild(_vplGroup->getLightSphereGeode());
+-    //     _rttCamera->addChild(createTexturedQuad());
++//     _rttCamera->addChild(createTexturedQuad());
+     _rootGroup->addChild(_rttCamera);
+     
+     // config camera
+-    // config shared depth buffer and stencil
+-    _rttCamera->setClearStencil(0);
+-    _rttCamera->setClearMask(GL_COLOR_BUFFER_BIT);
+-//    _rttCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+-//    _rttCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+-    _rttCamera->attach(osg::Camera::PACKED_DEPTH_STENCIL_BUFFER, _sharedDepthBufferTex);
+-    
+-    _rttCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f,1.0f));
+-    
+-    // viewport
+-    _rttCamera->setViewport(0, 0, _screenWidth, _screenHeight);
+-    _rttCamera->setRenderOrder(osg::Camera::PRE_RENDER);
+-    _rttCamera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+-    
++//    _rttCamera->attach(osg::Camera::PACKED_DEPTH_STENCIL_BUFFER, _depthBufferTex);
+     _rttCamera->attach(osg::Camera::COLOR_BUFFER0, getOutputTexture(_out_indirectLightingTex_id));
++//    _rttCamera->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
++//    _rttCamera->setProjectionMatrix(osg::Matrix::ortho2D(0, 1, 0, 1));
++    setupCamera();
++    
++    configureStateSet();
+ }
+ 
+ IndirectLightingPass::~IndirectLightingPass()
+@@ -131,14 +115,9 @@
+     osg::ref_ptr<osg::TextureRectangle> tex = new osg::TextureRectangle;
+     
+     tex->setTextureSize(_screenWidth, _screenHeight);
+-//    tex->setSourceType(GL_UNSIGNED_BYTE); // TODO: consider HDR cases
+-//    tex->setSourceFormat(GL_RGBA);
+-//    tex->setInternalFormat(GL_RGBA);
+-    
+-    tex->setSourceType(GL_FLOAT); // TODO: consider HDR cases
++    tex->setSourceType(GL_UNSIGNED_BYTE); // TODO: consider HDR cases
+     tex->setSourceFormat(GL_RGBA);
+-    tex->setInternalFormat(GL_RGBA16F_ARB);
+-    
++    tex->setInternalFormat(GL_RGBA);
+     
+     tex->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::LINEAR);
+     tex->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::LINEAR);
+@@ -153,6 +132,25 @@
+     _stateSet = _rttCamera->getOrCreateStateSet();
+     _stateSet->setAttributeAndModes(getShader(_indirectLightShader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+     
++//    uniform sampler2D u_samplePosTex;
++//    uniform sampler2DRect u_worldPosTex;
++//    uniform sampler2DRect u_lightDirTex;
++//    
++//    uniform mat4 u_matVP;
++//    uniform float u_scaleIndirect;
++//    uniform vec2 u_render_wh;
++//    uniform vec3 u_camPos;
++    
++//    float a[6][8];
++//    for(int i = 0; i < 6; i++)
++//    {
++//        for(int j = 0; j < 8; j++)
++//        {
++//            int index = i * 8 + j;
++//            a[i][j] = (float)index / (float)(8 * 6);
++//        }
++//    }
++    
+     _stateSet->addUniform(new osg::Uniform("u_samplePosTex", 0));
+     if(_impPass->isImportanceSampleEnabled())
+     {
+@@ -241,9 +239,6 @@
+     osg::Vec3 eye;
+     osg::Vec3 dummy;
+     mat.getLookAt(eye, dummy, dummy);
+-    
+-    // printf("%f, %f, %f\n", eye.x(), eye.y(), eye.z());
+-    
+     return eye;
+ }
+ 
+@@ -253,6 +248,5 @@
+     osg::Vec3 eye;
+     osg::Vec3 dummy;
+     mat.getLookAt(eye, dummy, dummy);
+-    
+     return eye;
+ }
+diff -ur ./IndirectLightingPass.h ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/IndirectLightingPass.h
+--- ./IndirectLightingPass.h	2015-02-23 23:05:57.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/IndirectLightingPass.h	2015-02-17 02:19:17.000000000 -0800
+@@ -32,7 +32,7 @@
+ class IndirectLightingPass : public ScreenPass
+ {
+ public:
+-    IndirectLightingPass(osg::Camera *mainCamera, ImportanceSamplingPass *impPass, osg::TextureRectangle *lightDirTex, osg::TextureRectangle *worldPosTex, osg::TextureRectangle *viewPositionTex, osg::TextureRectangle *viewNormalTex, osg::Texture2D *depthBufferTex, DirectionalLight *mainLight, osg::Texture2D *sharedDepthBuffer);
++    IndirectLightingPass(osg::Camera *mainCamera, ImportanceSamplingPass *impPass, osg::TextureRectangle *lightDirTex, osg::TextureRectangle *worldPosTex, osg::TextureRectangle *viewPositionTex, osg::TextureRectangle *viewNormalTex, osg::Texture2D *depthBufferTex, DirectionalLight *mainLight);
+     virtual ~IndirectLightingPass();
+     
+     inline void setImportanceSamplingEnabled(bool tf)
+@@ -57,9 +57,6 @@
+ protected:
+     virtual void configureStateSet();
+     
+-    // override
+-    virtual void setupCamera();
+-    
+ private:
+     void loadRegularSampleTexture();
+     osg::Vec3 getCameraPosition();
+@@ -97,8 +94,6 @@
+     osg::ref_ptr<osg::Texture2D> _depthBufferTex;
+     DirectionalLight *_mainLight;
+     
+-    osg::ref_ptr<osg::Texture2D> _sharedDepthBufferTex;
+-    
+ };
+ 
+ #endif /* defined(__vrphysics__IndirectLightingPass__) */
+diff -ur ./LightGroupAnimationCallback.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/LightGroupAnimationCallback.cpp
+--- ./LightGroupAnimationCallback.cpp	2015-02-24 22:24:10.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/LightGroupAnimationCallback.cpp	2015-02-10 17:18:28.000000000 -0800
+@@ -13,48 +13,17 @@
+ #include "Utils.h"
+ 
+ LightGroupAnimationCallback::LightGroupAnimationCallback(LightGroup *group)
+-: _group(NULL), _dirLightGroup(NULL)
+ {
+     _group = group;
+ }
+ 
+-LightGroupAnimationCallback::LightGroupAnimationCallback(DirectionalLightGroup *group)
+-: _group(NULL), _dirLightGroup(NULL)
+-{
+-    _dirLightGroup = group;
+-}
+-
+-void LightGroupAnimationCallback::animateDirLights(int count, float secPerFrame)
+-{
+-    if(_dirLightGroup == NULL) return;
+-    
+-    std::vector<DirectionalLight *> &ptArr = _dirLightGroup->getDirectionalLightsReference();
+-    for(std::vector<DirectionalLight *>::iterator it = ptArr.begin(); it != ptArr.end(); it++)
+-    {
+-        DirectionalLight *dl = *it;
+-        if(!dl->isAnimated())
+-        {
+-            continue;
+-        }
+-        
+-        // float percent = count / (float) ptArr.size();
+-        osg::Vec3 original = dl->getPosition();
+-        original -= dl->getLookAt();
+-        osg::Matrix mat;
+-        mat.makeRotate(osg::DegreesToRadians(10 * secPerFrame), dl->getAnimOrbitAxis());
+-        
+-        osg::Vec3 newPos = original * mat;
+-        newPos += dl->getLookAt();
+-        dl->setPosition(newPos);
+-        
+-        ++count;
+-    }
+-}
+-
+-void LightGroupAnimationCallback::animatePointLights(int count, float time)
++void LightGroupAnimationCallback::operator()(osg::Node* node, osg::NodeVisitor* nv)
+ {
+-    if(_group == NULL) return;
+-    
++    _angle += osg::DegreesToRadians(1.0f);
++    int count = 0;
++    const osg::FrameStamp *fs = nv->getFrameStamp();
++    if(!fs) return;
++    float time = fs->getReferenceTime();
+     std::vector<PointLight *> &ptArr = _group->getPointLightsArrayReference();
+     for(std::vector<PointLight *>::iterator it = ptArr.begin(); it != ptArr.end(); it++)
+     {
+@@ -73,18 +42,4 @@
+         pt->setIntensity(0.5f + 0.25f * (1.0f + cosf(time + percent* osg::PI)));
+         ++count;
+     }
+-}
+-
+-void LightGroupAnimationCallback::operator()(osg::Node* node, osg::NodeVisitor* nv)
+-{
+-    _angle += osg::DegreesToRadians(1.0f);
+-    int count = 0;
+-    const osg::FrameStamp *fs = nv->getFrameStamp();
+-    if(!fs) return;
+-    float time = fs->getReferenceTime();
+-    int frameNum = fs->getFrameNumber();
+-    float secPerFrame = time / frameNum;
+-    
+-    animateDirLights(count, secPerFrame);
+-    animatePointLights(count, time);
+ }
+\ No newline at end of file
+diff -ur ./LightGroupAnimationCallback.h ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/LightGroupAnimationCallback.h
+--- ./LightGroupAnimationCallback.h	2015-02-24 22:04:31.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/LightGroupAnimationCallback.h	2014-11-14 16:06:51.000000000 -0800
+@@ -14,23 +14,17 @@
+ #include <osg/Camera>
+ 
+ #include "LightGroup.h"
+-#include "DirectionalLightGroup.h"
+ 
+ class LightGroupAnimationCallback : public osg::NodeCallback
+ {
+ public:
+     LightGroupAnimationCallback(LightGroup *group);
+-    LightGroupAnimationCallback(DirectionalLightGroup *group);
+-    
+-    void animatePointLights(int count, float secPerFrame);
+-    void animateDirLights(int count, float time);
+     
+     virtual ~LightGroupAnimationCallback() {} ;
+     virtual void operator()(osg::Node* node, osg::NodeVisitor* nv);
+     
+ private:
+     LightGroup *_group;
+-    DirectionalLightGroup *_dirLightGroup;
+     float _angle;
+ };
+ 
+Only in ./: LightHandler.cpp
+Only in ./: LightHandler.h
+diff -ur ./LightingPass.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/LightingPass.cpp
+--- ./LightingPass.cpp	2015-02-23 23:11:56.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/LightingPass.cpp	2015-02-10 16:38:57.000000000 -0800
+@@ -227,7 +227,7 @@
+     // enable stencil test for correct light volume bounding
+     _lightPassGroupNode->getOrCreateStateSet()->setMode(GL_STENCIL_TEST, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+ 
+-    configStencilPassStateSet();
++    //configStencilPassStateSet();
+     configPointLightPassStateSet();
+ }
+ 
+diff -ur ./Material.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/Material.cpp
+--- ./Material.cpp	2014-12-01 03:50:44.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/Material.cpp	2015-02-20 04:00:07.000000000 -0800
+@@ -10,7 +10,7 @@
+ 
+ 
+ Material::Material(osg::Node *owner, osg::Texture2D *albedo/* = NULL */ )
+-: _hasTexture(false), _owner(owner)
++:  _owner(owner), _hasTexture(false)
+ {
+     if(albedo != NULL)
+     {
+diff -ur ./PointLight.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/PointLight.cpp
+--- ./PointLight.cpp	2015-02-24 20:46:54.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/PointLight.cpp	2015-02-20 03:57:49.000000000 -0800
+@@ -10,7 +10,7 @@
+ #include <osgDB/ReadFile>
+ 
+ PointLight::PointLight() :
+-intensity(1.0f), _animated(false)
++intensity(1.0f)
+ {
+     genGeometry();
+     
+@@ -65,4 +65,6 @@
+ }
+ 
+ int PointLight::_highest_id;
++
++// TODO: make a resource manager to preload files so that io error can be notified. i.e lightSphere.obj not found
+ osg::ref_ptr<osg::Geode> PointLight::_s_lightSphere = osgDB::readNodeFile("lightSphere.obj")->asGroup()->getChild(0)->asGeode();
+diff -ur ./SSAOPass.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/SSAOPass.cpp
+--- ./SSAOPass.cpp	2015-02-10 02:45:01.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/SSAOPass.cpp	2015-02-20 14:47:29.000000000 -0800
+@@ -111,7 +111,6 @@
+     camera->setProjectionMatrix(osg::Matrix::ortho2D(0, 1, 0, 1));
+     camera->setViewMatrix(osg::Matrix::identity());
+     _rttCamera = camera;
+-    
+ }
+ 
+ void SSAOPass::configRTTCamera()
+@@ -136,5 +135,4 @@
+     ss->getUniform("u_samplingRadius")->set(_ssaoPass->getSamplingRadius());
+     ss->getUniform("u_attenuation")->set(osg::Vec2(_ssaoPass->getConstantAttenuation(), _ssaoPass->getLinearAttenuation()));
+     ss->getUniform("u_inverseProjMatrix")->set(inverseProjMat);
+-
+ }
+\ No newline at end of file
+diff -ur ./ScreenPass.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ScreenPass.cpp
+--- ./ScreenPass.cpp	2015-02-23 19:57:58.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ScreenPass.cpp	2015-02-20 15:01:40.000000000 -0800
+@@ -53,10 +53,16 @@
+     
+     osg::ref_ptr<osg::Vec3Array> quad_coords = new osg::Vec3Array; // vertex coords
+     // counter-clockwise
+-    quad_coords->push_back(osg::Vec3d(0, 0, -1));
+-    quad_coords->push_back(osg::Vec3d(1, 0, -1));
+-    quad_coords->push_back(osg::Vec3d(1, 1, -1));
+-    quad_coords->push_back(osg::Vec3d(0, 1, -1));
++//    quad_coords->push_back(osg::Vec3d(0, 0, -1));
++//    quad_coords->push_back(osg::Vec3d(1, 0, -1));
++//    quad_coords->push_back(osg::Vec3d(1, 1, -1));
++//    quad_coords->push_back(osg::Vec3d(0, 1, -1));
++   
++    // this fix ssao not drawing anything in calvr
++    quad_coords->push_back(osg::Vec3d(0, 0, 0));
++    quad_coords->push_back(osg::Vec3d(1, 0, 0));
++    quad_coords->push_back(osg::Vec3d(1, 1, 0));
++    quad_coords->push_back(osg::Vec3d(0, 1, 0));
+     
+     osg::ref_ptr<osg::Vec2Array> quad_tcoords = new osg::Vec2Array; // texture coords
+     quad_tcoords->push_back(osg::Vec2(0, 0));
+diff -ur ./ShadowCallback.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ShadowCallback.cpp
+--- ./ShadowCallback.cpp	2015-02-23 22:20:01.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ShadowCallback.cpp	2015-02-04 02:23:52.000000000 -0800
+@@ -20,56 +20,15 @@
+     _pointLight = NULL;
+ }
+ 
+-std::pair<float, float> ShadowCallback::getNearFar()
++std::pair<float, float> ShadowCallback::getNearFarPlane()
+ {
+     float dummy;
+     float near;
+     float far;
+     _shadowProjection.getOrtho(dummy, dummy, dummy, dummy, near, far);
+-   
+     return std::make_pair(near, far);
+ }
+ 
+-osg::Matrix ShadowCallback::calcProjectionMatrix(const osg::Matrix &viewMatrix)
+-{
+-    float xMin, xMax, yMin, yMax, zMin, zMax;
+-    xMin = 1000000000;
+-    xMax = -1000000000;
+-    yMin = 1000000000;
+-    yMax = -1000000000;
+-    zMin = 1000000000;
+-    zMax = -1000000000;
+-   
+-    for(int i = 0; i < 8; i++)
+-    {
+-        osg::Vec3 v = _sceneAABB.corner(i);
+-        osg::Vec3 viewV = v * viewMatrix;
+-        
+-        if(viewV.x() > xMax) xMax = viewV.x();
+-        if(viewV.x() < xMin) xMin = viewV.x();
+-        
+-        if(viewV.y() > yMax) yMax = viewV.y();
+-        if(viewV.y() < yMin) yMin = viewV.y();
+-        if(viewV.z() > zMax) zMax = viewV.z();
+-        if(viewV.z() < zMin) zMin = viewV.z();
+-    }
+-    osg::Matrix proj;
+-    float near, far;
+-    if(zMax < 0 && zMin < 0)
+-    {
+-        near = -zMax;
+-        far = -zMin;
+-    }
+-    else // zMax > 0 && zMin > 0 || zMax > 0 zMin < 0
+-    {
+-        near = zMin;
+-        far = zMax;
+-    }
+-    
+-    proj.makeOrtho(xMin, xMax, yMin, yMax, near, far);
+-    return proj;
+-}
+-
+ void ShadowCallback::operator()(osg::StateSet *ss, osg::NodeVisitor* nv)
+ {
+     osg::Matrixf shadowMV;
+@@ -80,25 +39,18 @@
+         shadowViewInverse = osg::Matrixf::inverse(shadowMV);
+     }
+ 
+-    _shadowProjection = calcProjectionMatrix(shadowMV);
+     osg::Matrixf shadowMVP = shadowMV * _shadowProjection;
+     // TODO: pass in near/ far plane
+     ss->getUniform("u_lightViewMatrix")->set(shadowMV);
+-//    ss->getUniform("u_lightViewProjectionMatrix")->set(shadowMVP);
+-    _lightCamera->setViewMatrix(shadowMV);
+-    _lightCamera->setProjectionMatrix(_shadowProjection);
+-    
++    ss->getUniform("u_lightViewProjectionMatrix")->set(shadowMVP);
+     ss->getUniform("u_lightViewInverseMatrix")->set(shadowViewInverse);
+     
+     ss->getUniform("u_lightPos")->set(_dirLight->getPosition());
+    
+-    std::pair<float, float> nearFar = getNearFar();
+-    ss->getUniform("u_zLength")->set(nearFar.second - nearFar.first);
++    std::pair<float, float> nearFar = getNearFarPlane();
++    ss->getUniform("u_farDistance_s")->set(nearFar.second);
+     ss->getUniform("u_nearDistance_s")->set(nearFar.first);
+     
+-    _dirLight->_lightNearDistance = nearFar.first;
+-    _dirLight->_lightFarDistance = nearFar.second;
+-    
+     _dirLight->_lightProjectionMatrix = _shadowProjection;
+     _dirLight->_lightViewMatrix = shadowMV;
+     _dirLight->_lightMVP = shadowMVP;
+diff -ur ./ShadowCallback.h ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ShadowCallback.h
+--- ./ShadowCallback.h	2015-02-23 22:09:49.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ShadowCallback.h	2015-02-04 02:13:34.000000000 -0800
+@@ -18,10 +18,8 @@
+ class ShadowCallback : public osg::StateSet::Callback
+ {
+ public:
+-    ShadowCallback(osg::Camera *lightCamera, osg::Matrix shadowProjection, const osg::BoundingBox &sceneAABB)
+-        : _lightCamera(lightCamera), _shadowProjection(shadowProjection),
+-    _dirLight(NULL), _pointLight(NULL), _sceneAABB(sceneAABB) { };
+-    
++    ShadowCallback(osg::Camera *mainCamera, osg::Matrix shadowProjection)
++        : _mainCamera(mainCamera), _shadowProjection(shadowProjection), _dirLight(NULL), _pointLight(NULL) { };
+     ~ShadowCallback() {};
+    
+     void setPointLight(PointLight *pl);
+@@ -30,17 +28,13 @@
+     void operator()(osg::StateSet *ss, osg::NodeVisitor* nv);
+     
+ private:
+-    std::pair<float, float> getNearFar();
++    std::pair<float, float> getNearFarPlane();
+ 
+-    osg::ref_ptr<osg::Camera> _lightCamera;
++    osg::ref_ptr<osg::Camera> _mainCamera;
+     osg::Matrix _shadowProjection;
+     
+     DirectionalLight *_dirLight;
+     PointLight *_pointLight;
+-    
+-    const osg::BoundingBox &_sceneAABB;
+-    
+-    osg::Matrix calcProjectionMatrix(const osg::Matrix &viewInverse);
+ };
+ 
+ #endif /* defined(__vrphysics__ShadowCallback__) */
+diff -ur ./ShadowGroup.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ShadowGroup.cpp
+--- ./ShadowGroup.cpp	2015-02-25 16:40:46.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ShadowGroup.cpp	2015-02-20 14:16:23.000000000 -0800
+@@ -9,34 +9,27 @@
+ #include "ShadowGroup.h"
+ #include <osgDB/ReadFile>
+ #include <osg/TextureRectangle>
+-#include <osg/CullFace>
+ 
+ #include "ShadowCallback.h"
+ 
+-ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms, const osg::BoundingBox &sceneAABB)
+-: _mainCamera(mainCamera), _geoms(geoms), _sceneAABB(sceneAABB)
++ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms)
++: _mainCamera(mainCamera), _geoms(geoms)
+ {
+     _isGIEnabled = true;
+-    
+-    // dummy
+     _nearPlane = -10;
+     _farPlane = 20;
+     _shadowProjection.makeOrtho(-5, 5, -5, 5, _nearPlane, _farPlane);
++    // gi test settings
++//    _nearPlane = 14;
++//    _farPlane = 55;
++//    _shadowProjection.makePerspective(40, 1.0f, _nearPlane, _farPlane);
+     
+     _depthMapShader = new osg::Program();
+     _depthMapShader->addShader(osgDB::readShaderFile("orthoDepthMap.vert"));
+     _depthMapShader->addShader(osgDB::readShaderFile("orthoDepthMap.frag"));
+     _depthTexWidth = 512;
+     _depthTexHeight = 512;
+-    
+-    _blurShaderX = new osg::Program();
+-    _blurShaderX->addShader(osgDB::readShaderFile("gBlur.vert"));
+-    _blurShaderX->addShader(osgDB::readShaderFile("gBlurX.frag"));
+    
+-    _blurShaderY = new osg::Program();
+-    _blurShaderY->addShader(osgDB::readShaderFile("gBlur.vert"));
+-    _blurShaderY->addShader(osgDB::readShaderFile("gBlurY.frag"));
+-    
+     // TODO, currently not working, since MRT only support a single resolution
+     // Therefore, rsm and shadow maps are using the same resolution,
+     // later, they needs to be separated for performance and quality.
+@@ -44,11 +37,6 @@
+     _rsmTexHeight = _depthTexHeight;
+     
+     _shadowCameras = new osg::Group;
+-    _blurCameras = new osg::Group;
+-    _shadowRootGroup = new osg::Group;
+-    
+-    _shadowRootGroup->addChild(_shadowCameras);
+-    _shadowRootGroup->addChild(_blurCameras);
+ }
+ 
+ osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createShadowTexture(int width, int height)
+@@ -70,6 +58,7 @@
+     return tex;
+ }
+ 
++
+ osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createLightDirFluxTexture(int width, int height)
+ {
+     osg::ref_ptr<osg::TextureRectangle> tex = new osg::TextureRectangle;
+@@ -79,7 +68,7 @@
+     tex->setSourceFormat(GL_RGBA);
+     tex->setInternalFormat(GL_RGBA32F_ARB);
+     
+-    // ! must use nearest, or flux will be interpolated, making flux sphere irregular
++    // ! must use nearest, or flux will be interpolated, making flux color wrong -> sphere size irregular
+     tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
+     tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::NEAREST);
+     
+@@ -120,56 +109,6 @@
+     _depthTexHeight = height;
+ }
+ 
+-void ShadowGroup::addBlurCamera(osg::TextureRectangle *outDepthTex)
+-{
+-    osg::ref_ptr<osg::Camera> blurCamera(new osg::Camera);
+-    blurCamera->setClearColor(osg::Vec4());
+-    blurCamera->setClearMask(GL_DEPTH_BUFFER_BIT); // we cannot clear color buffer
+-    
+-    blurCamera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+-    blurCamera->setRenderOrder(osg::Camera::PRE_RENDER);
+-   
+-    blurCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+-    blurCamera->setProjectionMatrix(osg::Matrix::ortho2D(0, 1, 0, 1));
+-    blurCamera->setViewMatrix(osg::Matrix::identity());
+-    blurCamera->setViewport(0, 0, _depthTexWidth, _depthTexHeight);
+-    blurCamera->attach(osg::Camera::COLOR_BUFFER0, outDepthTex);
+-    
+-    blurCamera->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+-    
+-    osg::ref_ptr<osg::Group> yDir = createQuad();
+-    osg::ref_ptr<osg::Group> xDir = createQuad();
+-    
+-    // create two screen Quad for two blurring direction
+-    configBlurQuadStateSet(yDir, 'y', outDepthTex);
+-    configBlurQuadStateSet(xDir, 'x', outDepthTex);
+-//    blurCamera->addChild(yDir);
+-//    blurCamera->addChild(xDir);
+-    
+-    _blurCameras->addChild(blurCamera);
+-}
+-
+-
+-void ShadowGroup::configBlurQuadStateSet(osg::Group *g, char dir, osg::TextureRectangle *outDepthTex)
+-{
+-    osg::ref_ptr<osg::StateSet> ss = g->getOrCreateStateSet();
+-    if(dir == 'y')
+-    {
+-        ss->setAttributeAndModes(_blurShaderY, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+-    }
+-    else if(dir == 'x')
+-    {
+-        ss->setAttributeAndModes(_blurShaderX, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+-    }
+-    else
+-    {
+-        fprintf(stderr, "Shadow Group, blur dir err\n");
+-        exit(0);
+-    }
+-    ss->addUniform(new osg::Uniform("u_texture", 0));
+-    ss->setTextureAttribute(0, outDepthTex);
+-}
+-
+ void ShadowGroup::addBasicShadowCam(osg::TextureRectangle *outDepthTex, osg::TextureRectangle *outFluxTex, osg::TextureRectangle *outPosTex, const osg::Matrixf &shadowMV, const osg::Matrixf &shadowMVP, DirectionalLight *dirLight)
+ {
+     osg::ref_ptr<osg::Camera> cam(new osg::Camera);
+@@ -200,27 +139,18 @@
+     // 2) TODO: figure out why u_nearDistance cannot be passed to the shader
+     // symptom: u_nearDistance seems to be "overriden" by the uniform of the same name defined in the geometry pass
+     // Thus, for this reason, change u_nearDistance to u_nearDistance_s
+-
++    ss->addUniform(new osg::Uniform("u_nearDistance_s", _nearPlane));
++    ss->addUniform(new osg::Uniform("u_farDistance_s", _farPlane));
+     ss->addUniform(new osg::Uniform("u_lightViewMatrix", shadowMV));
+-//    ss->addUniform(new osg::Uniform("u_lightViewProjectionMatrix", shadowMVP));
+-//    ss->addUniform(new osg::Uniform("u_lightProjectionMatrix", osg::Matrixf(_shadowProjection)));
++    ss->addUniform(new osg::Uniform("u_lightViewProjectionMatrix", shadowMVP));
+   
+     ss->addUniform(new osg::Uniform("u_lightViewInverseMatrix", osg::Matrixf::inverse(shadowMV)));
+-    
+-    // to be modified in the callback
+-    ss->addUniform(new osg::Uniform("u_nearDistance_s", 0.0f));
+-//    ss->addUniform(new osg::Uniform("u_farDistance_s", _farPlane));
+-    ss->addUniform(new osg::Uniform("u_zLength", 0.0f));
++    ss->addUniform(new osg::Uniform("u_lightProjectionMatrix", osg::Matrixf(_shadowProjection)));
+     
+     // if gi enabled TODO: add switches
+     ss->addUniform(new osg::Uniform("u_lightPos", dirLight->getPosition()));
+     
+-    ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+-    osg::ref_ptr<osg::CullFace> cullFace(new osg::CullFace);
+-    cullFace->setMode(osg::CullFace::BACK);
+-    ss->setAttribute(cullFace);
+-    
+-    osg::ref_ptr<ShadowCallback> shadowCallback(new ShadowCallback(cam, _shadowProjection, _sceneAABB));
++    osg::ref_ptr<ShadowCallback> shadowCallback(new ShadowCallback(_mainCamera, _shadowProjection));
+     shadowCallback->setDirectionalLight(dirLight);
+     ss->setUpdateCallback(shadowCallback);
+     
+@@ -305,14 +235,13 @@
+             _dir_worldPos_Maps.insert(std::make_pair(light_id, posTex));
+             
+             addBasicShadowCam(depthTex, fluxTex, posTex, shadowView, shadowMVP, dirLight);
+-            addBlurCamera(depthTex);
+         }
+         else
+         {
+             addBasicShadowCam(depthTex, NULL, NULL, shadowView, shadowMVP, dirLight);
+-            addBlurCamera(depthTex);
+         }
+     }
++    
+ }
+ 
+ void ShadowGroup::addMultipleDirectionalLights(std::vector<DirectionalLight *> lights, enum ShadowMode mode)
+@@ -323,26 +252,3 @@
+         addDirectionalLight(light, mode);
+     }
+ }
+-
+-osg::ref_ptr<osg::Group> ShadowGroup::createQuad()
+-{
+-    osg::ref_ptr<osg::Group> top_group = new osg::Group;
+-    osg::ref_ptr<osg::Geode> quad_geode = new osg::Geode;
+-    
+-    osg::ref_ptr<osg::Vec3Array> quad_coords = new osg::Vec3Array; // vertex coords
+-    // counter-clockwise
+-    quad_coords->push_back(osg::Vec3d(0, 0, -1));
+-    quad_coords->push_back(osg::Vec3d(1, 0, -1));
+-    quad_coords->push_back(osg::Vec3d(1, 1, -1));
+-    quad_coords->push_back(osg::Vec3d(0, 1, -1));
+-    
+-    osg::ref_ptr<osg::Geometry> quad_geom = new osg::Geometry;
+-    osg::ref_ptr<osg::DrawArrays> quad_da = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
+-    
+-    quad_geom->setVertexArray(quad_coords.get());
+-    quad_geom->addPrimitiveSet(quad_da.get());
+-    
+-    quad_geode->addDrawable(quad_geom);
+-    top_group->addChild(quad_geode);
+-    return top_group;
+-}
+diff -ur ./ShadowGroup.h ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ShadowGroup.h
+--- ./ShadowGroup.h	2015-02-24 15:52:19.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/ShadowGroup.h	2015-02-17 14:44:37.000000000 -0800
+@@ -25,13 +25,12 @@
+         BASIC
+     };
+     
+-    ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms, const osg::BoundingBox &sceneAABB);
++    ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms);
+     ~ShadowGroup() {};
+     
+     void addDirectionalLight(DirectionalLight *dirLight, enum ShadowMode mode);
+     void addMultipleDirectionalLights(std::vector<DirectionalLight *> lights, enum ShadowMode mode);
+     void setDepthMapResolution(float width, float height);
+-    osg::ref_ptr<osg::Group> createQuad();
+     
+     osg::ref_ptr<osg::TextureRectangle> getDirLightShadowTexture(int light_id);
+     
+@@ -39,9 +38,9 @@
+     osg::ref_ptr<osg::TextureRectangle> getDirLightViewWorldPosTexture(int light_id);
+     osg::ref_ptr<osg::Texture2D> getDirMipmapFluxTexture(int light_id);
+     
+-    inline osg::ref_ptr<osg::Group> getShadowGroupRoot()
++    inline osg::ref_ptr<osg::Group> getShadowCamerasRoot()
+     {
+-        return _shadowRootGroup;
++        return _shadowCameras;
+     }
+     
+     inline float getRsmWidth()
+@@ -59,32 +58,19 @@
+     osg::ref_ptr<osg::TextureRectangle> createLightDirFluxTexture(int width, int height);
+     osg::ref_ptr<osg::Texture2D> createFluxMipmapTexture(int width, int height);
+     osg::ref_ptr<osg::TextureRectangle> createLightPositionTexture(int width, int height);
+-    
+-    // TODO: use a single camera with different matrix transform for light views to save memory
+-    // a single osg camera = a render buffer and couple lighting/indirect lighting stages to
+-    // reuse the render buffer
+     void addBasicShadowCam(osg::TextureRectangle *outDepthTex, osg::TextureRectangle *outFluxTex, osg::TextureRectangle *outPosTex, const osg::Matrixf &shadowMV, const osg::Matrixf &shadowMVP, DirectionalLight *dirLight);
+     
+-    void addBlurCamera(osg::TextureRectangle *outDepthTex);
+     osg::ref_ptr<osg::Camera> _mainCamera;
+     
+-    void configBlurQuadStateSet(osg::Group *g, char dir, osg::TextureRectangle *outDepthTex);
+-    
+     std::map<int, osg::ref_ptr<osg::TextureRectangle> > _dir_depthMaps; // if gi enabled, then rgb is normal; alpha is depth
+     std::map<int, osg::ref_ptr<osg::Texture2D> > _spot_depthMaps;
+     std::map<int, std::vector<osg::ref_ptr<osg::Texture2D> > > _point_depthMaps;
+     osg::Matrix _shadowProjection;
+     
+     osg::ref_ptr<osg::Group> _geoms;
+-    osg::ref_ptr<osg::Group> _shadowRootGroup;
+-    
+     osg::ref_ptr<osg::Group> _shadowCameras;
+-    osg::ref_ptr<osg::Group> _blurCameras;
+-    
+     
+     osg::ref_ptr<osg::Program> _depthMapShader;
+-    osg::ref_ptr<osg::Program> _blurShaderX;
+-    osg::ref_ptr<osg::Program> _blurShaderY;
+     
+     float _depthTexWidth;
+     float _depthTexHeight;
+@@ -100,8 +86,6 @@
+     float _rsmTexHeight;
+     
+     bool _isGIEnabled;
+-    
+-    const osg::BoundingBox &_sceneAABB;
+ };
+ 
+ #endif /* defined(__vrphysics__ShadowGroup__) */
+Only in ./: Shared.cpp
+Only in ./: Shared.h
+Only in ./: SkyDome.cpp
+Only in ./: SkyDome.h
+diff -ur ./VPLGroup.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/VPLGroup.cpp
+--- ./VPLGroup.cpp	2015-02-24 03:49:22.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/VPLGroup.cpp	2015-02-17 15:07:16.000000000 -0800
+@@ -9,9 +9,6 @@
+ #include "VPLGroup.h"
+ #include <osg/BlendFunc>
+ #include <osg/BlendEquation>
+-#include <osg/Depth>
+-#include <osg/PolygonMode>
+-#include <osg/CullFace>
+ 
+ VPLGroup::VPLGroup()
+ : _numVPLs(0)
+@@ -23,13 +20,6 @@
+     osg::ref_ptr<osg::Node> loadedSphere = osgDB::readNodeFile("lightSphere.obj");
+     _lightSphere = loadedSphere->asGroup()->getChild(0)->asGeode();
+     
+-    _stencilPass = new osg::Group;
+-    _renderPass = new osg::Group;
+-    
+-    _stencilPass->addChild(_lightSphere);
+-    _renderPass->addChild(_lightSphere);
+-    
+-    
+     // enable blending
+     osg::ref_ptr<osg::BlendFunc> blendFunc(new osg::BlendFunc);
+     osg::ref_ptr<osg::BlendEquation> blendEquation(new osg::BlendEquation);
+@@ -39,28 +29,13 @@
+     osg::ref_ptr<osg::StateSet> ss = _lightSphere->getOrCreateStateSet();
+     
+     // disable depth test for blending
+-    // testing against non-light geometry depth buffer
+-    ss->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON);
+-    osg::ref_ptr<osg::Depth> depth(new osg::Depth());
+-    depth->setFunction(osg::Depth::LEQUAL);
+-    depth->setWriteMask(false);
+-    ss->setAttribute(depth);
++     ss->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
+     
+     // enable blending
+     ss->setMode(GL_BLEND, osg::StateAttribute::ON);
+-    ss->setMode(GL_ALPHA_TEST, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
+     ss->setAttributeAndModes(blendFunc, osg::StateAttribute::ON);
+     ss->setAttributeAndModes(blendEquation, osg::StateAttribute::ON);
+     
+-//    osg::ref_ptr<osg::PolygonMode> polyMode(new osg::PolygonMode);
+-//    polyMode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+-//    ss->setAttribute(polyMode);
+-    
+-    ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+-//    osg::ref_ptr<osg::CullFace> cullFace = new osg::CullFace;
+-//    cullFace->setMode(osg::CullFace::FRONT);
+-//    ss->setAttribute(cullFace);
+-//    
+     applyInstanceNumberChange();
+ }
+ 
+@@ -100,50 +75,3 @@
+     _numVPLs = num;
+     applyInstanceNumberChange();
+ }
+-
+-void VPLGroup::configStencilPass()
+-{
+-//    osg::ref_ptr<osg::Group> stencilGroup(new osg::Group);
+-//    osg::ref_ptr<osg::StateSet> sss = stencilGroup->getOrCreateStateSet();
+-//    osg::ref_ptr<osg::ColorMask> colorMask(new osg::ColorMask);
+-//    colorMask->setMask(false, false, false, false);
+-//    sss->setAttribute(colorMask, osg::StateAttribute::OVERRIDE);
+-//    
+-//    sss->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);
+-//    sss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
+-//    
+-//    osg::ref_ptr<osg::StencilTwoSided> stencil(new osg::StencilTwoSided);
+-//    stencil->setFunction(osg::StencilTwoSided::FRONT, osg::StencilTwoSided::ALWAYS, 0, 0);
+-//    stencil->setFunction(osg::StencilTwoSided::BACK, osg::StencilTwoSided::ALWAYS, 0, 0);
+-//    stencil->setOperation(osg::StencilTwoSided::FRONT, osg::StencilTwoSided::KEEP,
+-//                          osg::StencilTwoSided::DECR_WRAP, osg::StencilTwoSided::KEEP);
+-//    stencil->setOperation(osg::StencilTwoSided::BACK, osg::StencilTwoSided::KEEP,
+-//                          osg::StencilTwoSided::INCR_WRAP, osg::StencilTwoSided::KEEP);
+-//    
+-//    stencil->setWriteMask(osg::StencilTwoSided::FRONT, 0xFF);
+-//    stencil->setWriteMask(osg::StencilTwoSided::BACK, 0xFF);
+-//    
+-//    sss->setAttributeAndModes(stencil, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+-//    sss->setRenderBinDetails(0, "RenderBin");
+-//    
+-//    sss->setAttributeAndModes(getShader(_stencil_shader_id), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+-//    // under same node, better use different uniform name for the same thing,
+-//    // seems like a bug in osg that same name uniform may have conflicts, overriding each other.
+-//    sss->addUniform(new osg::Uniform("u_projectionMat", osg::Matrixf(_mainCamera->getProjectionMatrix())));
+-//    sss->addUniform(new osg::Uniform("u_viewMat", osg::Matrixf(_mainCamera->getViewMatrix())));
+-//    sss->setUpdateCallback(new LightStencilCallback(_mainCamera));
+-//    
+-//    std::vector<PointLight *> &pointLights = _lightGroup->getPointLightsArrayReference();
+-//    for (std::vector<PointLight *>::iterator it = pointLights.begin(); it != pointLights.end(); it++)
+-//    {
+-//        osg::ref_ptr<osg::MatrixTransform> mt = (*it)->getLightSphereTransformNode();
+-//        stencilGroup->addChild(mt);
+-//    }
+-    
+-//    _lightPassGroupNode->addChild(stencilGroup);
+-}
+-
+-void VPLGroup::configRenderPass()
+-{
+-    
+-}
+diff -ur ./VPLGroup.h ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/VPLGroup.h
+--- ./VPLGroup.h	2015-02-23 23:13:54.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/VPLGroup.h	2015-02-06 15:17:32.000000000 -0800
+@@ -49,20 +49,12 @@
+     {
+         return _lightSphere;
+     }
+-    
+-    void configStencilPass();
+-    void configRenderPass();
+ 
+ private:
+ 	void applyInstanceNumberChange();
+     
+ private:
+     osg::ref_ptr<osg::Geode> _lightSphere;
+-    
+-    osg::ref_ptr<osg::Group> _vplLightGroupNode;
+-    osg::ref_ptr<osg::Group> _stencilPass;
+-    osg::ref_ptr<osg::Group> _renderPass;
+-    
+     int _numVPLs;
+     float _fluxFactor;
+     float _lowerThreshold;
+Only in ./: diffreport
+diff -ur ./main.cpp ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/main.cpp
+--- ./main.cpp	2015-02-27 14:20:05.000000000 -0800
++++ ../../CVRPlugins_xcode/calit2/vrphysics/Engine/src/main.cpp	2015-02-20 01:12:42.000000000 -0800
+@@ -1,35 +1,7 @@
+-#include <osg/Group>
+-
+-#include "Core.h"
+-
+-#include "AssetDB.h"
+-#include "DirectionalLightGroup.h"
+-
+-void handleGeometries(const osg::ref_ptr<osg::Group> geoms, Assets *const asset)
+-{
+-//   asset->addGeometryWithFile("Testing/gi_test.dae");
+-//    asset->addGeometryWithFile("Testing/test2gi.dae");
+-//    asset->addGeometryWithFile("Testing/uuu.dae");
+-//    asset->addGeometryWithFile("Testing/cornell-box/engine/c.dae");
+-    asset->addGeometryWithFile("Testing/testShadow.dae");
+-//    asset->addGeometryWithFile("Testing/testTorus.dae");
+-    
+-}
+-
+-void handleDirLights(DirectionalLightGroup *const dirLightGroup)
+-{
+-//    dirLightGroup->addLight(osg::Vec3(5, 5, 5), osg::Vec3(0, 0, 0), osg::Vec3(1, 1, 1), true);
+-    dirLightGroup->getDirectionalLightsReference()[0]->setAnimated(false);
+-    dirLightGroup->getDirectionalLightsReference()[0]->orbitAxis = osg::Vec3(0, 0, 1);
+-    
+-}
+-
+-int main()
+-{
+-    Core core;
+-    core.setGeometryHandler(handleGeometries);
+-    core.setDirectionalLightHandler(handleDirLights);
+-    core.setWindowSize(800, 600);
+-    
+-    core.run();
+-}
++//#include "Core.h"
++//int main()
++//{
++//    Core core;
++//    core.setWindow(1280, 720); // TODO: currently not working
++//    core.run();
++//}

@@ -24,18 +24,30 @@ vec3 Uncharted2Tonemap(vec3 x)
 void main()
 {
     vec3 inTex = texture2DRect(u_screenTex, gl_FragCoord.xy).rgb;
-    inTex *= 16;
+//    inTex *= 16;
 //    float lum = dot(color, RGB_TO_LUM);
 //    float adapted_lum_dest = 3 / (max(0.1f, 1 + 10 * EyeAdaption(adapted_lum)));
     
-    float ExposureBias = 0.5;
+//    // apply the tone-mapping
+//    color					= Uncharted2Tonemap( color * uExposure );
+//    
+//    // white balance
+//    const float whiteInputLevel = 20.0f;
+//    vec3 whiteScale			= 1.0f / Uncharted2Tonemap( vec3( whiteInputLevel ) );
+//    color					= color * whiteScale;
+//    
+//    // gamma correction
+//    color					= pow( color, vec3( 1.0f / uGamma ) );
+    
+//    float ExposureBias = 0.5;
+    float ExposureBias = 1.0;
     vec3 curr = Uncharted2Tonemap(ExposureBias * inTex);
     
-    vec3 whiteScale = 1.0 / Uncharted2Tonemap(vec3(W, W, W));
+    vec3 whiteScale = 1.0 / Uncharted2Tonemap(vec3(W));
     vec3 color = curr * whiteScale;
     
     float expFactor = 1 / 2.2;
-    vec3 retColor = pow(color, vec3(expFactor, expFactor, expFactor));
+    vec3 retColor = pow(color, vec3(expFactor));
     
     gl_FragColor = vec4(retColor, 1);
 }

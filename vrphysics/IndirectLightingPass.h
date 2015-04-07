@@ -34,17 +34,7 @@ class IndirectLightingPass : public ScreenPass
 public:
     IndirectLightingPass(osg::Camera *mainCamera, ImportanceSamplingPass *impPass, osg::TextureRectangle *lightDirTex, osg::TextureRectangle *worldPosTex, osg::TextureRectangle *viewPositionTex, osg::TextureRectangle *viewNormalTex, osg::Texture2D *depthBufferTex, DirectionalLight *mainLight, osg::Texture2D *sharedDepthBuffer);
     virtual ~IndirectLightingPass();
-    
-    inline void setImportanceSamplingEnabled(bool tf)
-    {
-        _importanceSamplingEnabled = tf;
-    }
-    
-    inline bool isImportanceSamplingEnabled()
-    {
-        return _importanceSamplingEnabled;
-    }
-    
+
     inline osg::ref_ptr<osg::TextureRectangle> getIndirectLightingTex()
     {
         return getOutputTexture(_out_indirectLightingTex_id);
@@ -78,8 +68,6 @@ private:
     //std::map<int, osg::ref_ptr<osg::Texture2D> > _importanceSampleTextures; // for each light source
     
     int _out_indirectLightingTex_id;
-    
-    bool _importanceSamplingEnabled;
     
     int _indirectLightShader;
     

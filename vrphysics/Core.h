@@ -26,6 +26,7 @@
 #include "FinalPass.h"
 #include "HDRPass.h"
 #include "IndirectLightingPass.h"
+// #include "FrustumData.h"
 
 #include "ImportanceSamplingPass.h"
 #include "AssetDB.h"
@@ -59,6 +60,11 @@ public:
     inline void setGeometryHandler(void (*handleGeometries)(const osg::ref_ptr<osg::Group>, Assets *const))
     {
         _handleGeometries = handleGeometries;
+    }
+    
+    inline osg::ref_ptr<osgViewer::Viewer> getViewer()
+    {
+        return _viewer;
     }
     
     void run();
@@ -152,6 +158,16 @@ private:
     osg::ComputeBoundsVisitor _computeBound;
     osg::BoundingBox _sceneAABB;
     
+};
+
+class CameraUpdateCallback : public osg::NodeCallback
+{
+public:
+    CameraUpdateCallback(osg::Camera *mainCamera) : _mainCamera(mainCamera) {};
+    virtual void operator()(osg::Node* node, osg::NodeVisitor* nv);
+    
+private:
+    osg::ref_ptr<osg::Camera> _mainCamera;
 };
 
 #endif /* defined(__vrphysics__Core__) */

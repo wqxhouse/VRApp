@@ -5,7 +5,7 @@ uniform sampler2DRect u_texture;
 // uniform vec2 resolution;
 
 // const float blurSize = 3/512.0;
-const float blurSize = 2;
+const float blurSize = 1;
 
 void main(void)
 {

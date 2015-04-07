@@ -9,8 +9,8 @@
 #include "KeyboardHandler.h"
 #include "LightGroup.h"
 
-KeyboardHandler::KeyboardHandler(osg::ref_ptr<osg::Group> sceneRoot, osg::ref_ptr<osg::Group> hud, LightGroup *lightGroup)
-:_sceneRoot(sceneRoot), _hud(hud), _hudOn(true)
+KeyboardHandler::KeyboardHandler(osg::ref_ptr<osg::Group> sceneRoot, osg::ref_ptr<osg::Group> hud, LightGroup *lightGroup, osgViewer::Viewer *viewer)
+:_sceneRoot(sceneRoot), _hud(hud), _hudOn(true), _viewer(viewer)
 {
     _pointLightGroup = lightGroup;
 }
@@ -60,6 +60,8 @@ bool KeyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
                 case 'p':
                     offsetExpAttenuation(-1);
                     break;
+                case '0':
+                    _viewer->setCameraManipulator(NULL);
                 default:
                     return false;
             }

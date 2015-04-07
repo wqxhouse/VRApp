@@ -25,7 +25,9 @@ uniform vec3 u_mainLightWorldPos;
 
 varying vec3 fluxDebug;
 
-const float distBias = 0.1f; // avoid singularity
+const float distBias = 1.0f; // avoid singularity
+
+varying float v_radius;
 
 void debug()
 {
@@ -48,24 +50,46 @@ void debug()
 
 void impl1()
 {
-    vec4 result;
-    
-    // get surface info for this pixel
     vec2 rectCoord = gl_FragCoord.xy;
     
     // do not include w component, or else inverse matrix will be incorrectly multiplied.
     vec3 viewSpacePosition = texture2DRect(u_viewPositionTex, rectCoord).xyz;
-    //    vec4 viewSpaceNormal = texture2DRect(u_viewNormalTex, rectCoord) * 2.0 - 1.0;
-    vec3 viewSpaceNormal = texture2DRect(u_viewNormalTex, rectCoord).xyz;
-    
     vec4 worldSpacePosition = u_viewInverseMatrix * vec4(viewSpacePosition, 1);
-    vec4 worldSpaceNormal   = u_viewInverseMatrix * vec4(viewSpaceNormal, 0);
     
-    // compute lighting
+    vec3 lightDir  = v_lightPos.xyz - worldSpacePosition.xyz;
+    float fragToLightRadius = length(lightDir);
+    
+    // dynamic branching -- not sure how this impacts performance
+    // use to limit pixels between the eye and the backface of light sphere
+    if( fragToLightRadius > v_radius ) // TODO: need to make sure v_radius is the intended radius
+    {
+        discard;
+//        gl_FragColor = vec4(0, 1, 0, 1);
+//        return;
+    }
+    
+    vec3 viewSpaceNormal = texture2DRect(u_viewNormalTex, rectCoord).xyz;
+    vec3 worldSpaceNormal   = (u_viewInverseMatrix * vec4(viewSpaceNormal, 0)).xyz;
+
+//    vec3 L = normalize(lightDir);
+//    float ndotL = dot(worldSpaceNormal, L);
+//    
+//    vec4 result = vec4(0, 0, 0, 1);
+//    
+//    if(ndotL > 0.0)
+//    {
+//        float distSqr = dot(lightDir, lightDir);
+//        float atten = 1.0 / (1.0 + distSqr);
+//        vec3 diffuse = v_lightFlux.rgb * vec3(ndotL);
+//        
+//        result.rgb = diffuse * atten;
+//    }
+//    
+    
+    vec3 R = lightDir;
+    
+//    // compute lighting
     float l2, lR, cosThetaI, cosThetaJ, Fij, phongExp;
-    
-    // R = vector from fragment to pixel light
-    vec3 R  = v_lightPos.xyz - worldSpacePosition.xyz;
     
     // squared length of R (needed again later)
     l2 = dot( R, R );
@@ -74,7 +98,8 @@ void impl1()
     R *= inversesqrt( l2 );
     
     // distance attenuation,
-    lR = ( 1.0f / ( distBias + l2 * 0.01 * 6.28) );
+    // lR = ( 1.0f / ( distBias + l2 * 0.03 * 6.28) );
+    lR = ( 1.0f / ( distBias + l2 ) );
     
     cosThetaI = clamp( dot( v_lightDir.xyz, -R ), 0.0, 1.0);			// outgoing cosine
     
@@ -98,15 +123,38 @@ void impl1()
 //        float fadeOutFactor = clamp( 2 - 6.667 * length( t1 - t2 ) / v_lightFlux.w, 0.0, 1.0 );
 //    
 //        Fij *= fadeOutFactor;
-//
-    result = v_lightFlux * Fij;								// transfer energy!
+
+    vec4 result = v_lightFlux * Fij;								// transfer energy!
+    
     gl_FragColor = result;
 }
 
 
 void visualizeVPLPos()
 {
-    gl_FragColor = vec4(0.2, 0.2, 0.2, 0.2);
+//    gl_FragColor = vec4(0.2, 0.2, 0.2, 0.2);
+//    gl_FragColor = vec4(0, 1, 0, 1);
+    
+    vec2 rectCoord = gl_FragCoord.xy;
+    
+    // do not include w component, or else inverse matrix will be incorrectly multiplied.
+    vec3 viewSpacePosition = texture2DRect(u_viewPositionTex, rectCoord).xyz;
+    vec4 worldSpacePosition = u_viewInverseMatrix * vec4(viewSpacePosition, 1);
+    
+    // R = vector from fragment to pixel light
+    vec3 R  = v_lightPos.xyz - worldSpacePosition.xyz;
+    float fragToLightRadius = length(R);
+    
+    // dynamic branching -- not sure how this impacts performance
+    if( fragToLightRadius > v_radius )
+    {
+        // discard;
+        gl_FragColor = vec4(0, 1, 0, 1);
+    }
+    else
+    {
+        gl_FragColor = vec4(1, 0, 0, 1);
+    }
 }
 
 void visualizeVPLFlux()
@@ -117,7 +165,7 @@ void visualizeVPLFlux()
 
 void main()
 {
-    impl1();
+     impl1();
     // visualizeVPLPos();
     // visualizeVPLFlux();
 }

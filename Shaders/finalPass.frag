@@ -48,6 +48,8 @@ void main(void)
 //    vec4 final_color = (ambient * ssaoContribution + lightContribution) * albedo;
     vec4 final_color = ( ambient + vec4(lightContribution.rgb, 1) ) * albedo * ssaoContribution;
 //    vec4 final_color = ( ambient + vec4(lightContribution.rgb, 1) ) *  ssaoContribution;
-    
+ 
+    // gamma correction
+//    final_color.rgb = pow(final_color.rgb, vec3(1.0f / 2.2f));
     gl_FragColor = vec4(final_color.rgb, 1.0);
 }

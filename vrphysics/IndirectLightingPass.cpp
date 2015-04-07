@@ -14,7 +14,7 @@
 #include "DirectionalLight.h"
 
 IndirectLightingPass::IndirectLightingPass(osg::Camera *mainCamera, ImportanceSamplingPass *impPass, osg::TextureRectangle *lightDirTex, osg::TextureRectangle *worldPosTex, osg::TextureRectangle *viewPositionTex, osg::TextureRectangle *viewNormalTex, osg::Texture2D *depthBufferTex, DirectionalLight *mainLight, osg::Texture2D *sharedDepthBuffer)
-: ScreenPass(mainCamera), _importanceSamplingEnabled(true), _impPass(impPass)
+: ScreenPass(mainCamera),  _impPass(impPass)
 {
     // load sample tex
     // TODO: support multiple lights later
@@ -36,7 +36,7 @@ IndirectLightingPass::IndirectLightingPass(osg::Camera *mainCamera, ImportanceSa
     _rsmWidth = _impPass->getRSMWidth();
     _rsmHeight = _impPass->getRSMHeight();
     
-    _splatSampleNum = 32;
+    _splatSampleNum = 16;
     createSampleTexcoordMap();
     
     // normal sample pattern, used when importance sampling is disabled
@@ -172,7 +172,7 @@ void IndirectLightingPass::configureStateSet()
     _stateSet->addUniform(new osg::Uniform("u_viewInverseMatrix", osg::Matrixf(_mainCamera->getInverseViewMatrix())));
     
     // hard coded defaults
-    float indirectFactor = 0.125f;
+    float indirectFactor = 0.25f;
     float indirectSample = _splatSampleNum * _splatSampleNum;
     float indirectScale = indirectFactor * 256.0f / (float)indirectSample;
     

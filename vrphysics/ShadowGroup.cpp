@@ -11,10 +11,12 @@
 #include <osg/TextureRectangle>
 #include <osg/CullFace>
 
+#include <osg/LightSource>
+
 #include "ShadowCallback.h"
 
 ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms, const osg::BoundingBox &sceneAABB)
-: _mainCamera(mainCamera), _geoms(geoms), _sceneAABB(sceneAABB)
+: _mainCamera(mainCamera), _geoms(geoms), _giLight(NULL), _sceneAABB(sceneAABB)
 {
     _isGIEnabled = true;
     
@@ -26,8 +28,8 @@ ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms, const osg::
     _depthMapShader = new osg::Program();
     _depthMapShader->addShader(osgDB::readShaderFile("orthoDepthMap.vert"));
     _depthMapShader->addShader(osgDB::readShaderFile("orthoDepthMap.frag"));
-    _depthTexWidth = 512;
-    _depthTexHeight = 512;
+    _depthTexWidth = 1024;
+    _depthTexHeight = 1024;
     
     _blurShaderX = new osg::Program();
     _blurShaderX->addShader(osgDB::readShaderFile("gBlur.vert"));
@@ -37,19 +39,25 @@ ShadowGroup::ShadowGroup(osg::Camera *mainCamera, osg::Group *geoms, const osg::
     _blurShaderY->addShader(osgDB::readShaderFile("gBlur.vert"));
     _blurShaderY->addShader(osgDB::readShaderFile("gBlurY.frag"));
     
-    // TODO, currently not working, since MRT only support a single resolution
-    // Therefore, rsm and shadow maps are using the same resolution,
-    // later, they needs to be separated for performance and quality.
-    _rsmTexWidth = _depthTexWidth;
-    _rsmTexHeight = _depthTexHeight;
+    _rsmShader = new osg::Program();
+    _rsmShader->addShader(osgDB::readShaderFile("rsm.vert"));
+    _rsmShader->addShader(osgDB::readShaderFile("rsm.frag"));
+    
+    _rsmTexWidth = 512;
+    _rsmTexHeight = 512;
     
     _shadowCameras = new osg::Group;
     _blurCameras = new osg::Group;
     _shadowRootGroup = new osg::Group;
     
+    _rsmCam = new osg::Camera;
+    
     _shadowRootGroup->addChild(_shadowCameras);
     _shadowRootGroup->addChild(_blurCameras);
+    _shadowRootGroup->addChild(_rsmCam);
 }
+
+
 
 osg::ref_ptr<osg::TextureRectangle> ShadowGroup::createShadowTexture(int width, int height)
 {
@@ -170,26 +178,59 @@ void ShadowGroup::configBlurQuadStateSet(osg::Group *g, char dir, osg::TextureRe
     ss->setTextureAttribute(0, outDepthTex);
 }
 
+void ShadowGroup::configRSMCamera()
+{
+    osg::ref_ptr<osg::StateSet> ss = _rsmCam->getOrCreateStateSet();
+    ss->setAttributeAndModes(_rsmShader, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+    ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+    ss->setMode(GL_BLEND, osg::StateAttribute::OFF);
+    _rsmCam->setViewport(0, 0, _rsmTexWidth, _rsmTexHeight);
+    
+    // TODO: refactor
+    _rsmCam->attach(osg::Camera::COLOR_BUFFER0, getDirLightDirFluxTexture(0));
+    _rsmCam->attach(osg::Camera::COLOR_BUFFER1, getDirLightViewWorldPosTexture(0));
+    
+    _rsmCam->setClearColor(osg::Vec4(0, 0, 0, 1));
+    _rsmCam->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    _rsmCam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+    _rsmCam->setRenderOrder(osg::Camera::PRE_RENDER);
+    _rsmCam->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+    
+    ss->addUniform(new osg::Uniform("u_lightViewInverseMatrix", osg::Matrixf()));
+    ss->addUniform(new osg::Uniform("u_lightPos", osg::Vec3()));
+    
+    ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+    osg::ref_ptr<osg::CullFace> cullFace(new osg::CullFace);
+    cullFace->setMode(osg::CullFace::BACK);
+    ss->setAttribute(cullFace);
+    
+    osg::Vec2 depthTexSize(_depthTexWidth, _depthTexHeight);
+    osg::ref_ptr<RSMCallback> rsmCallback(new RSMCallback(_mainCamera, _rsmCam, osg::Vec2(_rsmTexWidth, _rsmTexHeight), _sceneAABB));
+    rsmCallback->setDirectionalLight(_giLight);
+    ss->setUpdateCallback(rsmCallback);
+    
+    _rsmCam->addChild(_geoms);
+}
+
 void ShadowGroup::addBasicShadowCam(osg::TextureRectangle *outDepthTex, osg::TextureRectangle *outFluxTex, osg::TextureRectangle *outPosTex, const osg::Matrixf &shadowMV, const osg::Matrixf &shadowMVP, DirectionalLight *dirLight)
 {
     osg::ref_ptr<osg::Camera> cam(new osg::Camera);
     cam->setProjectionMatrix(_shadowProjection);
     
-    osg::StateSet *ss = cam->getOrCreateStateSet();
+    osg::ref_ptr<osg::StateSet> ss = cam->getOrCreateStateSet();
     ss->setAttributeAndModes(_depthMapShader, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
     ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
     ss->setMode(GL_BLEND, osg::StateAttribute::OFF);
     cam->setViewport(0, 0, _depthTexWidth, _depthTexHeight);
     cam->attach(osg::Camera::COLOR_BUFFER0, outDepthTex);
     
-    if(_isGIEnabled)
-    {
-        cam->attach(osg::Camera::COLOR_BUFFER1, outFluxTex);
-        cam->attach(osg::Camera::COLOR_BUFFER2, outPosTex);
-    }
+//    if(_isGIEnabled)
+//    {
+//        cam->attach(osg::Camera::COLOR_BUFFER1, outFluxTex);
+//        cam->attach(osg::Camera::COLOR_BUFFER2, outPosTex);
+//    }
     
     cam->setClearColor(osg::Vec4(0, 0, 0, 1));
-//    cam->setClearColor(osg::Vec4(0.5, 0, 1, 1));
     cam->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     cam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
     cam->setRenderOrder(osg::Camera::PRE_RENDER);
@@ -201,26 +242,17 @@ void ShadowGroup::addBasicShadowCam(osg::TextureRectangle *outDepthTex, osg::Tex
     // symptom: u_nearDistance seems to be "overriden" by the uniform of the same name defined in the geometry pass
     // Thus, for this reason, change u_nearDistance to u_nearDistance_s
 
-    ss->addUniform(new osg::Uniform("u_lightViewMatrix", shadowMV));
-//    ss->addUniform(new osg::Uniform("u_lightViewProjectionMatrix", shadowMVP));
-//    ss->addUniform(new osg::Uniform("u_lightProjectionMatrix", osg::Matrixf(_shadowProjection)));
-  
-    ss->addUniform(new osg::Uniform("u_lightViewInverseMatrix", osg::Matrixf::inverse(shadowMV)));
-    
     // to be modified in the callback
     ss->addUniform(new osg::Uniform("u_nearDistance_s", 0.0f));
-//    ss->addUniform(new osg::Uniform("u_farDistance_s", _farPlane));
     ss->addUniform(new osg::Uniform("u_zLength", 0.0f));
-    
-    // if gi enabled TODO: add switches
-    ss->addUniform(new osg::Uniform("u_lightPos", dirLight->getPosition()));
     
     ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
     osg::ref_ptr<osg::CullFace> cullFace(new osg::CullFace);
     cullFace->setMode(osg::CullFace::BACK);
     ss->setAttribute(cullFace);
-    
-    osg::ref_ptr<ShadowCallback> shadowCallback(new ShadowCallback(cam, _shadowProjection, _sceneAABB));
+   
+    osg::Vec2 depthTexSize(_depthTexWidth, _depthTexHeight);
+    osg::ref_ptr<ShadowCallback> shadowCallback(new ShadowCallback(_mainCamera, cam, depthTexSize));
     shadowCallback->setDirectionalLight(dirLight);
     ss->setUpdateCallback(shadowCallback);
     
@@ -299,12 +331,22 @@ void ShadowGroup::addDirectionalLight(DirectionalLight *dirLight, enum ShadowMod
         _dir_depthMaps.insert(std::make_pair(light_id, depthTex));
         if(_isGIEnabled)
         {
-            osg::ref_ptr<osg::TextureRectangle> fluxTex = createLightDirFluxTexture(_depthTexWidth, _depthTexWidth);// TODO: optimization
-            _dir_lightDir_fluxMaps.insert(std::make_pair(light_id, fluxTex));
-            osg::ref_ptr<osg::TextureRectangle> posTex = createLightPositionTexture(_depthTexWidth, _depthTexWidth);
-            _dir_worldPos_Maps.insert(std::make_pair(light_id, posTex));
+            // make the only the first light gi light
+            if(_dir_lightDir_fluxMaps.empty())
+            {
+                osg::ref_ptr<osg::TextureRectangle> fluxTex = createLightDirFluxTexture(_rsmTexWidth, _rsmTexHeight);// TODO: optimization
+                _dir_lightDir_fluxMaps.insert(std::make_pair(light_id, fluxTex));
+                osg::ref_ptr<osg::TextureRectangle> posTex = createLightPositionTexture(_rsmTexWidth, _rsmTexHeight);
+                _dir_worldPos_Maps.insert(std::make_pair(light_id, posTex));
+                
+                _giLight = dirLight;
+                configRSMCamera();
+            }
             
-            addBasicShadowCam(depthTex, fluxTex, posTex, shadowView, shadowMVP, dirLight);
+            // addBasicShadowCam(depthTex, fluxTex, posTex, shadowView, shadowMVP, dirLight);
+            
+            // TODO: refactor
+            addBasicShadowCam(depthTex, NULL, NULL, shadowView, shadowMVP, dirLight);
             addBlurCamera(depthTex);
         }
         else
@@ -331,6 +373,7 @@ osg::ref_ptr<osg::Group> ShadowGroup::createQuad()
     
     osg::ref_ptr<osg::Vec3Array> quad_coords = new osg::Vec3Array; // vertex coords
     // counter-clockwise
+    // TODO: config for calvr 
     quad_coords->push_back(osg::Vec3d(0, 0, -1));
     quad_coords->push_back(osg::Vec3d(1, 0, -1));
     quad_coords->push_back(osg::Vec3d(1, 1, -1));

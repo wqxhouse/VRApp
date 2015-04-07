@@ -42,7 +42,7 @@ VPLGroup::VPLGroup()
     // testing against non-light geometry depth buffer
     ss->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON);
     osg::ref_ptr<osg::Depth> depth(new osg::Depth());
-    depth->setFunction(osg::Depth::LEQUAL);
+    depth->setFunction(osg::Depth::GEQUAL);
     depth->setWriteMask(false);
     ss->setAttribute(depth);
     
@@ -57,10 +57,10 @@ VPLGroup::VPLGroup()
 //    ss->setAttribute(polyMode);
     
     ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-//    osg::ref_ptr<osg::CullFace> cullFace = new osg::CullFace;
-//    cullFace->setMode(osg::CullFace::FRONT);
-//    ss->setAttribute(cullFace);
-//    
+    osg::ref_ptr<osg::CullFace> cullFace = new osg::CullFace;
+    cullFace->setMode(osg::CullFace::FRONT);
+    ss->setAttribute(cullFace);
+//
     applyInstanceNumberChange();
 }
 

@@ -17,7 +17,7 @@
 class SSAOPass: public ScreenPass
 {
 public:
-    SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, osg::TextureRectangle *normalTex, osg::Texture2D *randomJitterTex, osg::Texture2D *debug);
+    SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, osg::TextureRectangle *normalTex, osg::Texture2D *randomJitterTex, osg::Texture2D *sharedDepthTex);
     virtual ~SSAOPass();
     
     inline osg::TextureRectangle *getSSAOOutTexture()
@@ -53,8 +53,14 @@ protected:
     void configRTTCamera();
     virtual void configureStateSet();
     
+    void setupBlurCamera();
+    
 private:
     void setSSAOParameters(float occluderBias, float samplingRadius, float constantAttenuation, float linearAttenuation);
+    
+    
+    void configBlurQuadStateSet(osg::Group *g, char dir, osg::TextureRectangle *outSSAOTex);
+    
     int _in_position_tex;
     int _in_normal_tex;
     //int _in_random_tex;
@@ -71,7 +77,11 @@ private:
     osg::ref_ptr<osg::Group> _screenQuad;
     osg::ref_ptr<osg::Texture2D> _randomTexture2D;
     
-    osg::ref_ptr<osg::Texture2D> _debug;
+    osg::ref_ptr<osg::Texture2D> _sharedDepthTex;
+    osg::ref_ptr<osg::Camera> _blurCamera;
+    
+    int _blurX_shader;
+    int _blurY_shader;
 };
 
 class SSAOStateCallback : public osg::StateSet::Callback

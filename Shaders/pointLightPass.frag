@@ -56,7 +56,7 @@ void main(void)
     
     float lambert = max(dot(normal, normalize(lightDir)), 0.0);
     
-    if (lambert > 0.0)
+    if (lambert > 0.0) // TODO: think if this can really happen (back face ?)
     {
         float distance = length(lightDir);
         // distance checking isn't necessary since stencil test handles that

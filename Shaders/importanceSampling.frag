@@ -1,8 +1,9 @@
 // importanceSampling.vert
 #version 120
-#extension GL_ARB_shader_texture_lod : enable
+//#extension GL_ARB_shader_texture_lod : enable
+#extension GL_EXT_gpu_shader4 : enable
 
-#define ADJUST_STEPS	2
+#define ADJUST_STEPS 3
 
 uniform sampler2D u_mipMapFlux;
 uniform sampler2D u_poissowTex;
@@ -28,8 +29,14 @@ vec3 adjustSample( vec3 sampleLocation, vec2 textureOffset, vec2 textureSize, fl
         // get the 4 average values of the quadrants
         A = texture2DLod( u_mipMapFlux, vec2( textureOffset + textureSize * vec2( 1, 1 ) * 0.25f), globalBias+bias ).xyz;
         B = texture2DLod( u_mipMapFlux, vec2( textureOffset + textureSize * vec2( 3, 1 ) * 0.25f), globalBias+bias ).xyz;
+        
         C = texture2DLod( u_mipMapFlux, vec2( textureOffset + textureSize * vec2( 1, 3 ) * 0.25f), globalBias+bias ).xyz;
+        
+        
         D = texture2DLod( u_mipMapFlux, vec2( textureOffset + textureSize * vec2( 3, 3 ) * 0.25f), globalBias+bias ).xyz;
+        
+        
+        
         
         // and take average brightness
         fA = dot( vec3( 0.299f, 0.587f, 0.114f ), A );
@@ -37,8 +44,11 @@ vec3 adjustSample( vec3 sampleLocation, vec2 textureOffset, vec2 textureSize, fl
         fC = dot( vec3( 0.299f, 0.587f, 0.114f ), C );
         fD = dot( vec3( 0.299f, 0.587f, 0.114f ), D );
         
+        
         // adjust sample positions (see ShaderX5 article for details)
         ratio = ( fA + fC ) / ( fA + fB + fC + fD );
+        
+        gl_FragColor = vec4(ratio);
         
         if ( sampleLocation.x < ratio )
         {
@@ -116,7 +126,7 @@ void main()
     for ( int j = 0; j < 8; j++ )
         for ( int i = 0; i < 8; i++ )
         {
-            sampleLocation = adjustSample( sampleLocation, vec2( 0.125 * i, 0.125 * j ), vec2( 0.125, 0.125 ), 5, CBSample );
+            sampleLocation = adjustSample( sampleLocation, vec2( 0.125 * i, 0.125 * j ), vec2( 0.125, 0.125 ), 5 );
         }
 #endif
     
@@ -130,6 +140,9 @@ void main()
 #endif
     
     gl_FragColor = vec4( sampleLocation, 0 );
+    
+    
+
     
 //    vec2 texcoord = vec2(v_texcoord.s / u_mipMapSize.x, v_texcoord.t / u_mipMapSize.y);
 //    vec2 texcoord = vec2(gl_FragCoord.x / u_mipMapSize.x, gl_FragCoord.y / u_mipMapSize.y);

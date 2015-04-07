@@ -17,7 +17,7 @@
 #include "DirectionalLightGroup.h"
 
 ImportanceSamplingPass::ImportanceSamplingPass(osg::Camera *mainCamera, ShadowGroup *sg, DirectionalLightGroup *dlg)
-: ScreenPass(mainCamera), _shadowGroup(sg), _dirLightGroup(dlg), _impSampleEnabled(false), _splatsSize(0)
+: ScreenPass(mainCamera), _shadowGroup(sg), _dirLightGroup(dlg), _impSampleEnabled(true), _splatsSize(0)
 {
     _rsmWidth = sg->getRsmWidth();
     _rsmHeight = sg->getRsmHeight();
@@ -90,10 +90,10 @@ osg::ref_ptr<osg::Texture2D> ImportanceSamplingPass::createMipMapTexture()
     tex->setTextureSize(_rsmWidth, _rsmHeight);
     tex->setSourceType(GL_FLOAT);
     tex->setSourceFormat(GL_RGBA);
-    tex->setInternalFormat(GL_RGB8);
+    tex->setInternalFormat(GL_RGBA32F_ARB);
     
-    tex->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST_MIPMAP_LINEAR);
-    tex->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::LINEAR);
+    tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST_MIPMAP_LINEAR);
+    tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::NEAREST);
     tex->setWrap(osg::TextureRectangle::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
     tex->setWrap(osg::TextureRectangle::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
     
@@ -154,7 +154,7 @@ void ImportanceSamplingPass::addMipMapCamera(osg::TextureRectangle *fluxMap, osg
    
     mipMapCamera->setViewport(0, 0, _rsmWidth, _rsmHeight);
  
-    mipMapCamera->attach(osg::Camera::COLOR_BUFFER0, mipTexOut);
+    mipMapCamera->attach(osg::Camera::COLOR_BUFFER0, mipTexOut, 0, 0, true);
     _mipMapCameraGroup->addChild(mipMapCamera);
    
     // set stateset

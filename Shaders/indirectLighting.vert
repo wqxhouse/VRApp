@@ -12,6 +12,8 @@ varying vec4 v_texcoord; // for deferred shading buffer
 varying vec4 v_splatCenter; // for smooth fade outA
 varying vec4 v_center2D;
 
+varying float v_radius;
+
 float Ilow = 0.00025f;
 
 vec3 decodeFlux( float h )
@@ -124,7 +126,10 @@ void main()
     
     // estimate pixel light size
     //float size = sqrt( I0 / Ilow ) * 0.4f;
-    float size = sqrt( I0 / Ilow ) * 0.4f * 2.0;
+//    float size = sqrt( I0 / Ilow ) * 0.4f * 2.0;
+    float size = sqrt( I0 / Ilow );
+    v_radius = size;
+    
     
     // scale tangent space by ellipsoid approximation
     lightDir  *= w_n;
@@ -132,7 +137,7 @@ void main()
     bitangent *= h_n;
     
     // and transform vertex of bounding geometry
-    vec4 worldPos;
+    vec4 worldPos = vec4(0, 0, 0, 1);
     
     worldPos.xyz  = gl_Vertex.y * lightDir.xyz;
     worldPos.xyz += gl_Vertex.x * tangent.xyz;

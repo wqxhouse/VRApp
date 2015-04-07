@@ -10,7 +10,7 @@
 #include "Utils.h"
 #include "LightCallback.h"
 
-SSAOPass::SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, osg::TextureRectangle *normalTex, osg::Texture2D *randomJitterTex, osg::Texture2D *debug)
+SSAOPass::SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, osg::TextureRectangle *normalTex, osg::Texture2D *randomJitterTex, osg::Texture2D *sharedDepthTex)
 : ScreenPass(mainCamera)
 {
     _ssao_shader_id = addShader("ssao.vert", "ssao.frag");
@@ -18,6 +18,10 @@ SSAOPass::SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, 
     _in_normal_tex = addInTexture(normalTex);
     //_in_random_tex = addInTexture(randomJitterTex);
     _randomTexture2D = randomJitterTex;
+    _blurCamera = new osg::Camera;
+    
+    _blurX_shader = addShader("gBlur.vert", "gBlurSSAOX.frag");
+    _blurY_shader = addShader("gBlur.vert", "gBlurSSAOY.frag");
     
     setSSAOParameters(0.5f, 30.0f, 0.3f, 0.36f);
     
@@ -30,8 +34,9 @@ SSAOPass::SSAOPass(osg::Camera *mainCamera, osg::TextureRectangle *positionTex, 
     // TODO: fix nearPlane
     projMatrix.getFrustum(dummy, dummy, dummy, dummy, dummy, _farPlaneDist);
    
-    _debug = debug;
+    _sharedDepthTex = sharedDepthTex;
     configureStateSet();
+    setupBlurCamera();
 }
 
 SSAOPass::~SSAOPass()
@@ -137,4 +142,64 @@ void SSAOStateCallback::operator()(osg::StateSet *ss, osg::NodeVisitor *nv)
     ss->getUniform("u_attenuation")->set(osg::Vec2(_ssaoPass->getConstantAttenuation(), _ssaoPass->getLinearAttenuation()));
     ss->getUniform("u_inverseProjMatrix")->set(inverseProjMat);
 
+}
+
+void SSAOPass::setupBlurCamera()
+{
+    _blurCamera->setClearColor(osg::Vec4());
+    _blurCamera->setClearMask(GL_DEPTH_BUFFER_BIT); // we cannot clear color buffer
+    
+    _blurCamera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+    _blurCamera->setRenderOrder(osg::Camera::PRE_RENDER);
+    
+    _blurCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+    _blurCamera->setProjectionMatrix(osg::Matrix::ortho2D(0, 1, 0, 1));
+    _blurCamera->setViewMatrix(osg::Matrix::identity());
+    _blurCamera->setViewport(0, 0, _screenWidth, _screenHeight);
+    osg::ref_ptr<osg::TextureRectangle> blurTexOut = getOutputTexture(_out_ssao_tex_id);
+    _blurCamera->attach(osg::Camera::COLOR_BUFFER0, blurTexOut);
+    
+    _blurCamera->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+    _blurCamera->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    
+    osg::ref_ptr<osg::Group> yDir = createTexturedQuad();
+    osg::ref_ptr<osg::Group> xDir = createTexturedQuad();
+    
+    // create two screen Quad for two blurring direction
+    configBlurQuadStateSet(yDir, 'y', blurTexOut);
+    configBlurQuadStateSet(xDir, 'x', blurTexOut);
+    _blurCamera->addChild(yDir);
+    _blurCamera->addChild(xDir);
+    
+    _rootGroup->addChild(_blurCamera);
+    
+}
+
+void SSAOPass::configBlurQuadStateSet(osg::Group *g, char dir, osg::TextureRectangle *outSSAOTex)
+{
+    osg::ref_ptr<osg::StateSet> ss = g->getOrCreateStateSet();
+    if(dir == 'y')
+    {
+        ss->setAttributeAndModes(getShader(_blurY_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+    }
+    else if(dir == 'x')
+    {
+        ss->setAttributeAndModes(getShader(_blurX_shader), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+    }
+    else
+    {
+        fprintf(stderr, "Shadow Group, blur dir err\n");
+        exit(0);
+    }
+    ss->addUniform(new osg::Uniform("u_ssaoTex", 0));
+    ss->setTextureAttribute(0, outSSAOTex);
+    
+    ss->addUniform(new osg::Uniform("u_depthTex", 1));
+    ss->setTextureAttribute(1, _sharedDepthTex);
+    
+    ss->addUniform(new osg::Uniform("u_inv_screenSize", osg::Vec2(1.0 / _screenWidth, 1.0 / _screenHeight)));
+    float s = 128.0f, e = 131070.0f, fs = 1.0f / s, fe = 1.0f / e, fd = fs - fe;
+    
+    ss->addUniform(new osg::Uniform("fs", fs));
+    ss->addUniform(new osg::Uniform("fd", fd));
 }

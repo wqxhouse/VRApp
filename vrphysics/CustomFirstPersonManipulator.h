@@ -10,5 +10,16 @@
 #define __vrphysics__CustomFirstPersonManipulator__
 
 #include <stdio.h>
+#include <osgGA/FirstPersonManipulator>
+
+class CustomFirstPersonManipulator : public osgGA::FirstPersonManipulator
+{
+public:
+    CustomFirstPersonManipulator(int flags = DEFAULT_SETTINGS);
+    virtual ~CustomFirstPersonManipulator();
+    
+protected:
+    virtual bool handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
+};
 
 #endif /* defined(__vrphysics__CustomFirstPersonManipulator__) */

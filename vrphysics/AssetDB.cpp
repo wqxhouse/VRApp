@@ -22,9 +22,10 @@ AssetDB::AssetDB()
 
 AssetDB::~AssetDB()
 {
-    for(auto it = _geomNodeAndMaterials.begin(); it != _geomNodeAndMaterials.end(); it++)
+    for(std::map<std::string, std::pair<osg::Node *, Material *> >::iterator it = _geomNodeAndMaterials.begin();
+        it != _geomNodeAndMaterials.end(); it++)
     {
-        auto pair = it->second;
+        std::pair<osg::Node *, Material *> pair = it->second;
         Material *mat = pair.second;
         delete mat;
     }
@@ -255,10 +256,11 @@ std::vector<DirectionalLight *> AssetDB::getDirectionalLights()
 {
     std::vector<DirectionalLight *> dirLights(_directionalLights.size(), NULL);
     int i = 0;
-    for(auto it = _directionalLights.begin(); it != _directionalLights.end(); it++)
+    for(std::map<std::string, DirectionalLight *>::iterator it = _directionalLights.begin();
+        it != _directionalLights.end(); it++)
     {
-        auto lights = it->second;
-        dirLights[i++] = lights;
+        DirectionalLight *light = it->second;
+        dirLights[i++] = light;
     }
     return dirLights;
 }
@@ -267,10 +269,11 @@ std::vector<PointLight *> AssetDB::getPointLights()
 {
     std::vector<PointLight *> pointLights(_pointLights.size(), NULL);
     int i = 0;
-    for(auto it = _pointLights.begin(); it != _pointLights.end(); it++)
+    for(std::map<std::string, PointLight *>::iterator it = _pointLights.begin();
+        it != _pointLights.end(); it++)
     {
-        auto lights = it->second;
-        pointLights[i++] = lights;
+        PointLight *light = it->second;
+        pointLights[i++] = light;
     }
     return pointLights;
 }
@@ -279,9 +282,10 @@ std::vector<std::pair<osg::Node *, Material *> > AssetDB::getGeometryNodesAndMat
 {
     std::vector<std::pair<osg::Node *, Material *> > arr(_geomNodeAndMaterials.size());
     int i = 0;
-    for(auto it = _geomNodeAndMaterials.begin(); it != _geomNodeAndMaterials.end(); it++)
+    for(std::map<std::string, std::pair<osg::Node *, Material *> >::iterator it = _geomNodeAndMaterials.begin();
+        it != _geomNodeAndMaterials.end(); it++)
     {
-        auto pair = it->second;
+        std::pair<osg::Node *, Material *> pair = it->second;
         arr[i++] = pair;
     }
     return arr;
@@ -290,19 +294,22 @@ std::vector<std::pair<osg::Node *, Material *> > AssetDB::getGeometryNodesAndMat
 void AssetDB::printAllNames()
 {
     printf("Geometries: \n");
-    for(auto it = _geomNodeAndMaterials.begin(); it != _geomNodeAndMaterials.end(); it++)
+    for(std::map<std::string, std::pair<osg::Node *, Material *> >::iterator it = _geomNodeAndMaterials.begin();
+        it != _geomNodeAndMaterials.end(); it++)
     {
         printf("%s\n", it->first.c_str());
     }
     
     printf("PointLights: \n");
-    for(auto it = _pointLights.begin(); it != _pointLights.end(); it++)
+    for(std::map<std::string, PointLight *>::iterator it = _pointLights.begin();
+        it != _pointLights.end(); it++)
     {
         printf("%s\n", it->first.c_str());
     }
     
     printf("DirectionalLights: \n");
-    for(auto it = _directionalLights.begin(); it != _directionalLights.end(); it++)
+    for(std::map<std::string, DirectionalLight *>::iterator it = _directionalLights.begin();
+        it != _directionalLights.end(); it++)
     {
         printf("%s\n", it->first.c_str());
     }
@@ -323,3 +330,5 @@ void Assets::addGeometryWithFile(const std::string &fileURL)
 {
     _assetDB->addGeometryWithFile(fileURL);
 }
+
+

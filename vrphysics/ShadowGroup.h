@@ -15,6 +15,9 @@
 #include <osg/Texture2D>
 #include <osg/TextureRectangle>
 
+#include <osgShadow/ParallelSplitShadowMap>
+#include <osgShadow/ShadowedScene>
+
 #include "DirectionalLight.h"
 
 class ShadowGroup
@@ -70,6 +73,8 @@ private:
     
     void configBlurQuadStateSet(osg::Group *g, char dir, osg::TextureRectangle *outDepthTex);
     
+    void configRSMCamera();
+    
     std::map<int, osg::ref_ptr<osg::TextureRectangle> > _dir_depthMaps; // if gi enabled, then rgb is normal; alpha is depth
     std::map<int, osg::ref_ptr<osg::Texture2D> > _spot_depthMaps;
     std::map<int, std::vector<osg::ref_ptr<osg::Texture2D> > > _point_depthMaps;
@@ -80,11 +85,15 @@ private:
     
     osg::ref_ptr<osg::Group> _shadowCameras;
     osg::ref_ptr<osg::Group> _blurCameras;
-    
+   
+    // currently only supports one gi light
+    osg::ref_ptr<osg::Camera> _rsmCam;
+    DirectionalLight *_giLight;
     
     osg::ref_ptr<osg::Program> _depthMapShader;
     osg::ref_ptr<osg::Program> _blurShaderX;
     osg::ref_ptr<osg::Program> _blurShaderY;
+    osg::ref_ptr<osg::Program> _rsmShader;
     
     float _depthTexWidth;
     float _depthTexHeight;

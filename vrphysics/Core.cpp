@@ -7,9 +7,34 @@
 //
 
 #include "Core.h"
-#include <osgGA/TrackballManipulator>
+#include "CustomFirstPersonManipulator.h"
 #include "LightTrackBallManipulator.h"
 #include "Utils.h"
+
+#include "Skybox.h"
+
+void CameraUpdateCallback::operator()(osg::Node *node, osg::NodeVisitor *nv)
+{
+    float l, r, b, t, n, f;
+    osg::Matrix proj = _mainCamera->getProjectionMatrix();
+//    proj.getFrustum(l, r, b, t, n, f);
+////    l = -20;
+////    r = 20;
+////    b = -20;
+////    t = 20;
+//    
+//    proj.makeFrustum(l, r, b, t, n, 80); // TODO: adaptive far plane
+    proj.makePerspective(10, (float)800/600.0, 1, 50);
+    _mainCamera->setProjectionMatrix(proj);
+    
+//        osg::Matrix camMat = _mainCamera->getInverseViewMatrix();
+//        osg::Vec3 camPos = osg::Vec3(camMat(3, 0), camMat(3, 1), camMat(3, 2));
+//        osg::Vec3 forward = osg::Vec3(camMat(2, 0), camMat(2, 1), camMat(2, 2));
+//        camPos -= forward * 0.1;
+//        camMat.setTrans(camPos.x(), camPos.y(), camPos.z());
+//        osg::Matrix updated = osg::Matrix::inverse(camMat);
+//        _mainCamera->setViewMatrix(updated);
+}
 
 void optGeoms()
 {
@@ -133,10 +158,13 @@ void Core::run()
     configLights();
     configPasses();
     
-    _keyboardHandler = new KeyboardHandler(_sceneRoot, _debugHUD, _pointLightGroup);
+    _keyboardHandler = new KeyboardHandler(_sceneRoot, _debugHUD, _pointLightGroup, _viewer);
     _viewer->setSceneData(_sceneRoot);
     _viewer->setUpViewInWindow(0, 0, _winWidth, _winHeight);
     _viewer->addEventHandler(_keyboardHandler);
+
+//    _viewer->setCameraManipulator(new CustomFirstPersonManipulator);
+    _mainCamera->setUpdateCallback(new CameraUpdateCallback(_mainCamera));
     
     _viewer->run();
 }
@@ -150,6 +178,41 @@ void Core::configGeometries()
     
     _geometryGroup->accept(_computeBound);
     _sceneAABB = _computeBound.getBoundingBox();
+    
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->addDrawable(
+            new osg::ShapeDrawable(
+            new osg::Sphere(osg::Vec3(), _geometryGroup->getBound().radius())) );
+    
+    geode->setCullingActive( false );
+    geode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+    
+    osg::ref_ptr<osg::TextureCubeMap> cubemap = new osg::TextureCubeMap;
+    cubemap->setImage( osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("east.png") );
+    cubemap->setImage( osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("west.png") );
+    cubemap->setImage( osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("down.png") );
+    cubemap->setImage( osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("up.png") );
+    cubemap->setImage( osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("north.png"));
+    cubemap->setImage( osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("south.png") );
+    
+    cubemap->setWrap( osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE );
+    cubemap->setWrap( osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE );
+    cubemap->setWrap( osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE );
+    cubemap->setFilter( osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR );
+    cubemap->setFilter( osg::Texture::MAG_FILTER, osg::Texture::LINEAR );
+    cubemap->setResizeNonPowerOfTwoHint( false );
+    
+    geode->getOrCreateStateSet()->setTextureAttributeAndModes( 0, cubemap.get() );
+    // _geometryGroup->addChild(geode);
+    
+    SkyBox *skyBox = new SkyBox(_mainCamera); // TODO: free
+    skyBox->setEnvironmentMap(
+                  osgDB::readImageFile("east.png"), osgDB::readImageFile("west.png"),
+                  osgDB::readImageFile("down.png"), osgDB::readImageFile("up.png"),
+                  osgDB::readImageFile("north.png"), osgDB::readImageFile("south.png") );
+    
+    //_geometryGroup->addChild(skyBox->getRootNode());
+    // _sceneRoot->addChild(skyBox->getRootNode());
 }
 
 void Core::configLights()
@@ -317,7 +380,7 @@ osg::ref_ptr<osg::Geode> Core::createTexturedQuad(int _TextureWidth, int _Textur
     quad_geom->setTexCoordArray(0, quad_tcoords.get());
     quad_geom->addPrimitiveSet(quad_da.get());
     
-    auto _StateSet = quad_geom->getOrCreateStateSet();
+    osg::ref_ptr<osg::StateSet> _StateSet = quad_geom->getOrCreateStateSet();
     _StateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
     
     quad_geode->addDrawable(quad_geom.get());
@@ -328,7 +391,7 @@ osg::ref_ptr<osg::Geode> Core::createTexturedQuad(int _TextureWidth, int _Textur
 
 void Core::configGeomPass()
 {
-    _geomPass = new GeometryPass(_mainCamera, _assetDB);
+    _geomPass = new GeometryPass(_mainCamera, _assetDB, _geometryGroup);
 }
 
 void Core::configDirectionalLightPass()
@@ -403,9 +466,11 @@ void Core::setupHUDForPasses()
                              //_shadowGroup->getDirLightShadowTexture(0),
                              //_shadowGroup->getDirLightFluxTexture(0),
                              //_impPass->getImportanceSampleTexture(0),
-                             //_geomPass->getPositionOutTexure(),
+                             //_geomPass->getNormalDepthOutTexture(),
+                             //_geomPass->getNormalDepthOutTexture(),
+                             _ssaoPass->getSSAOOutTexture(),
                              ///_impPass->getFluxMipMapTexture(),
-                             _indLPass->getIndirectLightingTex(),
+                             //_indLPass->getIndirectLightingTex(),
                              //_geomPass->getNormalDepthOutTexture(),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
@@ -413,7 +478,9 @@ void Core::setupHUDForPasses()
     createTextureDisplayQuad(osg::Vec3(0.3333, 0.7, 0),
                              //_shadowGroup->getDirLightViewWorldPosTexture(0),
                              //_shadowGroup->getDirLightDirFluxTexture(0),
-                             _shadowGroup->getDirLightShadowTexture(0),
+                             //_shadowGroup->getDirLightShadowTexture(0),
+                             _indLPass->getOutputTexture(0),
+                             //_hdrPass->getOutputTexture(0),
                              //_ssaoPass->getOutputTexture(0),
                              //_geomPass->getPositionOutTexure(),
                              //_geomPass->getSharedDepthStencilTexture(),
@@ -424,10 +491,12 @@ void Core::setupHUDForPasses()
     
     osg::ref_ptr<osg::Camera> qTexP =
     createTextureDisplayQuad(osg::Vec3(0.6666, 0.7, 0),
-                             //_directionalLightPass->getLightingOutTexture(),
+                             _directionalLightPass->getLightingOutTexture(),
                              //_geomPass->getNormalDepthOutTexture(),
-                             _shadowGroup->getDirLightDirFluxTexture(0),
+                             //_shadowGroup->getDirLightDirFluxTexture(0),
                              //_ssaoPass->getSSAOOutTexture(),
+                             //_indLPass->getIndirectLightingTex(),
+                             //_shadowGroup->getDirLightDirFluxTexture(0),
                              _winWidth, _winHeight, 0.3333, 0.3, true);
     
     osg::ref_ptr<osg::Camera> qTexF =
